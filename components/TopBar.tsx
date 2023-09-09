@@ -30,6 +30,12 @@ const navLinks = [
     route: "/profile",
     label: "Profile",
   },
+  {
+    imgURL: "/assets/user.svg",
+    route: "/roomlist",
+    label: "RoomList",
+  },
+  
 ];
 
 export default function TopBar() {
@@ -59,6 +65,7 @@ export default function TopBar() {
               href={link.route}
               key={link.label}
               className={` ${isActive && "bg-primary-500 "}`}
+              
             >
               <p className="text-light-1 max-lg:hidden">{link.label}</p>
             </Link>
