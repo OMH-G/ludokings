@@ -5,8 +5,10 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 
 export default function Rooms() {
+  const {userId}=useAuth();
   const [rooms, setRooms] = useState([
     { name: "Pawshar_kilo", value: "1" },
     { name: "ludo_mafia", value: "2" },
@@ -82,7 +84,7 @@ export default function Rooms() {
             <span className="flex justify-between items-center">
               <p>
                 <span className="text-red-400 font-bold">{room.name}</span> Set
-                By:
+                By: {userId}
               </p>
               <p className="text-green-400 font-bold text-lg">
                 {" "}
