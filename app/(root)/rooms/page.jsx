@@ -8,7 +8,7 @@ import { useUser } from "@clerk/nextjs";
 import { useAuth } from "@clerk/nextjs";
 
 export default function Rooms() {
-  const {userId}=useAuth();
+  const { userId } = useAuth();
   const [rooms, setRooms] = useState([
     { name: "Pawshar_kilo", value: "1" },
     { name: "ludo_mafia", value: "2" },
@@ -83,8 +83,9 @@ export default function Rooms() {
           <li key={index} className="mb-4">
             <span className="flex justify-between items-center">
               <p>
-                <span className="text-red-400 font-bold">{room.name}</span> Set
-                By: {userId}
+                Room
+                <span className="text-red-400 font-bold"> {room.name}</span> Set
+                By:
               </p>
               <p className="text-green-400 font-bold text-lg">
                 {" "}

@@ -23,9 +23,16 @@ export default function UserProfile({ params }) {
                 className="rounded-full "
               />
               <h1 className="text-2xl my-4">Hello {user.firstName}</h1>
-              <div className="text-xl p-4 flex flex-col justify-start items-start">
-                <h1>email: {user?.primaryEmailAddress?.emailAddress}</h1>
-              </div>
+              {user?.primaryEmailAddress?.emailAddress && (
+                <div className="text-xl p-4 flex flex-col justify-start items-start">
+                  <h1>Email: {user?.primaryEmailAddress?.emailAddress}</h1>
+                </div>
+              )}
+              {user?.primaryPhoneNumber?.phoneNumber && (
+                <div className="text-xl p-4 flex flex-col justify-start items-start">
+                  <h1>Phone: {user?.primaryPhoneNumber?.phoneNumber}</h1>
+                </div>
+              )}
               {/* <h1>Profile Page {params.id}</h1> */}
               {/* <button onClick={() => console.log(user)}>param</button> */}
               <br />

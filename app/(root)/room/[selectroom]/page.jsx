@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function Room({ params }) {
   const { userId } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
-  // const router = useRouter();
+  const router = useRouter();
   const room = params.selectroom;
 
   //Temporary database which can be replace with main database with fetch or axios.
