@@ -8,8 +8,8 @@ import Link from "next/link";
 export default function Room({ params }) {
   const { userId } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
-  const router = useRouter();
-  const room = params.room;
+  // const router = useRouter();
+  const room = params.selectroom;
 
   //Temporary database which can be replace with main database with fetch or axios.
   const database = {
@@ -70,19 +70,6 @@ export default function Room({ params }) {
             </div>
           ))}
       </div>
-      {/* <div>
-        {loading ? (
-          <p>Loading room code...</p>
-        ) : (
-          <div>
-            <h3 className="text-xl font-semibold mb-2">Room Code:</h3>
-            <div className="bg-white p-2 rounded-lg shadow-md">
-              {data.roomcode}
-            </div>
-          </div>
-        )}
-      </div> */}
-
       <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2">
         <p>Your room code is : </p>{" "}
         <div className="my-3 text-center text-sm md:text-lg md:my-4 flex justify-center items-center px-4 md:px-12">
