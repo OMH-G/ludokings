@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import TopBar from "@/components/TopBar";
 // import Background from "@/components/Background";
-import { PathnameProvider } from '../../pathnameContext';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,8 +19,6 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-          <PathnameProvider>
-
       <html lang="en">
         <body className={inter.className}>
           {/* <Background /> */}
@@ -29,7 +26,6 @@ export default function RootLayout({
           <div className="mt-28">{children}</div>
         </body>
       </html>
-      </PathnameProvider>
     </ClerkProvider>
   );
 }

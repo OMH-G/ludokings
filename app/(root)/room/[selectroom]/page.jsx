@@ -4,34 +4,16 @@ import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { usePathnameContext } from "@/pathnameContext";
+
 export default function Room({ params }) {
 
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
   const room = params.selectroom;
-  const pathname=usePathnameContext();
    // Adding roomid to user in supabase
-   const [currentUser, setCurrentUser] = useState(null);
-
-  // Set the user when they enter a room or perform an action
-  function setUser(user) {
-    setCurrentUser(user);
-  }
-
-  // Remove the user when they leave a room or navigate away
-  const cleanup = () => {
-    // Remove the user when the user navigates away
-    console.log('removed')
-    setCurrentUser(null);
-  };
-  useEffect(() => {
-
-
-    // return () => {
-    //   window.removeEventListener('beforeunload', cleanup);
-    // };
-  });
+  
+  
+  // Call the createUser function when the user is authenticated
 
   const database = {
     Pawshar_kilo: [user?.fullName, "user2", "user3"],
@@ -61,6 +43,7 @@ export default function Room({ params }) {
   
   const handleCopy = (copyReferelId) => {
     setCopied(copyReferelId);
+    
     navigator.clipboard.writeText(copyReferelId);
     // setTimeout(() => setCopied(false), 3000);
     alert("Room Code copied to your clipboard!");

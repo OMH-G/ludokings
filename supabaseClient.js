@@ -27,23 +27,20 @@ export async function createUserInSupabase(userId) {
         throw error;
     }
 }
-export async function createRoomInSupabase(userId, roomname) {
+export async function createRoomInSupabase(userId, roomname,value) {
     try {
-        let idOfUser = await supabase
-            .from('User')
-            .select("id")
-            .eq("user_id", userId)
-        
-        const { data, error } = await supabase
+        const {data,error}= await supabase
         .from('Room')
         .insert([
-            { ownedby: idOfUser.data[0].id, name: roomname },
+            { owned_by:userId, name: roomname,value:value },
         ])
         .select()
-
-        return data[0];
+        if(error){
+            throw error;
+        }
+        return data;
     } catch (error) {
-        console.error('Error creating user in Supabase:', error);
+        console.error('Error creating room in Supabase:');
         throw error;
     }
 }

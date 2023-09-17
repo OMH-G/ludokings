@@ -4,21 +4,59 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
+import axios from 'axios';
 import { useUser } from "@clerk/nextjs";
-import { useAuth } from "@clerk/nextjs";
+// import { useAuth } from "@clerk/nextjs";
+import {useEffect} from 'react'
 import { createRoomInSupabase } from '../../../supabaseClient'; // Import the createUserInSupabase function
+import { fetchroomsfromdatabase } from '../../../supabaseClient'; // Import the createUserInSupabase function
 
 export default function Rooms() {
+
+async function fetchSupabaseData() {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey =  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const tableName = 'Room'; // Replace with your table name
+    const apiUrl = `${supabaseUrl}/rest/v1/${tableName}`;
+
+    const response = await axios.get(apiUrl, {
+      headers: {
+        'apikey': supabaseKey,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.error('Error fetching data:', response.statusText);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return null;
+  }
+}
+
+  
+
   const [rooms, setRooms] = useState([
-    { name: "Pawshar_kilo", value: "1" },
-    { name: "ludo_mafia", value: "2" },
+    
   ]);
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState("");
-  const [Join, setJoin] = useState(0);
-  const [choosenRoom, setChoosenRoom] = useState("");
 
+  useEffect(() => {
+    async function fetchData() {
+      const supabaseData = await fetchSupabaseData();
+      if (supabaseData) {
+        setRooms(supabaseData);
+      }
+    }
+
+    fetchData();
+  }, []);
   const addRoom = () => {
     if (newRoomName !== "") {
       const newRoom = {
@@ -26,7 +64,6 @@ export default function Rooms() {
         value: newValue,
       };
 
-      setRooms([...rooms, newRoom]);
       setNewRoomName("");
       setNewValue("");
     }
@@ -34,7 +71,9 @@ export default function Rooms() {
       try {
         if (user) {
           // Create the user in Supabase with their user ID
-          await createRoomInSupabase(user.id,newRoomName);
+          let data=await createRoomInSupabase(user.id,newRoomName,newValue);
+          console.log(data);
+          setRooms(...rooms,data)
           console.log('Room created in Supabase');
         }
       } catch (error) {
@@ -101,7 +140,7 @@ export default function Rooms() {
               <p>
                 Room
                 <span className="text-red-400 font-bold"> {room.name}</span> Set
-                By:
+                By:{room.owned_by}
               </p>
               <p className="text-green-400 font-bold text-lg">
                 {" "}
