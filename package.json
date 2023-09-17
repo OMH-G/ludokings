@@ -17,6 +17,7 @@
     "@mui/material": "^5.14.8",
     "@mui/system": "^5.14.8",
     "@prisma/client": "^5.2.0",
+    "@supabase/supabase-js": "^2.33.2",
     "@types/node": "^20.5.9",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",

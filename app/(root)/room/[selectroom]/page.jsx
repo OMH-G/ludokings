@@ -1,24 +1,43 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
+import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { usePathnameContext } from "@/pathnameContext";
 export default function Room({ params }) {
-  const { userId } = useAuth();
+
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
   const room = params.selectroom;
+  const pathname=usePathnameContext();
+   // Adding roomid to user in supabase
+   const [currentUser, setCurrentUser] = useState(null);
 
-  //Temporary database which can be replace with main database with fetch or axios.
+  // Set the user when they enter a room or perform an action
+  function setUser(user) {
+    setCurrentUser(user);
+  }
+
+  // Remove the user when they leave a room or navigate away
+  const cleanup = () => {
+    // Remove the user when the user navigates away
+    console.log('removed')
+    setCurrentUser(null);
+  };
+  useEffect(() => {
+
+
+    // return () => {
+    //   window.removeEventListener('beforeunload', cleanup);
+    // };
+  });
+
   const database = {
     Pawshar_kilo: [user?.fullName, "user2", "user3"],
     ludo_mafia: [user?.fullName, "user3", "user4"],
   };
 
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [roomCode, setRoomCode] = useState("");
   const [copied, setCopied] = useState("");
 
@@ -39,7 +58,7 @@ export default function Room({ params }) {
       console.log("failed!!!!", error.message);
     }
   };
-
+  
   const handleCopy = (copyReferelId) => {
     setCopied(copyReferelId);
     navigator.clipboard.writeText(copyReferelId);

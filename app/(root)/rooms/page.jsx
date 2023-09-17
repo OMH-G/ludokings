@@ -6,9 +6,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { useAuth } from "@clerk/nextjs";
+import { createRoomInSupabase } from '../../../supabaseClient'; // Import the createUserInSupabase function
 
 export default function Rooms() {
-  const { userId } = useAuth();
   const [rooms, setRooms] = useState([
     { name: "Pawshar_kilo", value: "1" },
     { name: "ludo_mafia", value: "2" },
@@ -29,6 +29,22 @@ export default function Rooms() {
       setRooms([...rooms, newRoom]);
       setNewRoomName("");
       setNewValue("");
+    }
+    const createRoom = async () => {
+      try {
+        if (user) {
+          // Create the user in Supabase with their user ID
+          await createRoomInSupabase(user.id,newRoomName);
+          console.log('Room created in Supabase');
+        }
+      } catch (error) {
+        console.error('Error creating Room in Supabase:', error);
+      }
+    };
+
+    // Call the createUser function when the user is authenticated
+    if (user) {
+      createRoom();
     }
   };
   const join = (roomname) => {
