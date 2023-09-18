@@ -1,24 +1,61 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState ,useContext}from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
+import axios from 'axios';
 import { useUser } from "@clerk/nextjs";
-import { useAuth } from "@clerk/nextjs";
-
+import {useEffect} from 'react'
+import { createRoomInSupabase } from '../../../supabaseClient'; // Import the createUserInSupabase function
+import { assignroomid_user } from '../../../supabaseClient'; // Import the createUserInSupabase function
 export default function Rooms() {
-  const { userId } = useAuth();
+
+async function fetchSupabaseData() {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey =  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const tableName = 'Room'; // Replace with your table name
+    const apiUrl = `${supabaseUrl}/rest/v1/${tableName}`;
+
+    const response = await axios.get(apiUrl, {
+      headers: {
+        'apikey': supabaseKey,
+      },
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.error('Error fetching data:', response.statusText);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return null;
+  }
+}
+
+
+  
+
   const [rooms, setRooms] = useState([
-    { name: "Pawshar_kilo", value: "1" },
-    { name: "ludo_mafia", value: "2" },
+    
   ]);
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState("");
-  const [Join, setJoin] = useState(0);
-  const [choosenRoom, setChoosenRoom] = useState("");
 
+  useEffect(() => {
+    async function fetchData() {
+      const supabaseData = await fetchSupabaseData();
+      if (supabaseData) {
+        setRooms(supabaseData);
+      }
+    }
+
+    fetchData();
+  }, []);
   const addRoom = () => {
     if (newRoomName !== "") {
       const newRoom = {
@@ -26,11 +63,29 @@ export default function Rooms() {
         value: newValue,
       };
 
-      setRooms([...rooms, newRoom]);
       setNewRoomName("");
       setNewValue("");
     }
+    const createRoom = async () => {
+      try {
+        if (user) {
+          // Create the user in Supabase with their user ID
+          let data=await createRoomInSupabase(user.id,newRoomName,newValue);
+          console.log(data);
+          setRooms(...rooms,data)
+          console.log('Room created in Supabase');
+        }
+      } catch (error) {
+        console.error('Error creating Room in Supabase:', error);
+      }
+    };
+
+    // Call the createUser function when the user is authenticated
+    if (user) {
+      createRoom();
+    }
   };
+
   const join = (roomname) => {
     console.log("Join clicked");
     setJoin(1);
@@ -49,6 +104,24 @@ export default function Rooms() {
     setRooms(updatedRooms);
   };
 
+  const playbuttonclicked=(roomid,userid)=>{
+    const assignuser = async (roomid,userid) => {
+      try {
+        if (user) {
+          // Create the user in Supabase with their user ID
+          await assignroomid_user(roomid,userid);
+          console.log('User updated with room');
+        }
+      } catch (error) {
+        console.error('Error creating Room in Supabase:', error);
+      }
+    };
+
+    // Call the createUser function when the user is authenticated
+    if (user) {
+      assignuser(roomid,userid);
+    }
+  }
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="text-2xl font-bold my-4">Room Manager</p>
@@ -85,7 +158,7 @@ export default function Rooms() {
               <p>
                 Room
                 <span className="text-red-400 font-bold"> {room.name}</span> Set
-                By:
+                By:{room.owned_by}
               </p>
               <p className="text-green-400 font-bold text-lg">
                 {" "}
@@ -97,7 +170,7 @@ export default function Rooms() {
               <p className="text-blue-400">{user?.fullName}</p>
               <span>
                 <Link href={`/room/${room.name}`}>
-                  <button className="bg-green-500 text-white px-2 md:px-4 py-1 md:py-2 mx-1 rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300">
+                  <button className="bg-green-500 text-white px-2 md:px-4 py-1 md:py-2 mx-1 rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300" onClick={()=>playbuttonclicked(room.id,user.id)}>
                     Play
                   </button>
                 </Link>
