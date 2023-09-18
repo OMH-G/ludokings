@@ -1,16 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState ,useContext}from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import axios from 'axios';
 import { useUser } from "@clerk/nextjs";
-// import { useAuth } from "@clerk/nextjs";
 import {useEffect} from 'react'
 import { createRoomInSupabase } from '../../../supabaseClient'; // Import the createUserInSupabase function
-import { fetchroomsfromdatabase } from '../../../supabaseClient'; // Import the createUserInSupabase function
-
+import { assignroomid_user } from '../../../supabaseClient'; // Import the createUserInSupabase function
 export default function Rooms() {
 
 async function fetchSupabaseData() {
@@ -37,6 +35,7 @@ async function fetchSupabaseData() {
     return null;
   }
 }
+
 
   
 
@@ -86,6 +85,7 @@ async function fetchSupabaseData() {
       createRoom();
     }
   };
+
   const join = (roomname) => {
     console.log("Join clicked");
     setJoin(1);
@@ -104,6 +104,24 @@ async function fetchSupabaseData() {
     setRooms(updatedRooms);
   };
 
+  const playbuttonclicked=(roomid,userid)=>{
+    const assignuser = async (roomid,userid) => {
+      try {
+        if (user) {
+          // Create the user in Supabase with their user ID
+          await assignroomid_user(roomid,userid);
+          console.log('User updated with room');
+        }
+      } catch (error) {
+        console.error('Error creating Room in Supabase:', error);
+      }
+    };
+
+    // Call the createUser function when the user is authenticated
+    if (user) {
+      assignuser(roomid,userid);
+    }
+  }
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="text-2xl font-bold my-4">Room Manager</p>
@@ -152,7 +170,7 @@ async function fetchSupabaseData() {
               <p className="text-blue-400">{user?.fullName}</p>
               <span>
                 <Link href={`/room/${room.name}`}>
-                  <button className="bg-green-500 text-white px-2 md:px-4 py-1 md:py-2 mx-1 rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300">
+                  <button className="bg-green-500 text-white px-2 md:px-4 py-1 md:py-2 mx-1 rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300" onClick={()=>playbuttonclicked(room.id,user.id)}>
                     Play
                   </button>
                 </Link>

@@ -27,20 +27,73 @@ export async function createUserInSupabase(userId) {
         throw error;
     }
 }
-export async function createRoomInSupabase(userId, roomname,value) {
+export async function createRoomInSupabase(userId, roomname, value) {
     try {
-        const {data,error}= await supabase
-        .from('Room')
-        .insert([
-            { owned_by:userId, name: roomname,value:value },
-        ])
-        .select()
-        if(error){
+        const { data, error } = await supabase
+            .from('Room')
+            .insert([
+                { owned_by: userId, name: roomname, value: value },
+            ])
+            .select()
+        if (error) {
             throw error;
         }
         return data;
     } catch (error) {
         console.error('Error creating room in Supabase:');
+        throw error;
+    }
+}
+
+export async function assignroomid_user(roomid, userid) {
+    try {
+        console.log(roomid,userid)
+        const { data, error } = await supabase
+            .from('User')
+            .update({ roomid: roomid })
+            .eq('user_id', userid)
+            .select()
+
+        if (error) {
+            throw error;
+        }
+        return data;
+    } catch (error) {
+        console.error('Error creating room in Supabase:');
+        throw error;
+    }
+}
+export async function deassignroomid_user(userid) {
+    try {
+        const { data, error } = await supabase
+            .from('User')
+            .update({ roomid: null })
+            .eq('user_id', userid)
+            .select()
+
+        if (error) {
+            throw error;
+        }
+        return data;
+    } catch (error) {
+        console.error('Error creating room id in Supabase');
+        throw error;
+    }
+}
+
+export async function fetchusers(roomid) {
+    try {
+        const { data, error } = await supabase
+            .from('User')
+            .eq('roomid', )
+            .select()
+
+        if (error) {
+            throw error;
+        }
+        return data;
+    } catch (error) {
+        console.error('Error creating room id in Supabase');
         throw error;
     }
 }
