@@ -1,24 +1,24 @@
 "use client";
-import { useEffect, useState,useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
-import { useRoomID } from '../../../../RoomIDContext';
-import { fetchRoomById } from "@/app/api/roomCode/route";
-import {uuid} from 'uuid'
+import { useRoomID } from "../../../../RoomIDContext";
+import { fetchRoomById } from "@/app/api/fetchRoomById/route";
+import { v4 as uuidv4 } from "uuid";
+
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
 
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
   const room = params.selectroom;
-   // Adding roomid to user in supabase
-  
-  
+  // Adding roomid to user in supabase
+
   // Call the createUser function when the user is authenticated
-  
-  const [database, setDatabase] = useState([])
+
+  const [database, setDatabase] = useState([]);
 
   const [roomCode, setRoomCode] = useState("");
   const [copied, setCopied] = useState("");
@@ -27,29 +27,42 @@ export default function Room({ params }) {
     getRoomCode();
   }, []);
 
+  // useEffect(() => {
+  //   async function fetchroomdata() {
+  //     const supabaseData = await fetchRoomById(roomID);
+  //     if (supabaseData) {
+  //       console.log(supabaseData);
+  //       setDatabase(supabaseData);
+  //     }
+  //   }
+
+  //   fetchroomdata();
+  // }, []);
+
   useEffect(() => {
     async function fetchroomdata() {
-      const supabaseData = await fetchRoomById(roomID);
+      let supabaseData = await axios.post("/api/fetchRoomById", roomID);
       if (supabaseData) {
-        console.log(supabaseData)
-        setDatabase(supabaseData)
+        console.log(supabaseData.data);
+        setDatabase(supabaseData.data);
       }
     }
 
     fetchroomdata();
   }, []);
+
   function goBack(userid) {
-    console.log(roomID)
+    console.log(roomID);
     router.back();
     const deassignuser = async (userid) => {
       try {
         if (user) {
           // Create the user in Supabase with their user ID
           await deassignroomid_user(userid);
-          console.log('User updated with room');
+          console.log("User updated with room");
         }
       } catch (error) {
-        console.error('Error creating Room in Supabase:', error);
+        console.error("Error creating Room in Supabase:", error);
       }
     };
 
@@ -58,9 +71,8 @@ export default function Room({ params }) {
       deassignuser(userid);
     }
   }
-    
 
-    // Call the createUser function when the user is authenticated
+  // Call the createUser function when the user is authenticated
 
   const getRoomCode = async () => {
     try {
@@ -71,10 +83,10 @@ export default function Room({ params }) {
       console.log("failed!!!!", error.message);
     }
   };
-  
+
   const handleCopy = (copyReferelId) => {
     setCopied(copyReferelId);
-    
+
     navigator.clipboard.writeText(copyReferelId);
     // setTimeout(() => setCopied(false), 3000);
     alert("Room Code copied to your clipboard!");
@@ -84,7 +96,7 @@ export default function Room({ params }) {
     <div className="flex flex-col justify-center items-center">
       <div className="flex justify-start items-center w-11/12 md:w-1/2">
         <button
-          onClick={()=>goBack(user.id)}
+          onClick={() => goBack(user.id)}
           className=" bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
         >
           Go Back
@@ -92,15 +104,18 @@ export default function Room({ params }) {
       </div>
       <div className="flex flex-col md:flex-row justify-center items-center w-11/12 md:w-1/2 my-4 md:my-12">
         <p className="text-2xl">Waiting Room For </p>{" "}
-        <span className="text-red-400 font-bold text-2xl mx-1"> {database && database[room]} :</span>
+        <span className="text-red-400 font-bold text-2xl mx-1">
+          {" "}
+          {database && database[room]} :
+        </span>
       </div>
       <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2 my-4">
         <h3 className="text-xl font-semibold mb-2">Players in the room:</h3>
         {console.log(database)}
         {database &&
-          database.map((item) => (
-            <div key={uuid} className="mb-1">
-              {item['user_id']}
+          database.map((item, index) => (
+            <div key={index} className="mb-1">
+              {item["user_id"]}
             </div>
           ))}
       </div>
