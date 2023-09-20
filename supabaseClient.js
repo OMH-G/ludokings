@@ -81,19 +81,3 @@ export async function deassignroomid_user(userid) {
     }
 }
 
-export async function fetchusers(roomid) {
-    try {
-        const { data, error } = await supabase
-            .from('User')
-            .eq('roomid', )
-            .select()
-
-        if (error) {
-            throw error;
-        }
-        return data;
-    } catch (error) {
-        console.error('Error creating room id in Supabase');
-        throw error;
-    }
-}
