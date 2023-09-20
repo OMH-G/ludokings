@@ -9,6 +9,8 @@ import { useUser } from "@clerk/nextjs";
 import {useEffect} from 'react'
 import { createRoomInSupabase } from '../../../supabaseClient'; // Import the createUserInSupabase function
 import { assignroomid_user } from '../../../supabaseClient'; // Import the createUserInSupabase function
+import { useRoomID } from '../../../RoomIDContext'
+
 export default function Rooms() {
 
 async function fetchSupabaseData() {
@@ -39,9 +41,10 @@ async function fetchSupabaseData() {
 
   
 
-  const [rooms, setRooms] = useState([
-    
-  ]);
+  const [rooms, setRooms] = useState([]);
+
+  const { roomID, setRoomID } = useRoomID();
+
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState("");
@@ -56,6 +59,7 @@ async function fetchSupabaseData() {
 
     fetchData();
   }, []);
+  
   const addRoom = () => {
     if (newRoomName !== "") {
       const newRoom = {
@@ -105,6 +109,7 @@ async function fetchSupabaseData() {
   };
 
   const playbuttonclicked=(roomid,userid)=>{
+    setRoomID(roomid);
     const assignuser = async (roomid,userid) => {
       try {
         if (user) {

@@ -4,9 +4,11 @@ import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
-
-
+import { useRoomID } from '../../../../RoomIDContext';
+import { fetchRoomById } from "@/app/api/roomCode/route";
+import {uuid} from 'uuid'
 export default function Room({ params }) {
+  const { roomID, setRoomID } = useRoomID();
 
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
@@ -15,11 +17,8 @@ export default function Room({ params }) {
   
   
   // Call the createUser function when the user is authenticated
-
-  const database = {
-    Pawshar_kilo: [user?.fullName, "user2", "user3"],
-    ludo_mafia: [user?.fullName, "user3", "user4"],
-  };
+  
+  const [database, setDatabase] = useState([])
 
   const [roomCode, setRoomCode] = useState("");
   const [copied, setCopied] = useState("");
@@ -28,7 +27,19 @@ export default function Room({ params }) {
     getRoomCode();
   }, []);
 
+  useEffect(() => {
+    async function fetchroomdata() {
+      const supabaseData = await fetchRoomById(roomID);
+      if (supabaseData) {
+        console.log(supabaseData)
+        setDatabase(supabaseData)
+      }
+    }
+
+    fetchroomdata();
+  }, []);
   function goBack(userid) {
+    console.log(roomID)
     router.back();
     const deassignuser = async (userid) => {
       try {
@@ -47,6 +58,9 @@ export default function Room({ params }) {
       deassignuser(userid);
     }
   }
+    
+
+    // Call the createUser function when the user is authenticated
 
   const getRoomCode = async () => {
     try {
@@ -78,14 +92,15 @@ export default function Room({ params }) {
       </div>
       <div className="flex flex-col md:flex-row justify-center items-center w-11/12 md:w-1/2 my-4 md:my-12">
         <p className="text-2xl">Waiting Room For </p>{" "}
-        <span className="text-red-400 font-bold text-2xl mx-1"> {room} :</span>
+        <span className="text-red-400 font-bold text-2xl mx-1"> {database && database[room]} :</span>
       </div>
       <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2 my-4">
         <h3 className="text-xl font-semibold mb-2">Players in the room:</h3>
-        {database[room] &&
-          database[room].map((item, index) => (
-            <div key={index} className="mb-1">
-              {item}
+        {console.log(database)}
+        {database &&
+          database.map((item) => (
+            <div key={uuid} className="mb-1">
+              {item['user_id']}
             </div>
           ))}
       </div>
