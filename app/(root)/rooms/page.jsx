@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { createRoomInSupabase } from "../../../supabaseClient"; // Import the createUserInSupabase function
 import { assignroomid_user } from "../../../supabaseClient"; // Import the createUserInSupabase function
 import { useRoomID } from "../../../RoomIDContext";
-
+import { deleteroom } from "../../../supabaseClient";
 export default function Rooms() {
   async function fetchSupabaseData() {
     try {
@@ -100,6 +100,7 @@ export default function Rooms() {
 
   const removeRoom = (index) => {
     const updatedRooms = [...rooms];
+    deleteroom(user.id);
     updatedRooms.splice(index, 1);
     setRooms(updatedRooms);
   };

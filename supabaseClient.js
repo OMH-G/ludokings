@@ -10,19 +10,24 @@ const supabase = createClient(
 export async function createUserInSupabase(userId) {
   try {
     // Define the user data to be inserted or updated in the "User" table
-    const userData = {
-      user_id: userId, // The user ID you want to create
-      // Add other user data fields as needed
-    };
-
+    
     // Insert or update the user data in the "User" table using upsert
+    
+    
+    let check= await supabase
+    .from('User')
+    .select('user_id')
+    .eq('user_id',userId);
 
+    if(check.data.length!==0){
+        throw error;
+    }
     const { data, error } = await supabase
       .from("User")
       .insert([{ user_id: userId, chips: 100 }])
       .select();
 
-    return data[0];
+    return 'User created';
   } catch (error) {
     throw error;
   }
@@ -75,6 +80,22 @@ export async function deassignroomid_user(userid) {
     return data;
   } catch (error) {
     console.error("Error creating room id in Supabase");
+    throw error;
+  }
+}
+export async function deleteroom(userid) {
+  try {
+    const { data, error } = await supabase
+      .from("Room")
+      .delete()
+      .eq("owned_by", userid)
+
+    if (error) {
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error("Error Deleting room in Supabase");
     throw error;
   }
 }

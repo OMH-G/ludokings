@@ -12,11 +12,11 @@ export default function Home() {
       try {
         if (user) {
           // Create the user in Supabase with their user ID
-          await createUserInSupabase(user.id);
-          // console.log('User created in Supabase');
+          let data=await createUserInSupabase(user.id);
+          console.log(data);
         }
       } catch (error) {
-        console.error("Already login");
+        console.log("Already present");
       }
     };
 

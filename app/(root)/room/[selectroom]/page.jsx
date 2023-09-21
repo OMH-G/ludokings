@@ -27,17 +27,7 @@ export default function Room({ params }) {
     getRoomCode();
   }, []);
 
-  // useEffect(() => {
-  //   async function fetchroomdata() {
-  //     const supabaseData = await fetchRoomById(roomID);
-  //     if (supabaseData) {
-  //       console.log(supabaseData);
-  //       setDatabase(supabaseData);
-  //     }
-  //   }
 
-  //   fetchroomdata();
-  // }, []);
 
   useEffect(() => {
     async function fetchroomdata() {
