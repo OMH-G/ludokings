@@ -14,8 +14,6 @@ export default function Room({ params }) {
   const room = params.selectroom;
   // Adding roomid to user in supabase
 
-  // Call the createUser function when the user is authenticated
-
   const [database, setDatabase] = useState([]);
 
   const [roomCode, setRoomCode] = useState("");
@@ -25,23 +23,17 @@ export default function Room({ params }) {
     getRoomCode();
   }, []);
 
-
-
   useEffect(() => {
     async function fetchroomdata() {
-      try{
       let supabaseData = await axios.post("/api/fetchRoomById", roomID);
       if (supabaseData) {
+        console.log(supabaseData.data);
         setDatabase(supabaseData.data);
       }
     }
-    catch(error){
-      console.log('Error in room creation ')
-    }
-    }
 
     fetchroomdata();
-  }, [database]);
+  }, []);
 
   function goBack(userid) {
     console.log(roomID);
@@ -64,8 +56,6 @@ export default function Room({ params }) {
     }
   }
 
-  // Call the createUser function when the user is authenticated
-
   const getRoomCode = async () => {
     try {
       const response = await axios.get("/api/roomCode");
@@ -80,7 +70,6 @@ export default function Room({ params }) {
     setCopied(copyReferelId);
 
     navigator.clipboard.writeText(copyReferelId);
-    // setTimeout(() => setCopied(false), 3000);
     alert("Room Code copied to your clipboard!");
   };
 
@@ -98,15 +87,17 @@ export default function Room({ params }) {
         <p className="text-2xl">Waiting Room For </p>{" "}
         <span className="text-red-400 font-bold text-2xl mx-1">
           {" "}
-          {room} :
+          {database && database[room]} :
         </span>
       </div>
       <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2 my-4">
         <h3 className="text-xl font-semibold mb-2">Players in the room:</h3>
+        {/* {console.log("database", database)} */}
         {database &&
           database.map((item, index) => (
             <div key={index} className="mb-1">
-              {item["user_id"]}
+              {/* {checkUserInSupabase(item["user_id"]).name} */}
+              {item["name"]}
             </div>
           ))}
       </div>

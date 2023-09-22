@@ -10,24 +10,23 @@ const supabase = createClient(
 export async function createUserInSupabase(userId) {
   try {
     // Define the user data to be inserted or updated in the "User" table
-    
-    // Insert or update the user data in the "User" table using upsert
-    
-    
-    let check= await supabase
-    .from('User')
-    .select('user_id')
-    .eq('user_id',userId);
 
-    if(check.data.length!==0){
-        throw error;
+    // Insert or update the user data in the "User" table using upsert
+
+    let check = await supabase
+      .from("User")
+      .select("user_id")
+      .eq("user_id", userId);
+
+    if (check.data.length !== 0) {
+      throw error;
     }
     const { data, error } = await supabase
       .from("User")
       .insert([{ user_id: userId, chips: 100 }])
       .select();
 
-    return 'User created';
+    return "User created";
   } catch (error) {
     throw error;
   }
@@ -35,28 +34,26 @@ export async function createUserInSupabase(userId) {
 export async function createRoomInSupabase(userId, roomname, value) {
   try {
     // Define the user data to be inserted or updated in the "User" table
-    
+
     // Insert or update the user data in the "User" table using upsert
-    
-    
-    let check= await supabase
-    .from('Room')
-    .select('owned_by')
-    .eq('owned_by',userId);
-    console.log(check)
-    if(check.data.length!==0){
-        return null;
+
+    let check = await supabase
+      .from("Room")
+      .select("owned_by")
+      .eq("owned_by", userId);
+    console.log(check);
+    if (check.data.length !== 0) {
+      return null;
     }
     const data = await supabase
       .from("Room")
       .insert([{ owned_by: userId, name: roomname, value: value }])
       .select();
     console.log(data);
-    return 'Room created';
+    return "Room created";
   } catch (error) {
     throw error;
   }
-  
 }
 
 export async function checkUserInSupabase(userId) {
@@ -115,7 +112,7 @@ export async function deleteroom(userid) {
     const { data, error } = await supabase
       .from("Room")
       .delete()
-      .eq("owned_by", userid)
+      .eq("owned_by", userid);
 
     if (error) {
       throw error;
