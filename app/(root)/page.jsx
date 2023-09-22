@@ -2,29 +2,43 @@
 import { useUser } from "@clerk/nextjs";
 // import { createClient } from "@supabase/supabase-js";
 import { useEffect } from "react";
-import { createUserInSupabase } from "../../supabaseClient"; // Import the createUserInSupabase function
+import {
+  createUserInSupabase,
+  checkUserInSupabase,
+} from "../../supabaseClient";
 export default function Home() {
   const { user } = useUser();
 
   // Use an effect to create the user in Supabase when the user is authenticated
   useEffect(() => {
-    const createUser = async () => {
+    const checkUser = async () => {
       try {
         if (user) {
-          // Create the user in Supabase with their user ID
-          await createUserInSupabase(user.id);
-          // console.log('User created in Supabase');
+          const isUserInSupabase = await checkUserInSupabase(user.id);
+          console.log(isUserInSupabase[0].name);
+
+          if (!isUserInSupabase[0].name) {
+            await createUserInSupabase(user.id);
+          } else {
+            console.log("User already exists");
+          }
         }
       } catch (error) {
-        console.error("Already login");
+        console.log("User does not found");
       }
     };
 
-    // Call the createUser function when the user is authenticated
+    // Call the checkUser function when the user is authenticated
     if (user) {
-      createUser();
+      checkUser();
     }
   }, [user]);
 
-  return <div className="app">{/* Your UI components */}</div>;
+  return (
+    <div className="app">
+      Yet to update{/* Your UI components */}
+      <br />
+      {/* <button onClick={checkUser}>user</button> */}
+    </div>
+  );
 }

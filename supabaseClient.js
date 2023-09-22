@@ -43,6 +43,25 @@ export async function createRoomInSupabase(userId, roomname, value) {
   }
 }
 
+export async function checkUserInSupabase(userId) {
+  try {
+    // let { data: User, error } = await supabase.from("User").select("name");
+    const { data, error } = await supabase
+      .from("User")
+      .select("*")
+      .eq("user_id", userId)
+      .select();
+
+    if (error) {
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error("Error creating room in Supabase:");
+    throw error;
+  }
+}
+
 export async function assignroomid_user(roomid, userid) {
   try {
     console.log(roomid, userid);
