@@ -5,8 +5,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
 import { useRoomID } from "../../../../RoomIDContext";
-import { fetchRoomById } from "@/app/api/fetchRoomById/route";
-import { v4 as uuidv4 } from "uuid";
 
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
@@ -27,29 +25,23 @@ export default function Room({ params }) {
     getRoomCode();
   }, []);
 
-  // useEffect(() => {
-  //   async function fetchroomdata() {
-  //     const supabaseData = await fetchRoomById(roomID);
-  //     if (supabaseData) {
-  //       console.log(supabaseData);
-  //       setDatabase(supabaseData);
-  //     }
-  //   }
 
-  //   fetchroomdata();
-  // }, []);
 
   useEffect(() => {
     async function fetchroomdata() {
+      try{
       let supabaseData = await axios.post("/api/fetchRoomById", roomID);
       if (supabaseData) {
-        console.log(supabaseData.data);
         setDatabase(supabaseData.data);
       }
     }
+    catch(error){
+      console.log('Error in room creation ')
+    }
+    }
 
     fetchroomdata();
-  }, []);
+  }, [database]);
 
   function goBack(userid) {
     console.log(roomID);
@@ -106,12 +98,11 @@ export default function Room({ params }) {
         <p className="text-2xl">Waiting Room For </p>{" "}
         <span className="text-red-400 font-bold text-2xl mx-1">
           {" "}
-          {database && database[room]} :
+          {room} :
         </span>
       </div>
       <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2 my-4">
         <h3 className="text-xl font-semibold mb-2">Players in the room:</h3>
-        {console.log(database)}
         {database &&
           database.map((item, index) => (
             <div key={index} className="mb-1">
