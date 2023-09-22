@@ -54,7 +54,7 @@ export default function Rooms() {
     }
 
     fetchData();
-  }, []);
+  }, [rooms]);
 
   const addRoom = () => {
     if (newRoomName !== "") {
@@ -71,7 +71,6 @@ export default function Rooms() {
         if (user) {
           // Create the user in Supabase with their user ID
           let data = await createRoomInSupabase(user.id, newRoomName, newValue);
-          console.log(data);
           setRooms(...rooms, data);
           console.log("Room created in Supabase");
         }
@@ -166,7 +165,7 @@ export default function Rooms() {
       </div>
       <ul className="w-11/12 md:w-1/2">
         {/* <button onClick={getUserFromClerk}>getUserFromClerk</button> */}
-        {rooms.map((room, index) => (
+        {Array.isArray(rooms)?rooms.map((room, index) => (
           <li key={index} className="mb-4">
             <span className="flex justify-between items-center">
               <p>
@@ -200,7 +199,7 @@ export default function Rooms() {
               </span>
             </span>
           </li>
-        ))}
+        )):<div>Loading</div>}
       </ul>
     </div>
   );

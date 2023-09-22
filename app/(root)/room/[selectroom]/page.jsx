@@ -32,7 +32,6 @@ export default function Room({ params }) {
       try{
       let supabaseData = await axios.post("/api/fetchRoomById", roomID);
       if (supabaseData) {
-        console.log(supabaseData.data);
         setDatabase(supabaseData.data);
       }
     }
@@ -42,7 +41,7 @@ export default function Room({ params }) {
     }
 
     fetchroomdata();
-  }, []);
+  }, [database]);
 
   function goBack(userid) {
     console.log(roomID);
@@ -99,12 +98,11 @@ export default function Room({ params }) {
         <p className="text-2xl">Waiting Room For </p>{" "}
         <span className="text-red-400 font-bold text-2xl mx-1">
           {" "}
-          {database && database[room]} :
+          {room} :
         </span>
       </div>
       <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2 my-4">
         <h3 className="text-xl font-semibold mb-2">Players in the room:</h3>
-        {console.log(database)}
         {database &&
           database.map((item, index) => (
             <div key={index} className="mb-1">
