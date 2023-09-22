@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import axios from "axios";
-import { useUser } from "@clerk/nextjs";
+import { useUser, clerkClient } from "@clerk/nextjs";
 import { useEffect } from "react";
 import { createRoomInSupabase } from "../../../supabaseClient"; // Import the createUserInSupabase function
 import { assignroomid_user } from "../../../supabaseClient"; // Import the createUserInSupabase function
@@ -125,6 +125,16 @@ export default function Rooms() {
     }
   };
 
+  const getUserFromClerk = async () => {
+    try {
+      const userId = user_2VeZDRvMP3Lw2eleP6OjynhSAff;
+      const response = await axios.post("/api/getUserFromClerk", userId);
+      console.log(response.data);
+    } catch (error) {
+      console.log("failed! to get username!!!", error.message);
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="text-2xl font-bold my-4">Room Manager</p>
@@ -155,13 +165,14 @@ export default function Rooms() {
         </Button>
       </div>
       <ul className="w-11/12 md:w-1/2">
+        {/* <button onClick={getUserFromClerk}>getUserFromClerk</button> */}
         {rooms.map((room, index) => (
           <li key={index} className="mb-4">
             <span className="flex justify-between items-center">
               <p>
                 Room
                 <span className="text-red-400 font-bold"> {room.name}</span> Set
-                By:{room.owned_by}
+                By:
               </p>
               <p className="text-green-400 font-bold text-lg">
                 {" "}
@@ -170,7 +181,7 @@ export default function Rooms() {
             </span>
 
             <span className="flex justify-between items-center">
-              <p className="text-blue-400">{user?.fullName}</p>
+              <p className="text-blue-400">{room.owned_by}</p>
               <span>
                 <Link href={`/room/${room.name}`}>
                   <button
