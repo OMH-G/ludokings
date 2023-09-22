@@ -7,8 +7,8 @@ import Link from "next/link";
 import axios from "axios";
 import { useUser, clerkClient } from "@clerk/nextjs";
 import { useEffect } from "react";
-import { createRoomInSupabase } from "../../../supabaseClient"; // Import the createUserInSupabase function
-import { assignroomid_user } from "../../../supabaseClient"; // Import the createUserInSupabase function
+import { createRoomInSupabase } from "../../../supabaseClient";
+import { assignroomid_user } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
 import { deleteroom } from "../../../supabaseClient";
 export default function Rooms() {
@@ -180,7 +180,12 @@ export default function Rooms() {
             </span>
 
             <span className="flex justify-between items-center">
-              <p className="text-blue-400">{room.owned_by}</p>
+              {room.owner_name ? (
+                <p className="text-blue-400">{room.owner_name}</p>
+              ) : (
+                <p className="text-blue-400">{room.owned_by}</p>
+              )}
+
               <span>
                 <Link href={`/room/${room.name}`}>
                   <button
