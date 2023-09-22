@@ -5,8 +5,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
 import { useRoomID } from "../../../../RoomIDContext";
-import { fetchRoomById } from "@/app/api/fetchRoomById/route";
-import { v4 as uuidv4 } from "uuid";
 
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
@@ -31,11 +29,16 @@ export default function Room({ params }) {
 
   useEffect(() => {
     async function fetchroomdata() {
+      try{
       let supabaseData = await axios.post("/api/fetchRoomById", roomID);
       if (supabaseData) {
         console.log(supabaseData.data);
         setDatabase(supabaseData.data);
       }
+    }
+    catch(error){
+      console.log('Error in room creation ')
+    }
     }
 
     fetchroomdata();

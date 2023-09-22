@@ -34,18 +34,29 @@ export async function createUserInSupabase(userId) {
 }
 export async function createRoomInSupabase(userId, roomname, value) {
   try {
-    const { data, error } = await supabase
+    // Define the user data to be inserted or updated in the "User" table
+    
+    // Insert or update the user data in the "User" table using upsert
+    
+    
+    let check= await supabase
+    .from('Room')
+    .select('owned_by')
+    .eq('owned_by',userId);
+    console.log(check)
+    if(check.data.length!==0){
+        return null;
+    }
+    const data = await supabase
       .from("Room")
       .insert([{ owned_by: userId, name: roomname, value: value }])
       .select();
-    if (error) {
-      throw error;
-    }
-    return data;
+    console.log(data);
+    return 'Room created';
   } catch (error) {
-    console.error("Error creating room in Supabase:");
     throw error;
   }
+  
 }
 
 export async function assignroomid_user(roomid, userid) {
@@ -56,10 +67,7 @@ export async function assignroomid_user(roomid, userid) {
       .update({ roomid: roomid })
       .eq("user_id", userid)
       .select();
-
-    if (error) {
-      throw error;
-    }
+    console.log(data);
     return data;
   } catch (error) {
     console.error("Error creating room in Supabase:");

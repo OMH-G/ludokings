@@ -4,12 +4,12 @@ import axios from "axios";
 export async function POST(NextRequest) {
   try {
     const reqBody = await NextRequest.json();
-    const { roomID } = reqBody;
+    const roomID = reqBody;
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const tableName2 = "User";
     // have to change the room id
-    const apiUrl = `${supabaseUrl}/rest/v1/${tableName2}?select=user_id&roomid=eq.${10}`;
+    const apiUrl = `${supabaseUrl}/rest/v1/${tableName2}?select=user_id&roomid=eq.${roomID}`;
 
     const response = await axios.get(apiUrl, {
       headers: {
