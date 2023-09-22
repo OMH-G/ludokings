@@ -97,9 +97,9 @@ export default function Rooms() {
     setRooms(updatedRooms);
   };
 
-  const removeRoom = (index) => {
+  const removeRoom = (index,roomid) => {
     const updatedRooms = [...rooms];
-    deleteroom(user.id);
+    deleteroom(user.id,roomid);
     updatedRooms.splice(index, 1);
     setRooms(updatedRooms);
   };
@@ -197,7 +197,7 @@ export default function Rooms() {
                 </Link>
                 <button
                   className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
-                  onClick={() => removeRoom(index)}
+                  onClick={() => removeRoom(index,room.id)}
                 >
                   <DeleteIcon />
                 </button>
