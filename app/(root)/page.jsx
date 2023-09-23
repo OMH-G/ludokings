@@ -14,12 +14,12 @@ export default function Home() {
     const checkUser = async () => {
       try {
         if (user) {
-          console.log(user.id);
+          console.log(user.id, user.username);
           const isUserInSupabase = await checkUserInSupabase(user.id);
           console.log("gib", isUserInSupabase);
 
           if (isUserInSupabase === 0) {
-            await createUserInSupabase(user.id);
+            await createUserInSupabase(user.id, user.username);
           } else {
             console.log("User already exists");
           }

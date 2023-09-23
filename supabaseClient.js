@@ -7,7 +7,7 @@ const supabase = createClient(
 );
 
 // Function to create a user in Supabase
-export async function createUserInSupabase(userId) {
+export async function createUserInSupabase(userId, userName) {
   try {
     // Define the user data to be inserted or updated in the "User" table
 
@@ -23,7 +23,7 @@ export async function createUserInSupabase(userId) {
     }
     const { data, error } = await supabase
       .from("User")
-      .insert([{ user_id: userId, chips: 100 }])
+      .insert([{ user_id: userId, chips: 100, name: userName }])
       .select();
 
     return "User created";
