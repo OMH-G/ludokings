@@ -114,12 +114,13 @@ export async function deassignroomid_user(userid) {
     throw error;
   }
 }
-export async function deleteroom(userid) {
+export async function deleteroom(userid, roomid) {
   try {
     const { data, error } = await supabase
       .from("Room")
       .delete()
-      .eq("owned_by", userid);
+      .eq("owned_by", userid)
+      .eq("id", roomid);
 
     if (error) {
       throw error;
