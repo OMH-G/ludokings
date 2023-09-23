@@ -136,7 +136,6 @@ export async function fetchroomidbyuserid(userid) {
       .from("User")
       .select('roomid')
       .eq('user_id',userid)
-    console.log(data);
     if (error) {
       throw error;
     }
@@ -146,3 +145,21 @@ export async function fetchroomidbyuserid(userid) {
     throw error;
   }
 }
+export async function fetchroomowner(roomid) {
+  try {
+    
+    const { data, error } = await supabase
+      .from("Room")
+      .select('owner_name')
+      .eq('id',roomid)
+    if (error) {
+      throw error;
+    }
+    console.log('fetchroomowner',data)
+    return data;
+  } catch (error) {
+    console.error("Error Fetching room owner name from Supabase");
+    throw error;
+  }
+}
+

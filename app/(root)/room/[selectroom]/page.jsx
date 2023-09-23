@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
 import { useRoomID } from "../../../../RoomIDContext";
 import { fetchroomidbyuserid } from "../../../../supabaseClient";
+import { fetchroomowner } from "../../../../supabaseClient";
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
 
@@ -20,34 +21,46 @@ export default function Room({ params }) {
   const [copied, setCopied] = useState("");
 
   useEffect(() => {
-    
-    getRoomCode();
-  }, []);
+    // if(roomID){
+    //   let data=await fetchroomowner
+    if (isLoaded) {
+      async function getRoomCodeOwner() {
+        if (roomID !== null) {
+          let supabaseData = await fetchroomowner(roomID);
+          console.log("askdfsl",database[0].name,supabaseData[0].owner_name)
+          const isObjectPresent = database.some(obj => obj['name'] === supabaseData['owner_name']);
+          console.log(isObjectPresent);
+          if(isObjectPresent){
+
+            getRoomCode();
+          }
+        }
+      }
+      getRoomCodeOwner();
+    }
+  },[roomID,database]);
 
   useEffect(() => {
-    if(isLoaded){
-    async function fetchroomdata() {
-      if(roomID!==null){
-      let supabaseData = await axios.post("/api/fetchRoomById", roomID);
-      if (supabaseData) {
-        setDatabase(supabaseData.data);
+    if (isLoaded) {
+      async function fetchroomdata() {
+        if (roomID !== null) {
+          let supabaseData = await axios.post("/api/fetchRoomById", roomID);
+          if (supabaseData) {
+            setDatabase(supabaseData.data);
+          }
+        } else {
+          let supabaseData = await fetchroomidbyuserid(user.id);
+          if (supabaseData) {
+            setRoomID(supabaseData);
+          }
+        }
       }
-    }
-    else{
-      let supabaseData = await fetchroomidbyuserid(user.id);
-      if (supabaseData) {
-        setRoomID(supabaseData);
-      }
-    }
-    }
-    
 
-    fetchroomdata();
-  }
+      fetchroomdata();
+    }
   });
 
   function goBack(userid) {
-    console.log(roomID);
     router.back();
     const deassignuser = async (userid) => {
       try {
@@ -86,6 +99,7 @@ export default function Room({ params }) {
 
   return (
     <div className="flex flex-col justify-center items-center">
+      {/* {console.log(database)} */}
       <div className="flex justify-start items-center w-11/12 md:w-1/2">
         <button
           onClick={() => goBack(user?.id)}
