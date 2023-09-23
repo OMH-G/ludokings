@@ -204,12 +204,22 @@ export default function Rooms() {
                       Play
                     </button>
                   </Link>
-                  <button
+                  {user?.id == room?.owned_by ? (
+                    <button
+                      className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
+                      onClick={() => removeRoom(index, room.id)}
+                    >
+                      <DeleteIcon />
+                    </button>
+                  ) : (
+                    ""
+                  )}
+                  {/* <button
                     className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
                     onClick={() => removeRoom(index, room.id)}
                   >
                     <DeleteIcon />
-                  </button>
+                  </button> */}
                 </span>
               </span>
             </li>
