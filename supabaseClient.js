@@ -31,7 +31,7 @@ export async function createUserInSupabase(userId, userName) {
     throw error;
   }
 }
-export async function createRoomInSupabase(userId, roomname, value) {
+export async function createRoomInSupabase(userId, roomname, value, userName) {
   try {
     // Define the user data to be inserted or updated in the "User" table
 
@@ -47,7 +47,14 @@ export async function createRoomInSupabase(userId, roomname, value) {
     }
     const data = await supabase
       .from("Room")
-      .insert([{ owned_by: userId, name: roomname, value: value }])
+      .insert([
+        {
+          owned_by: userId,
+          name: roomname,
+          value: value,
+          owner_name: userName,
+        },
+      ])
       .select();
     console.log(data);
     return "Room created";

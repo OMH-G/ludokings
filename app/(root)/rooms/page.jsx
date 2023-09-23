@@ -70,7 +70,12 @@ export default function Rooms() {
       try {
         if (user) {
           // Create the user in Supabase with their user ID
-          let data = await createRoomInSupabase(user.id, newRoomName, newValue);
+          let data = await createRoomInSupabase(
+            user.id,
+            newRoomName,
+            newValue,
+            user.username
+          );
           setRooms(...rooms, data);
           console.log("Room created in Supabase");
         }
@@ -97,9 +102,9 @@ export default function Rooms() {
     setRooms(updatedRooms);
   };
 
-  const removeRoom = (index,roomid) => {
+  const removeRoom = (index, roomid) => {
     const updatedRooms = [...rooms];
-    deleteroom(user.id,roomid);
+    deleteroom(user.id, roomid);
     updatedRooms.splice(index, 1);
     setRooms(updatedRooms);
   };
@@ -165,46 +170,53 @@ export default function Rooms() {
       </div>
       <ul className="w-11/12 md:w-1/2">
         {/* <button onClick={getUserFromClerk}>getUserFromClerk</button> */}
-        {Array.isArray(rooms)?rooms.map((room, index) => (
-          <li key={index} className="mb-4">
-            <span className="flex justify-between items-center">
-              <p>
-                Room
-                <span className="text-red-400 font-bold"> {room.name}</span> Set
-                By:
-              </p>
-              <p className="text-green-400 font-bold text-lg">
-                {" "}
-                ₹ {room.value}
-              </p>
-            </span>
-
-            <span className="flex justify-between items-center">
-              {room.owner_name ? (
-                <p className="text-blue-400">{room.owner_name}</p>
-              ) : (
-                <p className="text-blue-400">{room.owned_by}</p>
-              )}
-
-              <span>
-                <Link href={`/room/${room.name}`}>
-                  <button
-                    className="bg-green-500 text-white px-2 md:px-4 py-1 md:py-2 mx-1 rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
-                    onClick={() => playbuttonclicked(room.id, user.id)}
-                  >
-                    Play
-                  </button>
-                </Link>
-                <button
-                  className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
-                  onClick={() => removeRoom(index,room.id)}
-                >
-                  <DeleteIcon />
-                </button>
+        {Array.isArray(rooms) ? (
+          rooms.map((room, index) => (
+            <li key={index} className="mb-4">
+              <span className="flex justify-between items-center">
+                <p>
+                  Room
+                  <span className="text-red-400 font-bold">
+                    {" "}
+                    {room.name}
+                  </span>{" "}
+                  Set By:
+                </p>
+                <p className="text-green-400 font-bold text-lg">
+                  {" "}
+                  ₹ {room.value}
+                </p>
               </span>
-            </span>
-          </li>
-        )):<div>Loading</div>}
+
+              <span className="flex justify-between items-center">
+                {room.owner_name ? (
+                  <p className="text-blue-400">{room.owner_name}</p>
+                ) : (
+                  <p className="text-blue-400">{room.owned_by}</p>
+                )}
+
+                <span>
+                  <Link href={`/room/${room.name}`}>
+                    <button
+                      className="bg-green-500 text-white px-2 md:px-4 py-1 md:py-2 mx-1 rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
+                      onClick={() => playbuttonclicked(room.id, user.id)}
+                    >
+                      Play
+                    </button>
+                  </Link>
+                  <button
+                    className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
+                    onClick={() => removeRoom(index, room.id)}
+                  >
+                    <DeleteIcon />
+                  </button>
+                </span>
+              </span>
+            </li>
+          ))
+        ) : (
+          <div>Loading</div>
+        )}
       </ul>
     </div>
   );
