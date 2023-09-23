@@ -5,7 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
 import { useRoomID } from "../../../../RoomIDContext";
-
+import { fetchroomidbyuserid } from "../../../../supabaseClient";
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
 
@@ -20,25 +20,31 @@ export default function Room({ params }) {
   const [copied, setCopied] = useState("");
 
   useEffect(() => {
-    console.log(database)
-    if(roomID!==null ){
+    
     getRoomCode();
-    }
   }, []);
 
   useEffect(() => {
+    if(isLoaded){
     async function fetchroomdata() {
-      if(roomID===null){
-        return ;
-      }
+      if(roomID!==null){
       let supabaseData = await axios.post("/api/fetchRoomById", roomID);
       if (supabaseData) {
         setDatabase(supabaseData.data);
       }
     }
+    else{
+      let supabaseData = await fetchroomidbyuserid(user.id);
+      if (supabaseData) {
+        setRoomID(supabaseData);
+      }
+    }
+    }
+    
 
     fetchroomdata();
-  }, [database]);
+  }
+  });
 
   function goBack(userid) {
     console.log(roomID);

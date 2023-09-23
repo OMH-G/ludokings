@@ -4,7 +4,6 @@ import axios from "axios";
 export async function POST(NextRequest) {
   try {
     const reqBody = await NextRequest.json();
-    console.log('roomId',reqBody)
     const roomID = reqBody;
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

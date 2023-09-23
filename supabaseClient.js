@@ -83,7 +83,6 @@ export async function checkUserInSupabase(userId) {
 
 export async function assignroomid_user(roomid, userid) {
   try {
-    console.log(roomid, userid);
     const { data, error } = await supabase
       .from("User")
       .update({ roomid: roomid })
@@ -125,6 +124,23 @@ export async function deleteroom(userid, roomid) {
       throw error;
     }
     return data;
+  } catch (error) {
+    console.error("Error Deleting room in Supabase");
+    throw error;
+  }
+}
+export async function fetchroomidbyuserid(userid) {
+  try {
+    
+    const { data, error } = await supabase
+      .from("User")
+      .select('roomid')
+      .eq('user_id',userid)
+    console.log(data);
+    if (error) {
+      throw error;
+    }
+    return data[0].roomid;
   } catch (error) {
     console.error("Error Deleting room in Supabase");
     throw error;
