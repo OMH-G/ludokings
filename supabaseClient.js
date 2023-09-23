@@ -64,19 +64,45 @@ export async function createRoomInSupabase(userId, roomname, value, userName) {
 
 export async function checkUserInSupabase(userId) {
   try {
-    // let { data: User, error } = await supabase.from("User").select("name");
     const { data, error } = await supabase
       .from("User")
       .select("*")
       .eq("user_id", userId)
       .select();
     console.log(data);
-    // if (error) {
-    //   throw error;
-    // }
+
     return data.length;
   } catch (error) {
     console.error("Error creating room in Supabase:");
+    throw error;
+  }
+}
+
+export async function getChips(userId) {
+  try {
+    const { data, error } = await supabase
+      .from("User")
+      .select("chips")
+      .eq("user_id", userId)
+      .select();
+    console.log(data);
+
+    return data[0].chips;
+  } catch (error) {
+    console.error("Error creating room in Supabase:");
+    throw error;
+  }
+}
+
+export async function updateChips(userId, amount) {
+  try {
+    const { data, error } = await supabase
+      .from("User")
+      .update({ chips: amount })
+      .eq("user_id", userId)
+      .select();
+  } catch (error) {
+    console.error("Error updating chips in Supabase:");
     throw error;
   }
 }
