@@ -20,11 +20,17 @@ export default function Room({ params }) {
   const [copied, setCopied] = useState("");
 
   useEffect(() => {
+    console.log(database)
+    if(roomID!==null ){
     getRoomCode();
+    }
   }, []);
 
   useEffect(() => {
     async function fetchroomdata() {
+      if(roomID===null){
+        return ;
+      }
       let supabaseData = await axios.post("/api/fetchRoomById", roomID);
       if (supabaseData) {
         setDatabase(supabaseData.data);
