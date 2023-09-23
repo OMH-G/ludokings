@@ -199,7 +199,7 @@ export default function Rooms() {
                   <Link href={`/room/${room.name}`}>
                     <button
                       className="bg-green-500 text-white px-2 md:px-4 py-1 md:py-2 mx-1 rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
-                      onClick={() => playbuttonclicked(room.id, user.id)}
+                      onClick={() => playbuttonclicked(room.id, user?.id)}
                     >
                       Play
                     </button>

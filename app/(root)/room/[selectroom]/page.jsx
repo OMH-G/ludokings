@@ -27,13 +27,12 @@ export default function Room({ params }) {
     async function fetchroomdata() {
       let supabaseData = await axios.post("/api/fetchRoomById", roomID);
       if (supabaseData) {
-        console.log(supabaseData.data);
         setDatabase(supabaseData.data);
       }
     }
 
     fetchroomdata();
-  }, []);
+  }, [database]);
 
   function goBack(userid) {
     console.log(roomID);
@@ -77,7 +76,7 @@ export default function Room({ params }) {
     <div className="flex flex-col justify-center items-center">
       <div className="flex justify-start items-center w-11/12 md:w-1/2">
         <button
-          onClick={() => goBack(user.id)}
+          onClick={() => goBack(user?.id)}
           className=" bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
         >
           Go Back

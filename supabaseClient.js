@@ -21,11 +21,12 @@ export async function createUserInSupabase(userId, userName) {
     if (check.data.length !== 0) {
       throw error;
     }
+
     const { data, error } = await supabase
       .from("User")
       .insert([{ user_id: userId, chips: 100, name: userName }])
       .select();
-
+    console.log(data);
     return "User created";
   } catch (error) {
     throw error;
@@ -41,7 +42,6 @@ export async function createRoomInSupabase(userId, roomname, value, userName) {
       .from("Room")
       .select("owned_by")
       .eq("owned_by", userId);
-    console.log(check);
     if (check.data.length !== 0) {
       return null;
     }
@@ -56,7 +56,6 @@ export async function createRoomInSupabase(userId, roomname, value, userName) {
         },
       ])
       .select();
-    console.log(data);
     return "Room created";
   } catch (error) {
     throw error;
