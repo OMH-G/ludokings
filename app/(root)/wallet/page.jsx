@@ -1,6 +1,35 @@
+"use client";
 import React from "react";
+import { updateChips, getChips } from "@/supabaseClient";
+import { useUser } from "@clerk/nextjs";
 
 export default function Wallet() {
+  const { user } = useUser();
+
+  const depositChipsToWallet = async () => {
+    try {
+      if (user) {
+        const chips = await getChips(user.id);
+        let amount = chips + 111;
+        await updateChips(user.id, amount);
+      }
+    } catch (error) {
+      console.log("Error while adding the chips.");
+    }
+  };
+
+  const withdrawChipsFromWallet = async () => {
+    try {
+      if (user) {
+        const chips = await getChips(user.id);
+        let amount = chips - 100;
+        await updateChips(user.id, amount);
+      }
+    } catch (error) {
+      console.log("Error while withdrawing the chips.");
+    }
+  };
+
   return (
     <div className="flex justify-center items-center flex-col">
       <div className="grid grid-cols-2 gap-2 md:gap-96 px-4">
@@ -24,7 +53,10 @@ export default function Wallet() {
           <p className="flex justify-center items-center flex-col mb-4">
             Chips:<span className=" text-3xl">0.00</span>
           </p>
-          <button className="w-11/12 bg-blue-600 text-white p-3 text-2xl rounded-lg mb-2">
+          <button
+            onClick={depositChipsToWallet}
+            className="w-11/12 bg-blue-600 text-white p-3 text-2xl rounded-lg mb-2"
+          >
             Add
           </button>
         </div>
@@ -43,7 +75,10 @@ export default function Wallet() {
           <p className="flex justify-center items-center flex-col mb-4">
             Chips:<span className=" text-3xl">0.00</span>
           </p>
-          <button className="w-11/12 bg-blue-600 text-white p-3 text-2xl rounded-lg mb-2">
+          <button
+            onClick={withdrawChipsFromWallet}
+            className="w-11/12 bg-blue-600 text-white p-3 text-2xl rounded-lg mb-2"
+          >
             Withdraw
           </button>
         </div>
