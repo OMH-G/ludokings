@@ -64,11 +64,11 @@ export async function checkUserInSupabase(userId) {
       .select("*")
       .eq("user_id", userId)
       .select();
-
-    if (error) {
-      throw error;
-    }
-    return data;
+    console.log(data);
+    // if (error) {
+    //   throw error;
+    // }
+    return data.length;
   } catch (error) {
     console.error("Error creating room in Supabase:");
     throw error;
@@ -107,13 +107,12 @@ export async function deassignroomid_user(userid) {
     throw error;
   }
 }
-export async function deleteroom(userid,roomid) {
+export async function deleteroom(userid) {
   try {
     const { data, error } = await supabase
       .from("Room")
       .delete()
-      .eq("owned_by", userid)
-      .eq("id", roomid);
+      .eq("owned_by", userid);
 
     if (error) {
       throw error;
