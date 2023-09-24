@@ -19,27 +19,7 @@ export default function Room({ params }) {
 
   const [roomCode, setRoomCode] = useState("");
   const [copied, setCopied] = useState("");
-
-  useEffect(() => {
-    // if(roomID){
-    //   let data=await fetchroomowner
-    if (isLoaded) {
-      async function getRoomCodeOwner() {
-        if (roomID !== null) {
-          let supabaseData = await fetchroomowner(roomID);
-          console.log("askdfsl",database[0].name,supabaseData[0].owner_name)
-          const isObjectPresent = database.some(obj => obj['name'] === supabaseData['owner_name']);
-          console.log(isObjectPresent);
-          if(isObjectPresent){
-
-            getRoomCode();
-          }
-        }
-      }
-      getRoomCodeOwner();
-    }
-  },[roomID,database]);
-
+  let check=1;
   useEffect(() => {
     if (isLoaded) {
       async function fetchroomdata() {
@@ -59,6 +39,30 @@ export default function Room({ params }) {
       fetchroomdata();
     }
   });
+
+  useEffect(() => {
+    // if(roomID){
+    //   let data=await fetchroomowner
+    console.log(roomID,database)
+    if (isLoaded) {
+      async function getRoomCodeOwner() {
+        if (roomID !== null && check) {
+          let supabaseData = await fetchroomowner(roomID);
+          console.log("askdfsl",database,supabaseData)
+          check=0;
+          // const isObjectPresent = database.some(obj => obj['name'] === supabaseData['owner_name']);
+          // console.log(isObjectPresent);
+          // if(isObjectPresent){
+
+          //   getRoomCode();
+          // }
+        }
+      }
+      getRoomCodeOwner();
+    }
+  },[roomID]);
+
+  
 
   function goBack(userid) {
     router.back();
