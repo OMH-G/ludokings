@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-
 // Initialize the Supabase client with your Supabase URL and API key
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -188,4 +187,3 @@ export async function fetchroomowner(roomid) {
     throw error;
   }
 }
-

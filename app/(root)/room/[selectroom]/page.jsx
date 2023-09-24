@@ -7,7 +7,12 @@ import { deassignroomid_user } from "../../../../supabaseClient";
 import { useRoomID } from "../../../../RoomIDContext";
 import { fetchroomidbyuserid } from "../../../../supabaseClient";
 import OCR from "../../../../components/OCR";
-
+import { createClient } from "@supabase/supabase-js";
+// Initialize the Supabase client with your Supabase URL and API key
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
 
@@ -20,31 +25,45 @@ export default function Room({ params }) {
 
   const [roomCode, setRoomCode] = useState("");
   const [copied, setCopied] = useState("");
-
+  async function fetchroomdata() {
+    if (roomID !== null) {
+      let supabaseData = await axios.post("/api/fetchRoomById", roomID);
+      if (supabaseData) {
+        setDatabase(supabaseData.data);
+      }
+    } else {
+      if(user!==undefined){
+      let supabaseData = await fetchroomidbyuserid(user.id);
+      if (supabaseData) {
+        setRoomID(supabaseData);
+      }
+    }
+    }
+  }
   useEffect(() => {
     getRoomCode();
   }, []);
 
   useEffect(() => {
     if (isLoaded) {
-      async function fetchroomdata() {
-        if (roomID !== null) {
-          let supabaseData = await axios.post("/api/fetchRoomById", roomID);
-          if (supabaseData) {
-            setDatabase(supabaseData.data);
-          }
-        } else {
-          let supabaseData = await fetchroomidbyuserid(user.id);
-          if (supabaseData) {
-            setRoomID(supabaseData);
-          }
-        }
-      }
+      
 
       fetchroomdata();
     }
-  });
+  },[]);
+  useEffect(()=>{
 
+    const User = supabase.channel('custom-update-channel')
+    .on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'User' },
+      (payload) => {
+        console.log('Change received!', payload)
+        fetchroomdata();
+      }
+    )
+    .subscribe()
+  },[])
   function goBack(userid) {
     router.back();
     const deassignuser = async (userid) => {
