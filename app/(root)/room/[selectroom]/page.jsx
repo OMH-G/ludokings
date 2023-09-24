@@ -20,30 +20,28 @@ export default function Room({ params }) {
   const [copied, setCopied] = useState("");
 
   useEffect(() => {
-    
     getRoomCode();
   }, []);
 
   useEffect(() => {
-    if(isLoaded){
-    async function fetchroomdata() {
-      if(roomID!==null){
-      let supabaseData = await axios.post("/api/fetchRoomById", roomID);
-      if (supabaseData) {
-        setDatabase(supabaseData.data);
+    console.log('ownerlogicfixing',database)
+    if (isLoaded) {
+      async function fetchroomdata() {
+        if (roomID !== null && database.length===0) {
+          let supabaseData = await axios.post("/api/fetchRoomById", roomID);
+          if (supabaseData) {
+            setDatabase(supabaseData.data);
+          }
+        } else {
+          let supabaseData = await fetchroomidbyuserid(user.id);
+          if (supabaseData) {
+            setRoomID(supabaseData);
+          }
+        }
       }
-    }
-    else{
-      let supabaseData = await fetchroomidbyuserid(user.id);
-      if (supabaseData) {
-        setRoomID(supabaseData);
-      }
-    }
-    }
-    
 
-    fetchroomdata();
-  }
+      fetchroomdata();
+    }
   });
 
   function goBack(userid) {
