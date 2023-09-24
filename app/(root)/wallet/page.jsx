@@ -1,34 +1,27 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { updateChips, getChips } from "@/supabaseClient";
 import { useUser } from "@clerk/nextjs";
+import WithdrawChipsButton from "@/components/withdrawChipsButton";
+import DepositChipsButton from "@/components/depositChipsButton";
 
 export default function Wallet() {
   const { user } = useUser();
+  const [chips, setChips] = useState("");
 
-  const depositChipsToWallet = async () => {
-    try {
+  useEffect(() => {
+    const getUserChips = async () => {
       if (user) {
-        const chips = await getChips(user.id);
-        let amount = chips + 111;
-        await updateChips(user.id, amount);
+        try {
+          const userChips = await getChips(user.id);
+          setChips(userChips);
+        } catch (error) {
+          console.error("Error fetching user's chips: ", error);
+        }
       }
-    } catch (error) {
-      console.log("Error while adding the chips.");
-    }
-  };
-
-  const withdrawChipsFromWallet = async () => {
-    try {
-      if (user) {
-        const chips = await getChips(user.id);
-        let amount = chips - 100;
-        await updateChips(user.id, amount);
-      }
-    } catch (error) {
-      console.log("Error while withdrawing the chips.");
-    }
-  };
+    };
+    getUserChips();
+  }, [user]);
 
   return (
     <div className="flex justify-center items-center flex-col">
@@ -51,14 +44,15 @@ export default function Wallet() {
             played with them. Cannot be withdrawn in Bank or UPI !
           </p>
           <p className="flex justify-center items-center flex-col mb-4">
-            Chips:<span className=" text-3xl">0.00</span>
+            Chips:<span className=" text-3xl">{chips}</span>
           </p>
-          <button
+          {/* <button
             onClick={depositChipsToWallet}
             className="w-11/12 bg-blue-600 text-white p-3 text-2xl rounded-lg mb-2"
           >
             Add
-          </button>
+          </button> */}
+          <DepositChipsButton />
         </div>
       </div>
 
@@ -73,14 +67,10 @@ export default function Wallet() {
             chips
           </p>
           <p className="flex justify-center items-center flex-col mb-4">
-            Chips:<span className=" text-3xl">0.00</span>
+            Chips:<span className=" text-3xl">{chips}</span>
           </p>
-          <button
-            onClick={withdrawChipsFromWallet}
-            className="w-11/12 bg-blue-600 text-white p-3 text-2xl rounded-lg mb-2"
-          >
-            Withdraw
-          </button>
+
+          <WithdrawChipsButton />
         </div>
       </div>
     </div>
