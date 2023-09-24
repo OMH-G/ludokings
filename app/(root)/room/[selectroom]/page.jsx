@@ -25,21 +25,22 @@ export default function Room({ params }) {
   }, []);
 
   useEffect(() => {
-    console.log('ownerlogicfixing',database)
-    if (isLoaded) {
-      async function fetchroomdata() {
-        if (roomID !== null && database.length===0) {
-          let supabaseData = await axios.post("/api/fetchRoomById", roomID);
-          if (supabaseData) {
-            setDatabase(supabaseData.data);
-          }
-        } else {
-          let supabaseData = await fetchroomidbyuserid(user.id);
-          if (supabaseData) {
-            setRoomID(supabaseData);
-          }
+    async function fetchroomdata() {
+      if (roomID !== null && database.length===0) {
+        let supabaseData = await axios.post("/api/fetchRoomById", roomID);
+        if (supabaseData) {
+          setDatabase(supabaseData.data);
+        }
+      } else {
+        let supabaseData = await fetchroomidbyuserid(user.id);
+        console.log('ownerlogicfixing',database)
+
+        if (supabaseData) {
+          setRoomID(supabaseData);
         }
       }
+    }
+    if (isLoaded) {
 
       fetchroomdata();
     }
