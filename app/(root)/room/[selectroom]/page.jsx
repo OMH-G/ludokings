@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
 import { useRoomID } from "../../../../RoomIDContext";
 import { fetchroomidbyuserid } from "../../../../supabaseClient";
+import { fetchroomowner } from "../../../../supabaseClient";
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
 
@@ -45,7 +46,6 @@ export default function Room({ params }) {
   });
 
   function goBack(userid) {
-    console.log(roomID);
     router.back();
     const deassignuser = async (userid) => {
       try {
@@ -84,6 +84,7 @@ export default function Room({ params }) {
 
   return (
     <div className="flex flex-col justify-center items-center">
+      {/* {console.log(database)} */}
       <div className="flex justify-start items-center w-11/12 md:w-1/2">
         <button
           onClick={() => goBack(user?.id)}

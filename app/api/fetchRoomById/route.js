@@ -9,7 +9,7 @@ export async function POST(NextRequest) {
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const tableName2 = "User";
     // have to change the room id
-    const apiUrl = `${supabaseUrl}/rest/v1/${tableName2}?select=name,user_id&roomid=eq.${roomID}`;
+    const apiUrl = `${supabaseUrl}/rest/v1/${tableName2}?select=name&roomid=eq.${roomID}`;
 
     const response = await axios.get(apiUrl, {
       headers: {
