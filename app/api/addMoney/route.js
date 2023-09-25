@@ -15,7 +15,7 @@ export async function POST(NextRequest) {
 
     const userChips = await getChips(userId);
     let final = userChips + amount;
-    await updateChips(userId, final);
+    const addChips = await updateChips(userId, final);
 
     return NextResponse.json({ chips: final }, { status: 200 });
   } catch (error) {
