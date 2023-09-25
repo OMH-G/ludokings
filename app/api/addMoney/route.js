@@ -17,7 +17,7 @@ export async function POST(NextRequest) {
     let final = userChips + amount;
     const response = await updateChips(userId, final);
 
-    return NextResponse.json({ response }, { status: 200 });
+    return NextResponse.json(response);
   } catch (error) {
     return NextResponse.json(
       { error: "An error occurred at addMoney server: " + error.message },
