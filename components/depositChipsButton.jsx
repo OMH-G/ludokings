@@ -10,6 +10,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Chip from "@mui/material/Chip";
 import { updateChips, getChips } from "@/supabaseClient";
 import { useUser } from "@clerk/nextjs";
+import axios from "axios";
 
 export default function DepositChipsButton() {
   const [open, setOpen] = useState(false);
@@ -31,9 +32,14 @@ export default function DepositChipsButton() {
   const depositChipsToWallet = async () => {
     try {
       if (user) {
-        const chips = await getChips(user.id);
-        let amount = chips + selectedAmount;
-        await updateChips(user.id, amount);
+        // const chips = await getChips(user.id);
+        const userData = {
+          userId: user.id,
+          amount: selectedAmount,
+        };
+        const response = await axios.post("/api/addMoney", userData);
+        console.log(response.data);
+
         alert(`Successfully added ₹${selectedAmount}.`);
         setOpen(false);
       }

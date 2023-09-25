@@ -31,6 +31,7 @@ export default function Room({ params }) {
           let supabaseData = await axios.post("/api/fetchRoomById", roomID);
           if (supabaseData) {
             setDatabase(supabaseData.data);
+            // console.log(supabaseData.data.length);
           }
         } else {
           let supabaseData = await fetchroomidbyuserid(user.id);

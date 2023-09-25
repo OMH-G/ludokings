@@ -85,7 +85,7 @@ export async function getChips(userId) {
       .select("chips")
       .eq("user_id", userId)
       .select();
-    console.log(data);
+    // console.log(data);
 
     return data[0].chips;
   } catch (error) {
@@ -157,11 +157,10 @@ export async function deleteroom(userid, roomid) {
 }
 export async function fetchroomidbyuserid(userid) {
   try {
-    
     const { data, error } = await supabase
       .from("User")
-      .select('roomid')
-      .eq('user_id',userid)
+      .select("roomid")
+      .eq("user_id", userid);
     console.log(data);
     if (error) {
       throw error;
