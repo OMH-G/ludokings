@@ -13,6 +13,7 @@ export async function POST(NextRequest) {
 
       return NextResponse.json({ message: "Chips added successfully" });
     }
+    return NextResponse.json({ error: "Error while adding chips" });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
