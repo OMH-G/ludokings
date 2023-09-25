@@ -84,7 +84,7 @@ export async function getChips(userId) {
       .select("chips")
       .eq("user_id", userId)
       .select();
-    console.log(data);
+    // console.log(data);
 
     return data[0].chips;
   } catch (error) {
@@ -100,6 +100,8 @@ export async function updateChips(userId, amount) {
       .update({ chips: amount })
       .eq("user_id", userId)
       .select();
+
+    return "chips updated";
   } catch (error) {
     console.error("Error updating chips in Supabase:");
     throw error;
@@ -156,7 +158,6 @@ export async function deleteroom(userid, roomid) {
 }
 export async function fetchroomidbyuserid(userid) {
   try {
-    
     const { data, error } = await supabase
       .from("User")
       .select('roomid')

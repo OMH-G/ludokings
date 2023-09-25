@@ -4,6 +4,7 @@ import { updateChips, getChips } from "@/supabaseClient";
 import { useUser } from "@clerk/nextjs";
 import WithdrawChipsButton from "@/components/withdrawChipsButton";
 import DepositChipsButton from "@/components/depositChipsButton";
+import axios from "axios";
 
 export default function Wallet() {
   const { user } = useUser();
@@ -13,8 +14,10 @@ export default function Wallet() {
     const getUserChips = async () => {
       if (user) {
         try {
-          const userChips = await getChips(user.id);
-          setChips(userChips);
+          const userId = user.id;
+          const response = await axios.post("/api/getChips", user);
+          console.log(response);
+          setChips(response.data);
         } catch (error) {
           console.error("Error fetching user's chips: ", error);
         }
@@ -33,7 +36,7 @@ export default function Wallet() {
           Wallet History
         </button>
       </div>
-
+      {/* <button onClick={test}>test</button> */}
       <div className="border border-gray-300 rounded-lg bg-white w-11/12 md:w-1/2 mt-4">
         <h4 className="flex justify-center items-center py-2 md:py-4 text-sm md:text-lg text-black bg-gray-100 border-b-2">
           Deposit Chips

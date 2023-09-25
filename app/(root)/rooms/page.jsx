@@ -43,7 +43,7 @@ export default function Rooms() {
 
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
-  const [newValue, setNewValue] = useState("");
+  const [newValue, setNewValue] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
@@ -152,11 +152,26 @@ export default function Rooms() {
         />
       </div>
       <div className="mb-4 flex justify-center items-center w-11/12 md:w-1/2">
+        {/* <TextField
+          label="Chips"
+          variant="outlined"
+          type="number"
+          value={newValue}
+          onChange={(e) => setNewValue(e.target.value)}
+          style={{ flex: "1", marginRight: "8px" }}
+        /> */}
+
         <TextField
           label="Chips"
           variant="outlined"
+          type="number"
           value={newValue}
-          onChange={(e) => setNewValue(e.target.value)}
+          onChange={(e) => {
+            const value = parseInt(e.target.value, 10); // Parse the input as an integer
+            if (!isNaN(value) && value >= 0) {
+              setNewValue(value); // Set the new value if it's a positive number
+            }
+          }}
           style={{ flex: "1", marginRight: "8px" }}
         />
         <Button
@@ -204,16 +219,16 @@ export default function Rooms() {
                       Play
                     </button>
                   </Link>
-                  {user?.id == room?.owned_by ? (
-                    <button
-                      className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
-                      onClick={() => removeRoom(index, room.id)}
-                    >
-                      <DeleteIcon />
-                    </button>
-                  ) : (
+                  {/* {user?.id == room?.owned_by ? ( */}
+                  <button
+                    className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
+                    onClick={() => removeRoom(index, room.id)}
+                  >
+                    <DeleteIcon />
+                  </button>
+                  {/* ) : (
                     ""
-                  )}
+                  )} */}
                   {/* <button
                     className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
                     onClick={() => removeRoom(index, room.id)}

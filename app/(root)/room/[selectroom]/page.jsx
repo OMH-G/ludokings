@@ -34,6 +34,7 @@ export default function Room({ params }) {
       
       if (supabaseData) {
         setDatabase(supabaseData.data);
+            // console.log(supabaseData.data.length);
       }
       const db=supabaseData.data;
       if(OwnwerData.data.length!==0 ){
