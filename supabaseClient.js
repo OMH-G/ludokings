@@ -101,6 +101,8 @@ export async function updateChips(userId, amount) {
       .update({ chips: amount })
       .eq("user_id", userId)
       .select();
+
+    return "chips added";
   } catch (error) {
     console.error("Error updating chips in Supabase:");
     throw error;
