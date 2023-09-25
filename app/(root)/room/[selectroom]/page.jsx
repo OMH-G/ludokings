@@ -36,16 +36,19 @@ export default function Room({ params }) {
         setDatabase(supabaseData.data);
       }
       const db=supabaseData.data;
+      if(OwnwerData.data.length!==0 ){
       const ownerdb=OwnwerData.data[0]['owner_name'];
       const possible=db.find(obj=>obj.name===ownerdb);
       if(possible){
+        // getRoomCode();
         getRoomCode();
-        console.log('possible',possible)
       }
       else{
         setRoomCode('');
       }
-    } 
+    }
+    }
+     
   }
 
   useEffect(() => {
@@ -60,9 +63,9 @@ export default function Room({ params }) {
     const User = supabase.channel('custom-update-channel')
     .on(
       'postgres_changes',
-      { event: 'UPDATE', schema: 'public', table: 'User' },
+      { event: "*", schema: 'public', table: 'User' },
       (payload) => {
-        console.log('Change received!', payload)
+        // console.log('Change received!', payload)
         fetchroomdata();
       }
     )
@@ -89,6 +92,7 @@ export default function Room({ params }) {
   }
 
   const getRoomCode = async () => {
+    console.log('getting room code');
     try {
       const response = await axios.get("/api/roomCode");
       setRoomCode(response.data.code);
