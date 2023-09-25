@@ -25,8 +25,6 @@ export default function Room({ params }) {
   const [database, setDatabase] = useState([]);
 
   const [roomCode, setRoomCode] = useState("");
-  const [copied, setCopied] = useState("");
-  const [isOwner,setisOwner]=useState(0);
   async function fetchroomdata() {
     if (roomID !== null) {
       let supabaseData = await axios.post("/api/fetchRoomById", roomID); 
@@ -53,6 +51,7 @@ export default function Room({ params }) {
   }
 
   useEffect(() => {
+    console.log('alskdflklllllllllllllllllllllllllllllllllll',roomID)
     if (isLoaded) {
       
 
