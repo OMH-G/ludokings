@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
 import { useRoomID } from "../../../../RoomIDContext";
 import { fetchroomidbyuserid } from "../../../../supabaseClient";
-import { fetchroomowner } from "../../../../supabaseClient";
+import OCR from "../../../../components/OCR";
+import { createClient } from "@supabase/supabase-js";
+// Initialize the Supabase client with your Supabase URL and API key
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
 
@@ -19,33 +25,45 @@ export default function Room({ params }) {
 
   const [roomCode, setRoomCode] = useState("");
   const [copied, setCopied] = useState("");
-
+  async function fetchroomdata() {
+    if (roomID !== null) {
+      let supabaseData = await axios.post("/api/fetchRoomById", roomID);
+      if (supabaseData) {
+        setDatabase(supabaseData.data);
+      }
+    } else {
+      if(user!==undefined){
+      let supabaseData = await fetchroomidbyuserid(user.id);
+      if (supabaseData) {
+        setRoomID(supabaseData);
+      }
+    }
+    }
+  }
   useEffect(() => {
     getRoomCode();
   }, []);
 
   useEffect(() => {
-    async function fetchroomdata() {
-      if (roomID !== null && database.length===0) {
-        let supabaseData = await axios.post("/api/fetchRoomById", roomID);
-        if (supabaseData) {
-          setDatabase(supabaseData.data);
-        }
-      } else {
-        let supabaseData = await fetchroomidbyuserid(user.id);
-        console.log('ownerlogicfixing',database)
-
-        if (supabaseData) {
-          setRoomID(supabaseData);
-        }
-      }
-    }
     if (isLoaded) {
+      
 
       fetchroomdata();
     }
-  });
+  },[]);
+  useEffect(()=>{
 
+    const User = supabase.channel('custom-update-channel')
+    .on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'User' },
+      (payload) => {
+        console.log('Change received!', payload)
+        fetchroomdata();
+      }
+    )
+    .subscribe()
+  },[])
   function goBack(userid) {
     router.back();
     const deassignuser = async (userid) => {
@@ -94,15 +112,15 @@ export default function Room({ params }) {
           Go Back
         </button>
       </div>
-      <div className="flex flex-col md:flex-row justify-center items-center w-11/12 md:w-1/2 my-4 md:my-12">
+      {/* <div className="flex flex-col md:flex-row justify-center items-center w-11/12 md:w-1/2 my-4 md:my-12">
         <p className="text-2xl">Waiting Room For </p>{" "}
         <span className="text-red-400 font-bold text-2xl mx-1">
           {" "}
           {database && database[room]} :
         </span>
-      </div>
+      </div> */}
       <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2 my-4">
-        <h3 className="text-xl font-semibold mb-2">Players in the room:</h3>
+        <h3 className="text-2xl font-semibold mb-2">Players in the room:</h3>
         {/* {console.log("database", database)} */}
         {database &&
           database.map((item, index) => (
@@ -115,9 +133,15 @@ export default function Room({ params }) {
       <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2">
         <p>Your room code is : </p>{" "}
         <div className="my-3 text-center text-sm md:text-lg md:my-4 flex justify-center items-center px-4 md:px-12">
-          <p className="bg-gray-100 py-3 px-8 border rounded-l-lg">
-            {roomCode}{" "}
-          </p>
+          {roomCode ? (
+            <p className="bg-gray-100 py-3 px-8 border rounded-l-lg">
+              {roomCode}{" "}
+            </p>
+          ) : (
+            <p className="bg-gray-100 h-11 md:h-14 w-32 border rounded-l-lg">
+              {" "}
+            </p>
+          )}
           <button
             onClick={() => handleCopy(roomCode)}
             className="bg-blue-500 text-white px-4 py-3 rounded-r-lg "
@@ -126,6 +150,7 @@ export default function Room({ params }) {
           </button>
         </div>
       </div>
+      <OCR roomCode={roomCode} />
     </div>
   );
 }
