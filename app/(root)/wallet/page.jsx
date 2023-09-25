@@ -15,9 +15,9 @@ export default function Wallet() {
       if (user) {
         try {
           const userId = user.id;
-          const userChips = await axios.post("/api/getChips", user);
-          // console.log(userChips);
-          setChips(userChips.data.chips);
+          const response = await axios.post("/api/getChips", user);
+          console.log(response);
+          setChips(response.data);
         } catch (error) {
           console.error("Error fetching user's chips: ", error);
         }
