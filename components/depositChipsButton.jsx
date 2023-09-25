@@ -38,7 +38,9 @@ export default function DepositChipsButton() {
           amount: selectedAmount,
         };
         const response = await axios.post("/api/addMoney", userData);
-        console.log(response.data);
+        if (response) {
+          console.log(response.data);
+        }
 
         alert(`Successfully added ₹${selectedAmount}.`);
         setOpen(false);

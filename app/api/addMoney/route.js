@@ -6,18 +6,18 @@ export async function POST(NextRequest) {
     const reqBody = await NextRequest.json();
     const { userId, amount } = reqBody;
 
-    if (userId && amount) {
-      const userChips = await getChips(userId);
-      let final = userChips + amount;
-      await updateChips(userId, final);
-
-      return NextResponse.json({ chips: final }, { status: 200 });
-    } else {
+    if (!userId || !amount) {
       return NextResponse.json(
         { error: "Missing userId or amount" },
         { status: 400 }
       );
     }
+
+    const userChips = await getChips(userId);
+    let final = userChips + amount;
+    await updateChips(userId, final);
+
+    return NextResponse.json({ chips: final }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
