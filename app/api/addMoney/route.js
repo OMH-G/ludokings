@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
 import { getChips, updateChips } from "@/supabaseClient";
 
 export async function POST(NextRequest) {
@@ -11,9 +10,10 @@ export async function POST(NextRequest) {
       let final = userChips + amount;
       await updateChips(userId, final);
 
-      return NextResponse.json({ message: "Chips added successfully" });
+      // return NextResponse.json({ chips: final });
+      return NextResponse.json({ chips: final }, { status: 200 });
     }
-    return NextResponse.json({ error: "Error while adding chips" });
+    // return NextResponse.json({ error: "Error while adding chips" });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

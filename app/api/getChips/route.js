@@ -9,9 +9,12 @@ export async function POST(NextRequest) {
     if (id) {
       const userChips = await getChips(id);
 
-      return NextResponse.json({
-        chips: userChips,
-      });
+      return NextResponse.json(
+        {
+          chips: userChips,
+        },
+        { status: 200 }
+      );
     }
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
