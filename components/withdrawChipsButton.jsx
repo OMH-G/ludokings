@@ -10,6 +10,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Chip from "@mui/material/Chip";
 import { updateChips, getChips } from "@/supabaseClient";
 import { useUser } from "@clerk/nextjs";
+import axios from "axios";
 
 export default function WithdrawChipsButton() {
   const [open, setOpen] = useState(false);
@@ -28,20 +29,41 @@ export default function WithdrawChipsButton() {
     setSelectedAmount(amount);
   };
 
+  // const withdrawChipsFromWallet = async () => {
+  //   try {
+  //     if (user) {
+  //       const chips = await getChips(user.id);
+
+  //       if (selectedAmount <= chips) {
+  //         let amount = chips - selectedAmount;
+  //         await updateChips(user.id, amount);
+  //         //   console.log("Withdrawal amount: ", selectedAmount);
+  //         alert(`Successfully withdrawn ₹${selectedAmount}.`);
+  //         setOpen(false);
+  //       } else {
+  //         alert("You don't have sufficient chips.");
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log("Error while withdrawing the chips.");
+  //   }
+  // };
+
   const withdrawChipsFromWallet = async () => {
     try {
       if (user) {
-        const chips = await getChips(user.id);
-
-        if (selectedAmount <= chips) {
-          let amount = chips - selectedAmount;
-          await updateChips(user.id, amount);
-          //   console.log("Withdrawal amount: ", selectedAmount);
-          alert(`Successfully withdrawn ₹${selectedAmount}.`);
-          setOpen(false);
-        } else {
-          alert("You don't have sufficient chips.");
+        // const chips = await getChips(user.id);
+        const userData = {
+          userId: user.id,
+          amount: selectedAmount,
+        };
+        const response = await axios.post("/api/withdrawMoney", userData);
+        if (response) {
+          console.log(response.data);
         }
+
+        alert(`Successfully withdrawed ₹${selectedAmount}.`);
+        setOpen(false);
       }
     } catch (error) {
       console.log("Error while withdrawing the chips.");
