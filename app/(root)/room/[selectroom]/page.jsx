@@ -39,7 +39,6 @@ export default function Room({ params }) {
       const ownerdb=OwnwerData.data[0]['owner_name'];
       const possible=db.find(obj=>obj.name===ownerdb);
       if(possible){
-        // getRoomCode();
         getRoomCode();
       }
       else{
@@ -51,7 +50,6 @@ export default function Room({ params }) {
   }
 
   useEffect(() => {
-    console.log('alskdflklllllllllllllllllllllllllllllllllll',roomID)
     if (isLoaded) {
       
 
