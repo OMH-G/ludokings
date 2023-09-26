@@ -25,22 +25,22 @@ export default function Rooms() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
-  // useEffect(() => {
-  //   console.log("socketproblemt");
-  //   const Room = supabase
-  //     .channel("custom-insert-channel")
-  //     .on(
-  //       "postgres_changes",
-  //       { event: "*", schema: "public", table: "Room" },
-  //       (payload) => {
-  //         console.log("Change received!", payload);
-  //         fetchRooms();
-  //       }
-  //     )
-  //     .subscribe();
+  useEffect(() => {
+    console.log("database change occured");
+    const Room = supabase
+      .channel("custom-insert-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Room" },
+        (payload) => {
+          console.log("Change received!", payload);
+          fetchRooms();
+        }
+      )
+      .subscribe();
 
-  //   // console.log("Success!", response.data.code);
-  // }, []);
+    // console.log("Success!", response.data.code);
+  }, []);
 
   const fetchRooms = async () => {
     if (user) {
@@ -55,8 +55,9 @@ export default function Rooms() {
   };
 
   useEffect(() => {
+    console.log('asdlkf')
     fetchRooms();
-  }, [user]);
+  }, []);
 
   const addRoom = () => {
     const createRoom = async () => {
@@ -113,9 +114,10 @@ export default function Rooms() {
         };
 
         const response = await axios.post("/api/deleteRoom", data);
-        console.log(response);
-        updatedRooms.splice(index, 1);
-        setRooms(updatedRooms);
+        fetchRooms();
+        // console.log(response);
+        // updatedRooms.splice(index, 1);
+        // setRooms(updatedRooms);
       } catch (error) {
         console.log("Error while deleting the room");
       }
