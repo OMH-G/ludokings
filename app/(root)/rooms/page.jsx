@@ -48,29 +48,54 @@ export default function Rooms() {
   const [newValue, setNewValue] = useState(0);
 
   useEffect(() => {
-    async function fetchData() {
-      const supabaseData = await fetchSupabaseData();
-      if (supabaseData) {
-        setRooms(supabaseData);
+    // async function fetchData() {
+    //   const supabaseData = await fetchSupabaseData();
+    //   console.log(supabaseData);
+    //   if (supabaseData) {
+    //     setRooms(supabaseData);
+    //   }
+    // }
+    // fetchData();
+    // //////////////////////////////////////////////////
+    const fetchRooms = async () => {
+      if (user) {
+        try {
+          const response = await axios.get("/api/fetchRooms");
+          console.log(response.data);
+          setRooms(response.data);
+        } catch (error) {
+          console.log("Failed to retrieve rooms");
+        }
+      }
+    };
+    fetchRooms();
+  }, []);
+
+  const fetchRooms = async () => {
+    if (user) {
+      try {
+        const response = await axios.get("/api/fetchRooms");
+        console.log(response.data);
+      } catch (error) {
+        console.log("Failed to retrieve rooms");
       }
     }
-
-    fetchData();
-  }, [rooms]);
+  };
 
   const addRoom = () => {
     const createRoom = async () => {
       try {
         if (user) {
-          // Create the user in Supabase with their user ID
-          let data = await createRoomInSupabase(
-            user.id,
+          const data = {
+            userId: user.id,
             newRoomName,
             newValue,
-            user.username
-          );
-          setRooms(...rooms, data);
-          console.log("Room created in Supabase");
+            userName: user.username,
+          };
+
+          let roomdata = await axios.post("/api/createRoom", data);
+          setRooms(...rooms, roomdata);
+          // console.log(roomdata);
         }
       } catch (error) {
         console.error("Error creating Room in Supabase:", error);
@@ -88,8 +113,6 @@ export default function Rooms() {
       setNewRoomName("");
       setNewValue("");
     }
-
-    // Call the createUser function when the user is authenticated
   };
 
   const join = (roomname) => {
@@ -104,11 +127,23 @@ export default function Rooms() {
     setRooms(updatedRooms);
   };
 
-  const removeRoom = (index, roomid) => {
-    const updatedRooms = [...rooms];
-    deleteroom(user.id, roomid);
-    updatedRooms.splice(index, 1);
-    setRooms(updatedRooms);
+  const removeRoom = async (index, roomid) => {
+    if (user && roomid) {
+      try {
+        const updatedRooms = [...rooms];
+        const data = {
+          userId: user.id,
+          roomId: roomid,
+        };
+
+        const response = await axios.post("/api/deleteRoom", data);
+        console.log(response);
+        updatedRooms.splice(index, 1);
+        setRooms(updatedRooms);
+      } catch (error) {
+        console.log("Error while deleting the room");
+      }
+    }
   };
 
   const playbuttonclicked = (roomid, userid) => {
@@ -140,19 +175,10 @@ export default function Rooms() {
     }
   };
 
-  // const getUserFromClerk = async () => {
-  //   try {
-  //     const userId = user_2VeZDRvMP3Lw2eleP6OjynhSAff;
-  //     const response = await axios.post("/api/getUserFromClerk", userId);
-  //     console.log(response.data);
-  //   } catch (error) {
-  //     console.log("failed! to get username!!!", error.message);
-  //   }
-  // };
-
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="text-2xl font-bold my-4">Room Manager</p>
+      <button onClick={fetchRooms}>test</button>
       <div className="mb-4 flex justify-center items-center w-11/12 md:w-1/2">
         <TextField
           label="Room Name"

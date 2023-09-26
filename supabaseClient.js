@@ -73,6 +73,16 @@ export async function checkUserInSupabase(userId) {
   }
 }
 
+export async function fetchRooms() {
+  try {
+    let { data, error } = await supabase.from("Room").select("*");
+    return data;
+  } catch (error) {
+    console.error("Error creating room in Supabase:");
+    throw error;
+  }
+}
+
 export async function getChips(userId) {
   try {
     const { data, error } = await supabase
@@ -156,28 +166,27 @@ export async function fetchroomidbyuserid(userid) {
   try {
     const { data, error } = await supabase
       .from("User")
-      .select('roomid')
-      .eq('user_id',userid)
+      .select("roomid")
+      .eq("user_id", userid);
     if (error) {
       throw error;
     }
     return data[0].roomid;
   } catch (error) {
-    console.error("Error Deleting room in Supabase");
+    console.error("Error fetching room in Supabase");
     throw error;
   }
 }
 export async function fetchroomowner(roomid) {
   try {
-    
     const { data, error } = await supabase
       .from("Room")
-      .select('owner_name')
-      .eq('id',roomid)
+      .select("owner_name")
+      .eq("id", roomid);
     if (error) {
       throw error;
     }
-    console.log('fetchroomowner',data)
+    console.log("fetchroomowner", data);
     return data;
   } catch (error) {
     console.error("Error Fetching room owner name from Supabase");
