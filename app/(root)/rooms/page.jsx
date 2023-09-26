@@ -13,7 +13,7 @@ import { useRoomID } from "../../../RoomIDContext";
 import { deleteroom } from "../../../supabaseClient";
 import { useRouter } from "next/navigation";
 export default function Rooms() {
-  const router=useRouter()
+  const router = useRouter();
   async function fetchSupabaseData() {
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -59,12 +59,10 @@ export default function Rooms() {
   }, [rooms]);
 
   const addRoom = () => {
-    
     const createRoom = async () => {
       try {
         if (user) {
           // Create the user in Supabase with their user ID
-          
           let data = await createRoomInSupabase(
             user.id,
             newRoomName,
@@ -92,7 +90,6 @@ export default function Rooms() {
     }
 
     // Call the createUser function when the user is authenticated
-    
   };
 
   const join = (roomname) => {
@@ -115,16 +112,15 @@ export default function Rooms() {
   };
 
   const playbuttonclicked = (roomid, userid) => {
-    console.log('playbutton')
+    console.log("playbutton");
     const assignuser = async (roomid, userid) => {
-      let supabaseData = await axios.post("/api/fetchRoomById", roomid); 
-      if(supabaseData.data.length===2){
+      let supabaseData = await axios.post("/api/fetchRoomById", roomid);
+      if (supabaseData.data.length === 2) {
         setRoomID(null);
-        alert('Already player exist');
-        console.log('Not forward');
+        alert("Already player exist");
+        console.log("Not forward");
         return;
-      }
-      else{
+      } else {
         setRoomID(roomid);
       }
       try {
@@ -144,17 +140,16 @@ export default function Rooms() {
     }
   };
 
-  const getUserFromClerk = async () => {
-    try {
-      const userId = user_2VeZDRvMP3Lw2eleP6OjynhSAff;
-      const response = await axios.post("/api/getUserFromClerk", userId);
-      console.log(response.data);
-    } catch (error) {
-      console.log("failed! to get username!!!", error.message);
-    }
-  };
-  const [linkstate, setlinkstate] = useState('')
-  
+  // const getUserFromClerk = async () => {
+  //   try {
+  //     const userId = user_2VeZDRvMP3Lw2eleP6OjynhSAff;
+  //     const response = await axios.post("/api/getUserFromClerk", userId);
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.log("failed! to get username!!!", error.message);
+  //   }
+  // };
+
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="text-2xl font-bold my-4">Room Manager</p>

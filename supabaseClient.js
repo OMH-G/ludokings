@@ -33,10 +33,6 @@ export async function createUserInSupabase(userId, userName) {
 }
 export async function createRoomInSupabase(userId, roomname, value, userName) {
   try {
-    // Define the user data to be inserted or updated in the "User" table
-
-    // Insert or update the user data in the "User" table using upsert
-
     let check = await supabase
       .from("Room")
       .select("owned_by")
