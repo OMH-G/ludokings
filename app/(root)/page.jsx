@@ -1,31 +1,31 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
+import axios from "axios";
 // import { createClient } from "@supabase/supabase-js";
 import { useEffect } from "react";
 import {
   createUserInSupabase,
   checkUserInSupabase,
 } from "../../supabaseClient";
+
 export default function Home() {
   const { user } = useUser();
 
   // Use an effect to create the user in Supabase when the user is authenticated
   useEffect(() => {
     const checkUser = async () => {
-      try {
-        if (user) {
-          console.log(user.id, user.username);
-          const isUserInSupabase = await checkUserInSupabase(user.id);
-          console.log("gib", isUserInSupabase);
+      if (user) {
+        try {
+          const userData = {
+            userId: user.id,
+            username: user.username,
+          };
+          const response = await axios.post("/api/addUserToDB", userData);
 
-          if (isUserInSupabase === 0) {
-            await createUserInSupabase(user.id, user.username);
-          } else {
-            console.log("User already exists");
-          }
+          // console.log(response);
+        } catch (error) {
+          console.log("User does not found");
         }
-      } catch (error) {
-        console.log("User does not found");
       }
     };
 
@@ -34,6 +34,22 @@ export default function Home() {
       checkUser();
     }
   }, [user]);
+
+  // const test = async () => {
+  //   if (user) {
+  //     try {
+  //       const userData = {
+  //         userId: user.id,
+  //         username: user.username,
+  //       };
+  //       const response = await axios.post("/api/addUserToDB", userData);
+
+  //       console.log(response);
+  //     } catch (error) {
+  //       console.log("User does not found");
+  //     }
+  //   }
+  // };
 
   return (
     <div className="app">

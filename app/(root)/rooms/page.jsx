@@ -55,7 +55,18 @@ export default function Rooms() {
   };
 
   useEffect(() => {
-    console.log('asdlkf')
+    const fetchRooms = async () => {
+      if (user) {
+        try {
+          const response = await axios.get("/api/fetchRooms");
+          console.log(response.data);
+          setRooms(response.data);
+        } catch (error) {
+          console.log("Failed to retrieve rooms");
+        }
+      }
+    };
+
     fetchRooms();
   }, []);
 
@@ -98,11 +109,11 @@ export default function Rooms() {
     setChoosenRoom(roomname);
   };
 
-  const updateRoomValue = (index, updatedValue) => {
-    const updatedRooms = [...rooms];
-    updatedRooms[index].value = updatedValue;
-    setRooms(updatedRooms);
-  };
+  // const updateRoomValue = (index, updatedValue) => {
+  //   const updatedRooms = [...rooms];
+  //   updatedRooms[index].value = updatedValue;
+  //   setRooms(updatedRooms);
+  // };
 
   const removeRoom = async (index, roomid) => {
     if (user && roomid) {
@@ -166,15 +177,6 @@ export default function Rooms() {
         />
       </div>
       <div className="mb-4 flex justify-center items-center w-11/12 md:w-1/2">
-        {/* <TextField
-          label="Chips"
-          variant="outlined"
-          type="number"
-          value={newValue}
-          onChange={(e) => setNewValue(e.target.value)}
-          style={{ flex: "1", marginRight: "8px" }}
-        /> */}
-
         <TextField
           label="Chips"
           variant="outlined"
@@ -240,15 +242,6 @@ export default function Rooms() {
                   >
                     <DeleteIcon />
                   </button>
-                  {/* ) : (
-                    ""
-                  )} */}
-                  {/* <button
-                    className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
-                    onClick={() => removeRoom(index, room.id)}
-                  >
-                    <DeleteIcon />
-                  </button> */}
                 </span>
               </span>
             </li>
