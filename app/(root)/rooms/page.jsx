@@ -13,34 +13,6 @@ import { useRoomID } from "../../../RoomIDContext";
 import { deleteroom } from "../../../supabaseClient";
 import { createClient } from "@supabase/supabase-js";
 export default function Rooms() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-        const supabase = createClient(supabaseUrl, supabaseKey);
-  async function fetchSupabaseData() {
-    try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      const tableName = "Room"; // Replace with your table name
-      const apiUrl = `${supabaseUrl}/rest/v1/${tableName}`;
-
-      const response = await axios.get(apiUrl, {
-        headers: {
-          apikey: supabaseKey,
-        },
-      });
-
-      if (response.status === 200) {
-        return response.data;
-      } else {
-        console.error("Error fetching data:", response.statusText);
-        return null;
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return null;
-    }
-  }
-
   const [rooms, setRooms] = useState([]);
 
   const { roomID, setRoomID } = useRoomID();
@@ -48,31 +20,38 @@ export default function Rooms() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
-  useEffect(()=>{
-    console.log('socketproblemt')
-    const Room = supabase.channel('custom-insert-channel')
-    .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'Room' },
-        (payload) => {
-            console.log('Change received!', payload)
-            fetchData();
-        }
-    )
-    .subscribe()
-      
-      // console.log("Success!", response.data.code);
-  },[])
-  async function fetchData() {
-    const supabaseData = await fetchSupabaseData();
-    if (supabaseData) {
-      setRooms(supabaseData);
-    }
-  }
   useEffect(() => {
-    
-    fetchData();
+    console.log("socketproblemt");
+    const Room = supabase
+      .channel("custom-insert-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Room" },
+        (payload) => {
+          console.log("Change received!", payload);
+          fetchData();
+        }
+      )
+      .subscribe();
+
+    // console.log("Success!", response.data.code);
   }, []);
+
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+
+  const fetchRooms = async () => {
+    if (user) {
+      try {
+        const response = await axios.get("/api/fetchRooms");
+        console.log(response.data);
+        setRooms(response.data);
+      } catch (error) {
+        console.log("Failed to retrieve rooms");
+      }
+    }
+  };
 
   const addRoom = () => {
     const createRoom = async () => {
