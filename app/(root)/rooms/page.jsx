@@ -12,6 +12,11 @@ import { assignroomid_user } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
 import { deleteroom } from "../../../supabaseClient";
 import { createClient } from "@supabase/supabase-js";
+// Initialize the Supabase client with your Supabase URL and API key
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 export default function Rooms() {
   const [rooms, setRooms] = useState([]);
 
@@ -29,7 +34,7 @@ export default function Rooms() {
         { event: "*", schema: "public", table: "Room" },
         (payload) => {
           console.log("Change received!", payload);
-          fetchData();
+          fetchRooms();
         }
       )
       .subscribe();
