@@ -25,6 +25,24 @@ export default function Rooms() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
+  const [chips, setChips] = useState("");
+
+  useEffect(() => {
+    const getUserChips = async () => {
+      if (user) {
+        try {
+          const userId = user.id;
+          const response = await axios.post("/api/getChips", user);
+          console.log(response);
+          setChips(response.data);
+        } catch (error) {
+          console.error("Error fetching user's chips: ", error);
+        }
+      }
+    };
+    getUserChips();
+  }, [user]);
+
   useEffect(() => {
     console.log("database change occured");
     const Room = supabase
@@ -74,8 +92,8 @@ export default function Rooms() {
 
   const addRoom = () => {
     const createRoom = async () => {
-      try {
-        if (user) {
+      if (user) {
+        try {
           const data = {
             userId: user.id,
             newRoomName,
@@ -83,12 +101,17 @@ export default function Rooms() {
             userName: user.username,
           };
 
-          let roomdata = await axios.post("/api/createRoom", data);
-          setRooms(...rooms, roomdata);
+          if (chips && newValue > chips) {
+            alert("You do not have enough chips!");
+          } else {
+            let roomdata = await axios.post("/api/createRoom", data);
+            setRooms(...rooms, roomdata);
+          }
+
           // console.log(roomdata);
+        } catch (error) {
+          console.error("Error creating Room in Supabase:", error);
         }
-      } catch (error) {
-        console.error("Error creating Room in Supabase:", error);
       }
     };
     if (user) {
