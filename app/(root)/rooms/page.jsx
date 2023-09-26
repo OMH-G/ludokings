@@ -170,7 +170,6 @@ export default function Rooms() {
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="text-2xl font-bold my-4">Room Manager</p>
-      <button onClick={fetchRooms}>test</button>
       <div className="mb-4 flex justify-center items-center w-11/12 md:w-1/2">
         <TextField
           label="Room Name"
