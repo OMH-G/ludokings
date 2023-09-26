@@ -5,8 +5,15 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
 import { useRoomID } from "../../../../RoomIDContext";
+import { fetchroomidbyuserid } from "../../../../supabaseClient";
+import { fetchroomowner } from "../../../../supabaseClient";
 import OCR from "../../../../components/OCR";
-
+import { createClient } from "@supabase/supabase-js";
+// Initialize the Supabase client with your Supabase URL and API key
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
 
@@ -18,35 +25,53 @@ export default function Room({ params }) {
   const [database, setDatabase] = useState([]);
 
   const [roomCode, setRoomCode] = useState("");
-  const [copied, setCopied] = useState("");
-
-  useEffect(() => {
-    getRoomCode();
-  }, []);
-
-  useEffect(() => {
-    if (isLoaded) {
-      async function fetchroomdata() {
-        if (roomID !== null) {
-          let supabaseData = await axios.post("/api/fetchRoomById", roomID);
-          if (supabaseData) {
-            setDatabase(supabaseData.data);
+  async function fetchroomdata() {
+    if (roomID !== null) {
+      let supabaseData = await axios.post("/api/fetchRoomById", roomID); 
+      let OwnwerData = await axios.post("/api/fetchRoomOwnerById", roomID); 
+      
+      if (supabaseData) {
+        setDatabase(supabaseData.data);
             // console.log(supabaseData.data.length);
-          }
-        } else {
-          let supabaseData = await fetchroomidbyuserid(user.id);
-          if (supabaseData) {
-            setRoomID(supabaseData);
-          }
-        }
       }
+      const db=supabaseData.data;
+      if(OwnwerData.data.length!==0 ){
+      const ownerdb=OwnwerData.data[0]['owner_name'];
+      const possible=db.find(obj=>obj.name===ownerdb);
+      if(possible){
+        // getRoomCode();
+        getRoomCode();
+      }
+      else{
+        setRoomCode('');
+      }
+    }
+    }
+     
+  }
+
+  useEffect(() => {
+    console.log('alskdflklllllllllllllllllllllllllllllllllll',roomID)
+    if (isLoaded) {
+      
 
       fetchroomdata();
     }
-  });
+  },[]);
+  useEffect(()=>{
 
+    const User = supabase.channel('custom-update-channel')
+    .on(
+      'postgres_changes',
+      { event: "*", schema: 'public', table: 'User' },
+      (payload) => {
+        // console.log('Change received!', payload)
+        fetchroomdata();
+      }
+    )
+    .subscribe()
+  },[])
   function goBack(userid) {
-    console.log(roomID);
     router.back();
     const deassignuser = async (userid) => {
       try {
@@ -67,6 +92,7 @@ export default function Room({ params }) {
   }
 
   const getRoomCode = async () => {
+    console.log('getting room code');
     try {
       const response = await axios.get("/api/roomCode");
       setRoomCode(response.data.code);
@@ -85,6 +111,7 @@ export default function Room({ params }) {
 
   return (
     <div className="flex flex-col justify-center items-center">
+      {/* {console.log(database)} */}
       <div className="flex justify-start items-center w-11/12 md:w-1/2">
         <button
           onClick={() => goBack(user?.id)}

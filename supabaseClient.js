@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-
 // Initialize the Supabase client with your Supabase URL and API key
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -161,15 +160,31 @@ export async function fetchroomidbyuserid(userid) {
   try {
     const { data, error } = await supabase
       .from("User")
-      .select("roomid")
-      .eq("user_id", userid);
-    console.log(data);
+      .select('roomid')
+      .eq('user_id',userid)
     if (error) {
       throw error;
     }
     return data[0].roomid;
   } catch (error) {
     console.error("Error Deleting room in Supabase");
+    throw error;
+  }
+}
+export async function fetchroomowner(roomid) {
+  try {
+    
+    const { data, error } = await supabase
+      .from("Room")
+      .select('owner_name')
+      .eq('id',roomid)
+    if (error) {
+      throw error;
+    }
+    console.log('fetchroomowner',data)
+    return data;
+  } catch (error) {
+    console.error("Error Fetching room owner name from Supabase");
     throw error;
   }
 }

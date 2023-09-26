@@ -11,7 +11,9 @@ import { createRoomInSupabase } from "../../../supabaseClient";
 import { assignroomid_user } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
 import { deleteroom } from "../../../supabaseClient";
+import { useRouter } from "next/navigation";
 export default function Rooms() {
+  const router=useRouter()
   async function fetchSupabaseData() {
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -57,19 +59,12 @@ export default function Rooms() {
   }, [rooms]);
 
   const addRoom = () => {
-    if (newRoomName !== "") {
-      const newRoom = {
-        name: newRoomName,
-        value: newValue,
-      };
-
-      setNewRoomName("");
-      setNewValue("");
-    }
+    
     const createRoom = async () => {
       try {
         if (user) {
           // Create the user in Supabase with their user ID
+          
           let data = await createRoomInSupabase(
             user.id,
             newRoomName,
@@ -83,11 +78,21 @@ export default function Rooms() {
         console.error("Error creating Room in Supabase:", error);
       }
     };
-
-    // Call the createUser function when the user is authenticated
     if (user) {
       createRoom();
     }
+    if (newRoomName !== "") {
+      const newRoom = {
+        name: newRoomName,
+        value: newValue,
+      };
+
+      setNewRoomName("");
+      setNewValue("");
+    }
+
+    // Call the createUser function when the user is authenticated
+    
   };
 
   const join = (roomname) => {
@@ -110,8 +115,18 @@ export default function Rooms() {
   };
 
   const playbuttonclicked = (roomid, userid) => {
-    setRoomID(roomid);
+    console.log('playbutton')
     const assignuser = async (roomid, userid) => {
+      let supabaseData = await axios.post("/api/fetchRoomById", roomid); 
+      if(supabaseData.data.length===2){
+        setRoomID(null);
+        alert('Already player exist');
+        console.log('Not forward');
+        return;
+      }
+      else{
+        setRoomID(roomid);
+      }
       try {
         if (user) {
           // Create the user in Supabase with their user ID
@@ -138,7 +153,8 @@ export default function Rooms() {
       console.log("failed! to get username!!!", error.message);
     }
   };
-
+  const [linkstate, setlinkstate] = useState('')
+  
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="text-2xl font-bold my-4">Room Manager</p>
