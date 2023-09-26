@@ -25,26 +25,22 @@ export default function Rooms() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
-  useEffect(() => {
-    console.log("socketproblemt");
-    const Room = supabase
-      .channel("custom-insert-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "Room" },
-        (payload) => {
-          console.log("Change received!", payload);
-          fetchRooms();
-        }
-      )
-      .subscribe();
+  // useEffect(() => {
+  //   console.log("socketproblemt");
+  //   const Room = supabase
+  //     .channel("custom-insert-channel")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "Room" },
+  //       (payload) => {
+  //         console.log("Change received!", payload);
+  //         fetchRooms();
+  //       }
+  //     )
+  //     .subscribe();
 
-    // console.log("Success!", response.data.code);
-  }, []);
-
-  useEffect(() => {
-    fetchRooms();
-  }, []);
+  //   // console.log("Success!", response.data.code);
+  // }, []);
 
   const fetchRooms = async () => {
     if (user) {
@@ -57,6 +53,10 @@ export default function Rooms() {
       }
     }
   };
+
+  useEffect(() => {
+    fetchRooms();
+  }, [user]);
 
   const addRoom = () => {
     const createRoom = async () => {
