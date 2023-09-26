@@ -11,9 +11,11 @@ import { createRoomInSupabase } from "../../../supabaseClient";
 import { assignroomid_user } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
 import { deleteroom } from "../../../supabaseClient";
-import { useRouter } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
 export default function Rooms() {
-  const router = useRouter();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        const supabase = createClient(supabaseUrl, supabaseKey);
   async function fetchSupabaseData() {
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -46,17 +48,31 @@ export default function Rooms() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
-
-  useEffect(() => {
-    async function fetchData() {
-      const supabaseData = await fetchSupabaseData();
-      if (supabaseData) {
-        setRooms(supabaseData);
-      }
+  useEffect(()=>{
+    console.log('socketproblemt')
+    const Room = supabase.channel('custom-insert-channel')
+    .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'Room' },
+        (payload) => {
+            console.log('Change received!', payload)
+            fetchData();
+        }
+    )
+    .subscribe()
+      
+      // console.log("Success!", response.data.code);
+  },[])
+  async function fetchData() {
+    const supabaseData = await fetchSupabaseData();
+    if (supabaseData) {
+      setRooms(supabaseData);
     }
-
+  }
+  useEffect(() => {
+    
     fetchData();
-  }, [rooms]);
+  }, []);
 
   const addRoom = () => {
     const createRoom = async () => {
