@@ -60,7 +60,9 @@ export default function Rooms() {
         try {
           const response = await axios.get("/api/fetchRooms");
           console.log(response.data);
-          setRooms(response.data);
+          if (response.data.length >= 1) {
+            setRooms(response.data);
+          }
         } catch (error) {
           console.log("Failed to retrieve rooms");
         }
