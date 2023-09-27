@@ -41,7 +41,7 @@ export default function Rooms() {
       }
     };
     getUserChips();
-  }, [user]);
+  }, [isSignedIn]);
 
   useEffect(() => {
     console.log("database change occured");
@@ -58,7 +58,7 @@ export default function Rooms() {
       .subscribe();
 
     // console.log("Success!", response.data.code);
-  }, []);
+  }, [isSignedIn]);
 
   const fetchRooms = async () => {
     if (user) {
@@ -88,7 +88,7 @@ export default function Rooms() {
     };
 
     fetchRooms();
-  }, [user]);
+  }, [isSignedIn]);
 
   const addRoom = () => {
     const createRoom = async () => {

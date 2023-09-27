@@ -26,38 +26,37 @@ export default function Room({ params }) {
 
   const [roomCode, setRoomCode] = useState(undefined);
   async function fetchroomdata() {
+    console.log('laskfdlkaskd')
     if (roomID !== null) {
-      let supabaseData = await fetchUserbyRoomID(roomID);
+      let supabaseData = await fetchUserbyRoomID(roomID); 
       let OwnwerData = await fetchroomowner(roomID);
-      
+      console.log('Owner',OwnwerData);
+      console.log('data',supabaseData)
       if (supabaseData) {
-        setDatabase(supabaseData.data);
+        setDatabase(supabaseData);
             // console.log(supabaseData.data.length);
       }
       const db=supabaseData;
-      if(OwnwerData.data.length!==0 ){
-      const ownerdb=OwnwerData.data[0]['owner_name'];
+      console.log(db)
+      // console.log(OwnwerData)
+      if(OwnwerData!==undefined && OwnwerData.length!==0 ){
+      const ownerdb=OwnwerData[0]['owner_name'];
       const possible=db.find(obj=>obj.name===ownerdb);
       if(possible){
         getRoomCode();
       }
       else{
         setRoomCode(undefined);
-      }
-    }
+      }}
     }
      
   }
-  useEffect(()=>{
-    console.log(roomCode);
-  },[roomCode])
+  // useEffect(()=>{
+  //   console.log(roomCode);
+  // },[roomCode])
   useEffect(() => {
-    if (isLoaded) {
-      
-
       fetchroomdata();
-    }
-  },[]);
+  },[isSignedIn]);
   useEffect(()=>{
 
     const User = supabase.channel('custom-update-channel')
@@ -70,7 +69,7 @@ export default function Room({ params }) {
       }
     )
     .subscribe()
-  },[])
+  },[isSignedIn])
   function goBack(userid) {
     router.back();
     const deassignuser = async (userid) => {
