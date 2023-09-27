@@ -84,7 +84,10 @@ export async function fetchRooms() {
 }
 export async function fetchRoomsById(roomid) {
   try {
-    let { data, error } = await supabase.from("Room").select("*").eq('id',roomid);
+    let { data, error } = await supabase
+      .from("Room")
+      .select("*")
+      .eq("id", roomid);
     return data;
   } catch (error) {
     console.error("fetching room from Supabase:");
@@ -195,8 +198,8 @@ export async function fetchroomowner(roomid) {
     if (error) {
       throw error;
     }
-    console.log("fetchroomowner", data);
-    return data;
+    // console.log(data[0].owner_name);
+    return data[0].owner_name;
   } catch (error) {
     console.error("Error Fetching room owner name from Supabase");
     throw error;

@@ -63,9 +63,9 @@ export default function Rooms() {
     if (user) {
       try {
         const response = await axios.get("/api/fetchRooms");
-        console.log('fetching rooms',response.data.roomArray);
+        console.log("fetching rooms", response.data.roomArray);
         // if (response.data.roomArray.length >= 1) {
-          setRooms(response.data.roomArray);
+        setRooms(response.data.roomArray);
         // }
       } catch (error) {
         console.log("Failed to retrieve rooms");
@@ -121,12 +121,6 @@ export default function Rooms() {
     setChoosenRoom(roomname);
   };
 
-  // const updateRoomValue = (index, updatedValue) => {
-  //   const updatedRooms = [...rooms];
-  //   updatedRooms[index].value = updatedValue;
-  //   setRooms(updatedRooms);
-  // };
-
   const removeRoom = async (index, roomid) => {
     if (user && roomid) {
       try {
@@ -150,11 +144,11 @@ export default function Rooms() {
   const playbuttonclicked = (roomid, userid) => {
     const assignuser = async (roomid, userid) => {
       let supabaseData = await fetchRoomsById(roomid);
-      console.log(supabaseData)
+      console.log(supabaseData);
       if (supabaseData.length === 2) {
-          setRoomID(null);
-          alert("Already player exist");
-          console.log("Not forward");
+        setRoomID(null);
+        alert("Already player exist");
+        console.log("Not forward");
         return;
       } else {
         setRoomID(roomid);
@@ -169,7 +163,7 @@ export default function Rooms() {
         console.error("Error creating Room in Supabase:", error);
       }
     };
-    
+
     // Call the createUser function when the user is authenticated
     if (user) {
       assignuser(roomid, userid);
