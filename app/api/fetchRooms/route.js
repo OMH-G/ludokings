@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const response = await fetchRooms();
 
-    return NextResponse.json(response);
+    return NextResponse.json({ response }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "An error occurred at fetchRooms server: " + error.message },
