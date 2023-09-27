@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { assignroomid_user } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
 import { createClient } from "@supabase/supabase-js";
+import { fetchRoomsById } from "../../../supabaseClient";
 // Initialize the Supabase client with your Supabase URL and API key
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -39,7 +40,7 @@ export default function Rooms() {
       }
     };
     getUserChips();
-  }, [isSignedIn]);
+  }, []);
 
   useEffect(() => {
     console.log("database change occured");
@@ -56,16 +57,16 @@ export default function Rooms() {
       .subscribe();
 
     // console.log("Success!", response.data.code);
-  }, [user]);
+  }, []);
 
   const fetchRooms = async () => {
     if (user) {
       try {
         const response = await axios.get("/api/fetchRooms");
-        console.log(response.data.roomArray);
-        if (response.data.roomArray.length >= 1) {
+        console.log('fetching rooms',response.data.roomArray);
+        // if (response.data.roomArray.length >= 1) {
           setRooms(response.data.roomArray);
-        }
+        // }
       } catch (error) {
         console.log("Failed to retrieve rooms");
       }
@@ -73,22 +74,8 @@ export default function Rooms() {
   };
 
   useEffect(() => {
-    const fetchRooms = async () => {
-      if (user) {
-        try {
-          const response = await axios.get("/api/fetchRooms");
-          console.log(response.data.roomArray);
-          if (response.data.roomArray.length >= 1) {
-            setRooms(response.data.roomArray);
-          }
-        } catch (error) {
-          console.log("Failed to retrieve rooms");
-        }
-      }
-    };
-
     fetchRooms();
-  }, [isSignedIn]);
+  }, []);
 
   const addRoom = () => {
     const createRoom = async () => {
@@ -161,13 +148,13 @@ export default function Rooms() {
   };
 
   const playbuttonclicked = (roomid, userid) => {
-    console.log("playbutton");
     const assignuser = async (roomid, userid) => {
-      let supabaseData = await axios.post("/api/fetchRoomById", roomid);
-      if (supabaseData.data.length === 2) {
-        setRoomID(null);
-        alert("Already player exist");
-        console.log("Not forward");
+      let supabaseData = await fetchRoomsById(roomid);
+      console.log(supabaseData)
+      if (supabaseData.length === 2) {
+          setRoomID(null);
+          alert("Already player exist");
+          console.log("Not forward");
         return;
       } else {
         setRoomID(roomid);
@@ -175,14 +162,14 @@ export default function Rooms() {
       try {
         if (user) {
           // Create the user in Supabase with their user ID
-          await assignroomid_user(roomid, userid);
           console.log("User updated with room");
+          await assignroomid_user(roomid, userid);
         }
       } catch (error) {
         console.error("Error creating Room in Supabase:", error);
       }
     };
-
+    
     // Call the createUser function when the user is authenticated
     if (user) {
       assignuser(roomid, userid);

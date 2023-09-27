@@ -82,6 +82,15 @@ export async function fetchRooms() {
     throw error;
   }
 }
+export async function fetchRoomsById(roomid) {
+  try {
+    let { data, error } = await supabase.from("Room").select("*").eq('id',roomid);
+    return data;
+  } catch (error) {
+    console.error("fetching room from Supabase:");
+    throw error;
+  }
+}
 
 export async function getChips(userId) {
   try {

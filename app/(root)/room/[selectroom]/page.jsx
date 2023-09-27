@@ -26,7 +26,7 @@ export default function Room({ params }) {
 
   const [roomCode, setRoomCode] = useState(undefined);
   async function fetchroomdata() {
-    console.log('laskfdlkaskd')
+    console.log('laskfdlkaskd',roomID)
     if (roomID !== null) {
       let supabaseData = await fetchUserbyRoomID(roomID); 
       let OwnwerData = await fetchroomowner(roomID);
@@ -56,7 +56,7 @@ export default function Room({ params }) {
   // },[roomCode])
   useEffect(() => {
       fetchroomdata();
-  },[isSignedIn]);
+  },[]);
   useEffect(()=>{
 
     const User = supabase.channel('custom-update-channel')
@@ -69,7 +69,7 @@ export default function Room({ params }) {
       }
     )
     .subscribe()
-  },[isSignedIn])
+  },[])
   function goBack(userid) {
     router.back();
     const deassignuser = async (userid) => {
