@@ -12,7 +12,7 @@ export async function GET() {
     const formattedNumber = String(random8DigitNumber).padStart(8, "0");
 
     // Delay for 5 seconds
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    // await new Promise((resolve) => setTimeout(resolve, 5000));
 
     return NextResponse.json({
       code: formattedNumber,

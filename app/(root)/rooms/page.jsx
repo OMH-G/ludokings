@@ -226,7 +226,7 @@ export default function Rooms() {
       </div>
       <ul className="w-11/12 md:w-1/2">
         {/* <button onClick={getUserFromClerk}>getUserFromClerk</button> */}
-        {Array.isArray(rooms) ? (
+        {Array.isArray(rooms) &&
           rooms.map((room, index) => (
             <li key={index} className="mb-4">
               <span className="flex justify-between items-center">
@@ -270,10 +270,7 @@ export default function Rooms() {
                 </span>
               </span>
             </li>
-          ))
-        ) : (
-          <div>Loading</div>
-        )}
+          ))}
       </ul>
     </div>
   );
