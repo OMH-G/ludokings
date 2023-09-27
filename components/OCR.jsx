@@ -6,7 +6,7 @@ export default function OCR(props) {
   const [image, setImage] = useState(null);
   const [extractedText, setExtractedText] = useState("");
   const [resultMessage, setResultMessage] = useState("");
-  // const [showComponent, setShowComponent] = useState(false); // Add state to control component visibility
+  const [showComponent, setShowComponent] = useState(false); // Add state to control component visibility
   const [errorText, setErrorText] = useState(""); // State for error message
   // const { roomCode } = props; // Destructure the roomCode from props
 
