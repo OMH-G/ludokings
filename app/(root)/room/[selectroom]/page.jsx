@@ -39,7 +39,7 @@ export default function Room({ params }) {
       const db=supabaseData;
       console.log(db)
       // console.log(OwnwerData)
-      if(OwnwerData!==undefined && OwnwerData.length!==0 ){
+      if(OwnwerData!==undefined && OwnwerData.length!==0 && db.length!==0){
       const ownerdb=OwnwerData[0]['owner_name'];
       const possible=db.find(obj=>obj.name===ownerdb);
       if(possible){
