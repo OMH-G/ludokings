@@ -56,14 +56,16 @@ export default function Rooms() {
       .subscribe();
 
     // console.log("Success!", response.data.code);
-  }, []);
+  }, [user]);
 
   const fetchRooms = async () => {
     if (user) {
       try {
         const response = await axios.get("/api/fetchRooms");
-        console.log('asldfasldkflasdkk',response.data);
-        setRooms(response.data);
+        console.log(response.data.roomArray);
+        if (response.data.roomArray.length >= 1) {
+          setRooms(response.data.roomArray);
+        }
       } catch (error) {
         console.log("Failed to retrieve rooms");
       }
@@ -75,9 +77,9 @@ export default function Rooms() {
       if (user) {
         try {
           const response = await axios.get("/api/fetchRooms");
-          console.log(response.data);
-          if (response.data.length >= 1) {
-            setRooms(response.data);
+          console.log(response.data.roomArray);
+          if (response.data.roomArray.length >= 1) {
+            setRooms(response.data.roomArray);
           }
         } catch (error) {
           console.log("Failed to retrieve rooms");
