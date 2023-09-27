@@ -5,7 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
 import { useRoomID } from "../../../../RoomIDContext";
-import { fetchroomidbyuserid } from "../../../../supabaseClient";
+import { fetchUserbyRoomID } from "../../../../supabaseClient";
 import { fetchroomowner } from "../../../../supabaseClient";
 import OCR from "../../../../components/OCR";
 import { createClient } from "@supabase/supabase-js";
@@ -27,16 +27,19 @@ export default function Room({ params }) {
   const [roomCode, setRoomCode] = useState(undefined);
   async function fetchroomdata() {
     if (roomID !== null) {
-      let supabaseData = await axios.post("/api/fetchRoomById", roomID); 
-      let OwnwerData = await axios.post("/api/fetchRoomOwnerById", roomID); 
-      
+      let supabaseData = await fetchUserbyRoomID(roomID); 
+      let OwnwerData = await fetchroomowner(roomID);
+      console.log(OwnwerData);
+      console.log(supabaseData)
       if (supabaseData) {
-        setDatabase(supabaseData.data);
+        setDatabase(supabaseData);
             // console.log(supabaseData.data.length);
       }
-      const db=supabaseData.data;
-      if(OwnwerData.data.length!==0 ){
-      const ownerdb=OwnwerData.data[0]['owner_name'];
+      const db=supabaseData;
+      console.log(db)
+      // console.log(OwnwerData)
+      if(OwnwerData!==undefined && OwnwerData.length!==0 && db.length!==0){
+      const ownerdb=OwnwerData[0]['owner_name'];
       const possible=db.find(obj=>obj.name===ownerdb);
       if(possible){
         getRoomCode();

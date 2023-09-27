@@ -7,10 +7,8 @@ import Link from "next/link";
 import axios from "axios";
 import { useUser, clerkClient } from "@clerk/nextjs";
 import { useEffect } from "react";
-import { createRoomInSupabase } from "../../../supabaseClient";
 import { assignroomid_user } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
-import { deleteroom } from "../../../supabaseClient";
 import { createClient } from "@supabase/supabase-js";
 // Initialize the Supabase client with your Supabase URL and API key
 const supabase = createClient(
@@ -64,7 +62,7 @@ export default function Rooms() {
     if (user) {
       try {
         const response = await axios.get("/api/fetchRooms");
-        console.log(response.data);
+        console.log('asldfasldkflasdkk',response.data);
         setRooms(response.data);
       } catch (error) {
         console.log("Failed to retrieve rooms");
