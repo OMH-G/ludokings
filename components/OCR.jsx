@@ -8,9 +8,10 @@ export default function OCR(props) {
   const [resultMessage, setResultMessage] = useState("");
   const [showComponent, setShowComponent] = useState(false); // Add state to control component visibility
   const [errorText, setErrorText] = useState(""); // State for error message
-  const { roomCode } = props; // Destructure the roomCode from props
+  // const { roomCode } = props; // Destructure the roomCode from props
 
   useEffect(() => {
+    console.log('ocr ',props)
     // Use setTimeout to delay showing the component for 6 seconds
     const delay = setTimeout(() => {
       setShowComponent(true);

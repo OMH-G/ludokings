@@ -24,7 +24,7 @@ export default function Room({ params }) {
 
   const [database, setDatabase] = useState([]);
 
-  const [roomCode, setRoomCode] = useState("");
+  const [roomCode, setRoomCode] = useState(undefined);
   async function fetchroomdata() {
     if (roomID !== null) {
       let supabaseData = await axios.post("/api/fetchRoomById", roomID); 
@@ -42,13 +42,15 @@ export default function Room({ params }) {
         getRoomCode();
       }
       else{
-        setRoomCode('');
+        setRoomCode(undefined);
       }
     }
     }
      
   }
-
+  useEffect(()=>{
+    console.log(roomCode);
+  },[roomCode])
   useEffect(() => {
     if (isLoaded) {
       
@@ -156,7 +158,7 @@ export default function Room({ params }) {
           </button>
         </div>
       </div>
-      <OCR roomCode={roomCode} />
+      {roomCode!==undefined? <OCR roomCode={roomCode} roomId={roomID} userId={user.id}/>:<div>Loading</div>}
     </div>
   );
 }
