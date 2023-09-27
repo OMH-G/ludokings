@@ -88,7 +88,7 @@ export default function Rooms() {
     };
 
     fetchRooms();
-  }, []);
+  }, [user]);
 
   const addRoom = () => {
     const createRoom = async () => {

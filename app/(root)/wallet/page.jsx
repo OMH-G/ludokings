@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { updateChips, getChips } from "@/supabaseClient";
 import { useUser } from "@clerk/nextjs";
 import WithdrawChipsButton from "@/components/withdrawChipsButton";
 import DepositChipsButton from "@/components/depositChipsButton";
@@ -8,7 +7,7 @@ import axios from "axios";
 
 export default function Wallet() {
   const { user } = useUser();
-  const [chips, setChips] = useState("");
+  const [chips, setChips] = useState(0);
 
   useEffect(() => {
     const getUserChips = async () => {
