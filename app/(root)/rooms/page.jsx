@@ -1,16 +1,14 @@
 "use client";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import axios from "axios";
 import { useUser, clerkClient } from "@clerk/nextjs";
-import { useEffect } from "react";
-import { assignroomid_user } from "../../../supabaseClient";
+import { assignroomid_user, fetchRoomsById } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
 import { createClient } from "@supabase/supabase-js";
-import { fetchRoomsById } from "../../../supabaseClient";
 // Initialize the Supabase client with your Supabase URL and API key
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -40,7 +38,7 @@ export default function Rooms() {
       }
     };
     getUserChips();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     console.log("database change occured");

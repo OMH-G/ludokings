@@ -6,6 +6,12 @@ export async function POST(NextRequest) {
     const reqBody = await NextRequest.json();
     const { userId, newRoomName, newValue, userName } = reqBody;
 
+    // Use a regex pattern to validate that newValue is a positive integer
+    const positiveIntegerPattern = /^[1-9]\d*$/;
+    if (!positiveIntegerPattern.test(newValue)) {
+      return NextResponse.json("New value must be a positive integer.");
+    }
+
     const userChips = await getChips(userId);
 
     // if (userChips < newValue) {
