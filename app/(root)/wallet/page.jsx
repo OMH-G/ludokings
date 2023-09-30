@@ -10,6 +10,7 @@ export default function Wallet() {
   const [chips, setChips] = useState(0);
 
   useEffect(() => {
+    console.log(user);
     const getUserChips = async () => {
       if (user) {
         try {
