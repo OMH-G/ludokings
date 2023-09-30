@@ -26,9 +26,8 @@ export default function Room({ params }) {
 
   const [roomCode, setRoomCode] = useState("Fetching Roomcode");
 
-  const [Owner, setOwner] = useState('')
-  
-  
+  const [Owner, setOwner] = useState("");
+
   const fetchroomdata = async () => {
     if (user) {
       try {
@@ -37,14 +36,13 @@ export default function Room({ params }) {
             id: roomID,
           };
           let usersInRoom = await axios.post("/api/fetchRoomById", roomId);
-          let Ownerd=await axios.post('/api/fetchRoomOwnerById',roomId);
+          let Ownerd = await axios.post("/api/fetchRoomOwnerById", roomId);
           setDatabase(usersInRoom.data);
-          let db=usersInRoom.data;
-          if(db.find(obj=>obj.name===Ownerd.data)){
+          let db = usersInRoom.data;
+          if (db.find((obj) => obj.name === Ownerd.data)) {
             getRoomCode();
-          }
-          else{
-            setRoomCode('Fetching Roomcode')
+          } else {
+            setRoomCode("Fetching Roomcode");
           }
         }
       } catch (error) {
@@ -53,7 +51,6 @@ export default function Room({ params }) {
     }
   };
 
-  
   useEffect(() => {
     fetchroomdata();
   }, []);
@@ -65,7 +62,6 @@ export default function Room({ params }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "User" },
         (payload) => {
-
           fetchroomdata();
         }
       )
@@ -77,9 +73,12 @@ export default function Room({ params }) {
     const deassignuser = async (userid) => {
       try {
         if (user) {
-          // Create the user in Supabase with their user ID
-          await deassignroomid_user(userid);
-          console.log("User updated with room");
+          const userId = {
+            id: user.id,
+          };
+          // await deassignroomid_user(userid);
+          const response = await axios.post("/api/goBack", userId);
+          console.log("User updated with room", response);
         }
       } catch (error) {
         console.error("Error creating Room in Supabase:", error);
@@ -121,13 +120,7 @@ export default function Room({ params }) {
           Go Back
         </button>
       </div>
-      {/* <div className="flex flex-col md:flex-row justify-center items-center w-11/12 md:w-1/2 my-4 md:my-12">
-        <p className="text-2xl">Waiting Room For </p>{" "}
-        <span className="text-red-400 font-bold text-2xl mx-1">
-          {" "}
-          {database && database[room]} :
-        </span>
-      </div> */}
+
       <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2 my-4">
         <h3 className="text-2xl font-semibold mb-2">Players in the room:</h3>
         {/* {console.log("database", database)} */}
@@ -159,8 +152,8 @@ export default function Room({ params }) {
           </button>
         </div>
       </div>
-      {roomCode !== undefined && user!==undefined && roomID!==null? (
-      <OCR roomCode={roomCode} roomId={roomID} userId={user.id} />
+      {roomCode !== undefined && user !== undefined && roomID !== null ? (
+        <OCR roomCode={roomCode} roomId={roomID} userId={user.id} />
       ) : (
         <div>Loading</div>
       )}
