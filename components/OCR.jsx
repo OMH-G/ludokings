@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import Tesseract from "tesseract.js";
 import Image from "next/image";
+import axios from "axios";
 
 export default function OCR(props) {
   const [image, setImage] = useState(null);
   const [extractedText, setExtractedText] = useState("");
   const [resultMessage, setResultMessage] = useState("");
-  const [showComponent, setShowComponent] = useState(false); // Add state to control component visibility
   const [errorText, setErrorText] = useState(""); // State for error message
+  const [roomValue, setRoomValue] = useState(0);
   // const { roomCode } = props; // Destructure the roomCode from props
 
   useEffect(() => {
-    console.log("ocr ", props);
-    // Use setTimeout to delay showing the component for 6 seconds
-    const delay = setTimeout(() => {
-      setShowComponent(true);
-    }, 1000);
+    const fetchCurrentRoomData = async () => {
+      const data = { roomId: props.roomId };
+      const roomData = await axios.post("/api/fetchCurrentRoomData", data);
+      console.log("fetchCurrentRoomData value = ", roomData.data[0].value);
+      setRoomValue(roomData.data[0].value);
+    };
 
-    return () => clearTimeout(delay); // Clear the timeout if the component unmounts
+    fetchCurrentRoomData();
   }, []);
 
   const handleImageChange = (event) => {
@@ -42,17 +44,32 @@ export default function OCR(props) {
           "eng" // Language code for English
         );
         setExtractedText(text);
-        console.log(text);
+        // console.log(text);
 
         const hasCongratulations = text.includes("Congratulations");
-        const hasMatchingRoomCode = roomCode && text.includes(roomCode);
+        // const hasMatchingRoomCode = roomCode && text.includes(roomCode);
 
-        if (hasCongratulations && hasMatchingRoomCode) {
+        // if (hasCongratulations && hasMatchingRoomCode) {
+        //   setResultMessage("Congratulations! You won the match.");
+        // } else if (hasCongratulations && !hasMatchingRoomCode) {
+        //   setResultMessage("Room code does not match.");
+        // } else {
+        //   setResultMessage("You lost the match. ");
+        // }
+        let data = {
+          hasCongratulations,
+          roomId: props.roomId,
+          userId: props.userId,
+          roomValue: roomValue,
+        };
+        if (hasCongratulations) {
           setResultMessage("Congratulations! You won the match.");
-        } else if (hasCongratulations && !hasMatchingRoomCode) {
-          setResultMessage("Room code does not match.");
+          let isWinner = await axios.post("/api/gameResult", data);
+          console.log("isWinner", isWinner.data);
         } else {
           setResultMessage("You lost the match. ");
+          let isWinner = await axios.post("/api/gameResult", data);
+          console.log("isLoser", isWinner.data);
         }
       }
     } catch (error) {
