@@ -24,7 +24,7 @@ export default function Room({ params }) {
 
   const [database, setDatabase] = useState([]);
 
-  const [roomCode, setRoomCode] = useState("");
+  const [roomCode, setRoomCode] = useState("Fetching Roomcode");
 
   const [Owner, setOwner] = useState('')
   
