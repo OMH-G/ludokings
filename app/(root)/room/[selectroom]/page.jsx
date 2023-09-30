@@ -24,85 +24,38 @@ export default function Room({ params }) {
 
   const [database, setDatabase] = useState([]);
 
-  const [roomCode, setRoomCode] = useState("");
+  const [roomCode, setRoomCode] = useState("Fetching Roomcode");
 
-  // async function fetchroomdata() {
-  //   console.log("laskfdlkaskd", roomID, "database", database);
-  //   if (roomID !== null) {
-  //     let supabaseData = await axios.post("/api/fetchRoomById", roomID);
-  //     let OwnwerData = await axios.post("/api/fetchRoomOwnerById", roomID);
-  //     console.log(supabaseData);
-  //     if (supabaseData) {
-  //       setDatabase(supabaseData.data);
-  //       // console.log(supabaseData.data.length);
-  //     }
-  //     const db = supabaseData.data;
-  //     // if (OwnwerData.data.length !== 0) {
-  //     //   const ownerdb = OwnwerData.data[0]["owner_name"];
-  //     //   const possible = db.find((obj) => obj.name === ownerdb);
-  //     //   if (possible) {
-  //     //     getRoomCode();
-  //     //   } else {
-  //     //     setRoomCode(undefined);
-  //     //   }
-  //     // }
-  //     // getRoomCode();
-  //   }
-  // }
-  // useEffect(() => {
-  //   console.log(roomCode);
-  // }, [roomCode]);
-
-  useEffect(() => {
-    getRoomCode();
-  }, []);
-
-  useEffect(() => {
-    const fetchroomdata = async () => {
-      if (user) {
-        try {
-          if (roomID) {
-            const roomId = {
-              id: roomID,
-            };
-            let usersInRoom = await axios.post("/api/fetchRoomById", roomId);
-            setDatabase(usersInRoom.data);
-
-            // console.log("fetchRoomsById", supabaseData.data);
+  const [Owner, setOwner] = useState('')
+  
+  
+  const fetchroomdata = async () => {
+    if (user) {
+      try {
+        if (roomID) {
+          const roomId = {
+            id: roomID,
+          };
+          let usersInRoom = await axios.post("/api/fetchRoomById", roomId);
+          let Ownerd=await axios.post('/api/fetchRoomOwnerById',roomId);
+          setDatabase(usersInRoom.data);
+          let db=usersInRoom.data;
+          if(db.find(obj=>obj.name===Ownerd.data)){
+            getRoomCode();
           }
-        } catch (error) {
-          console.log("fetchroom error");
+          else{
+            setRoomCode('Fetching Roomcode')
+          }
         }
+      } catch (error) {
+        console.log("fetchroom error");
       }
-    };
-
-    if (user && roomID) {
-      fetchroomdata();
     }
-  }, [user, roomID]);
+  };
 
+  
   useEffect(() => {
-    const fetchOwnerData = async () => {
-      if (user) {
-        try {
-          if (roomID) {
-            const roomId = {
-              id: roomID,
-            };
-
-            let OwnwerData = await axios.post(
-              "/api/fetchRoomOwnerById",
-              roomId
-            );
-            console.log("owner of the room", OwnwerData.data);
-          }
-        } catch (error) {
-          console.log("owner info error");
-        }
-      }
-    };
-
-    fetchOwnerData();
+    fetchroomdata();
   }, []);
 
   useEffect(() => {
@@ -112,7 +65,7 @@ export default function Room({ params }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "User" },
         (payload) => {
-          // console.log('Change received!', payload)
+
           fetchroomdata();
         }
       )
@@ -206,11 +159,11 @@ export default function Room({ params }) {
           </button>
         </div>
       </div>
-      {/* {roomCode !== undefined ? ( */}
+      {roomCode !== undefined && user!==undefined && roomID!==null? (
       <OCR roomCode={roomCode} roomId={roomID} userId={user.id} />
-      {/* ) : (
+      ) : (
         <div>Loading</div>
-      )} */}
+      )}
     </div>
   );
 }

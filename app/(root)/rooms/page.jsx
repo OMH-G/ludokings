@@ -41,7 +41,8 @@ export default function Rooms() {
   }, [user]);
 
   useEffect(() => {
-    console.log("database change occured");
+    console.log("database change occured",user);
+    fetchRooms();
     const Room = supabase
       .channel("custom-insert-channel")
       .on(
@@ -55,8 +56,7 @@ export default function Rooms() {
       .subscribe();
 
     // console.log("Success!", response.data.code);
-  }, []);
-
+  }, [user]);
   const fetchRooms = async () => {
     if (user) {
       try {
@@ -71,9 +71,7 @@ export default function Rooms() {
     }
   };
 
-  useEffect(() => {
-    fetchRooms();
-  }, []);
+
 
   const addRoom = () => {
     const createRoom = async () => {
@@ -89,8 +87,14 @@ export default function Rooms() {
           if (chips && newValue > chips) {
             alert("You do not have enough chips!");
           } else {
+            console.log('setting user',rooms)
             let roomdata = await axios.post("/api/createRoom", data);
-            setRooms(...rooms, roomdata);
+            if(roomdata.length!==rooms.length){
+            setRooms(roomdata);
+            }
+            else{
+              fetchRooms();
+            }
           }
 
           // console.log(roomdata);
@@ -129,7 +133,6 @@ export default function Rooms() {
         };
 
         const response = await axios.post("/api/deleteRoom", data);
-        fetchRooms();
         // console.log(response);
         // updatedRooms.splice(index, 1);
         // setRooms(updatedRooms);

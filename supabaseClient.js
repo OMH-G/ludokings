@@ -220,3 +220,19 @@ export async function fetchUserbyRoomID(roomid) {
     throw error;
   }
 }
+export async function fetchRoomIdbyUser(userid) {
+  try {
+    const { data, error } = await supabase
+      .from("User")
+      .select("roomid")
+      .eq("user_id", userid);
+    if (error) {
+      throw error;
+    }
+    console.log(data)
+    return data[0].roomid;
+  } catch (error) {
+    console.error("Error fetching room in Supabase");
+    throw error;
+  }
+}
