@@ -63,18 +63,18 @@ export default function Rooms() {
   const fetchRooms = async () => {
     if (user) {
       try {
-        let data = await supabase.from("Room").select("*");
-        // const response = await axios.get("/api/fetchRooms", {
-        //   headers: {
-        //     cache: "no-store",
-        //     Pragma: "no-cache",
-        //     Expires: "0",
-        //   },
-        // });
+        // let data = await supabase.from("Room").select("*");
+        const response = await axios.get("/api/fetchRooms", {
+          headers: {
+            cache: "no-store",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+        });
         // console.log("fetching rooms", response.data.roomArray.data);
         // console.log("fetching rooms", response);
         // if (response.data.roomArray.length >= 1) {
-        setRooms(data.data);
+        setRooms(response.data.roomArray.data);
         // }
       } catch (error) {
         console.log("Failed to retrieve rooms");
