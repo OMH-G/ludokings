@@ -76,10 +76,10 @@ export async function checkUserInSupabase(userId) {
 export async function fetchRooms() {
   try {
     let { data, error } = await supabase.from("Room").select("*");
-    console.log(data.data);
+    console.log(data);
     return data;
   } catch (error) {
-    console.error("Error creating room in Supabase:");
+    console.error("Error while fetching room ");
     throw error;
   }
 }
