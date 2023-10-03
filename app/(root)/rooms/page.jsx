@@ -64,7 +64,7 @@ export default function Rooms() {
       try {
         const response = await axios.get("/api/fetchRooms", {
           headers: {
-            "Cache-Control": "no-store, must-revalidate",
+            cache: "no-store",
             Pragma: "no-cache",
             Expires: "0",
           },
