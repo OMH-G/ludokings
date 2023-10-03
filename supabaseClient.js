@@ -76,6 +76,7 @@ export async function checkUserInSupabase(userId) {
 export async function fetchRooms() {
   try {
     let { data, error } = await supabase.from("Room").select("*");
+    console.log(data.data);
     return data;
   } catch (error) {
     console.error("Error creating room in Supabase:");
@@ -229,7 +230,7 @@ export async function fetchRoomIdbyUser(userid) {
     if (error) {
       throw error;
     }
-    console.log(data)
+    console.log(data);
     return data[0].roomid;
   } catch (error) {
     console.error("Error fetching room in Supabase");

@@ -69,6 +69,7 @@ export default function Rooms() {
           },
         });
         console.log("fetching rooms", response.data.roomArray);
+        // console.log("fetching rooms", response);
         // if (response.data.roomArray.length >= 1) {
         setRooms(response.data.roomArray);
         // }
