@@ -9,6 +9,7 @@ import { useUser, clerkClient } from "@clerk/nextjs";
 import { assignroomid_user, fetchRoomsById } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
 import { createClient } from "@supabase/supabase-js";
+import { fetchRooms } from "../../../supabaseClient";
 // Initialize the Supabase client with your Supabase URL and API key
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -57,22 +58,23 @@ export default function Rooms() {
       .subscribe();
 
     // console.log("Success!", response.data.code);
-  }, [user]);
+  }, [rooms.length]);
 
   const fetchRooms = async () => {
     if (user) {
       try {
-        const response = await axios.get("/api/fetchRooms", {
-          headers: {
-            cache: "no-store",
-            Pragma: "no-cache",
-            Expires: "0",
-          },
-        });
-        console.log("fetching rooms", response.data.roomArray.data);
+        let data = await supabase.from("Room").select("*");
+        // const response = await axios.get("/api/fetchRooms", {
+        //   headers: {
+        //     cache: "no-store",
+        //     Pragma: "no-cache",
+        //     Expires: "0",
+        //   },
+        // });
+        // console.log("fetching rooms", response.data.roomArray.data);
         // console.log("fetching rooms", response);
         // if (response.data.roomArray.length >= 1) {
-        setRooms(response.data.roomArray.data);
+        setRooms(data.data);
         // }
       } catch (error) {
         console.log("Failed to retrieve rooms");

@@ -4,6 +4,7 @@ import { fetchUserbyRoomID } from "@/supabaseClient";
 export async function POST(NextRequest) {
   try {
     const reqBody = await NextRequest.json();
+    console.log(reqBody);
     const { id } = reqBody;
 
     let users;
