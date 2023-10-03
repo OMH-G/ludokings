@@ -218,7 +218,7 @@ export default function Rooms() {
         </Button>
       </div>
       <ul className="w-11/12 md:w-1/2">
-        {/* <button onClick={getUserFromClerk}>getUserFromClerk</button> */}
+        <button onClick={fetchRooms}>test</button>
         {Array.isArray(rooms) &&
           rooms.map((room, index) => (
             <li key={index} className="mb-4">

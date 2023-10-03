@@ -8,7 +8,8 @@ export async function POST(NextRequest) {
 
     const response = deleteroom(userId, roomId);
 
-    return NextResponse.json("Room deleted");
+    return NextResponse.json("Room deleted", { status: 200 });
+    // return NextResponse.json({ roomArray }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "An error occurred at deleteRoom server: " + error.message },
