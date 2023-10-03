@@ -61,7 +61,9 @@ export default function Rooms() {
   const fetchRooms = async () => {
     if (user) {
       try {
-        const response = await axios.get("/api/fetchRooms");
+        const response = await axios.get("/api/fetchRooms", {
+          cache: "no-store",
+        });
         console.log("fetching rooms", response.data.roomArray);
         // if (response.data.roomArray.length >= 1) {
         setRooms(response.data.roomArray);
