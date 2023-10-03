@@ -57,6 +57,7 @@ export default function Rooms() {
 
     // console.log("Success!", response.data.code);
   }, [user]);
+
   const fetchRooms = async () => {
     if (user) {
       try {
@@ -90,6 +91,7 @@ export default function Rooms() {
             if (roomdata.length !== rooms.length) {
               setRooms(roomdata);
             } else {
+              setRooms([]);
               fetchRooms();
             }
           }
@@ -123,13 +125,17 @@ export default function Rooms() {
   const removeRoom = async (index, roomid) => {
     if (user && roomid) {
       try {
-        const updatedRooms = [...rooms];
+        // const updatedRooms = [...rooms];
         const data = {
           userId: user.id,
           roomId: roomid,
         };
 
         const response = await axios.post("/api/deleteRoom", data);
+        if (response) {
+          setRooms([]);
+          fetchRooms();
+        }
         // console.log(response);
         // updatedRooms.splice(index, 1);
         // setRooms(updatedRooms);
