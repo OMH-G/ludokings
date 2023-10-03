@@ -64,18 +64,16 @@ export default function Rooms() {
     if (user) {
       try {
         // let data = await supabase.from("Room").select("*");
-        const response = await axios.get("/api/fetchRooms", {
+        const response = await axios.get("https://ludo-server-teal.vercel.app/", {
           headers: {
-            cache: "no-store",
+            "Cache-Control": "no-store, must-revalidate",
             Pragma: "no-cache",
             Expires: "0",
           },
         });
-        // console.log("fetching rooms", response.data.roomArray.data);
-        // console.log("fetching rooms", response);
+        console.log("fetching rooms", response.data['message']);
         // if (response.data.roomArray.length >= 1) {
-        setRooms(response.data.roomArray.data);
-        // }
+        setRooms(response.data['message']);
       } catch (error) {
         console.log("Failed to retrieve rooms");
       }
