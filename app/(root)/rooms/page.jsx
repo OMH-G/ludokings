@@ -44,20 +44,21 @@ export default function Rooms() {
   }, [user]);
 
   useEffect(() => {
+    setRooms([])
     console.log("database change occured", user);
-    fetchRooms();
     const Room = supabase
-      .channel("custom-insert-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "Room" },
-        (payload) => {
-          console.log("Change received!", payload);
-          fetchRooms();
-        }
+    .channel("custom-insert-channel")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "Room" },
+      (payload) => {
+        console.log("Change received!", payload);
+        fetchRooms();
+      }
       )
       .subscribe();
-
+      
+      fetchRooms();
     // console.log("Success!", response.data.code);
   }, [user]);
   const fetchRooms = async () => {
@@ -75,6 +76,7 @@ export default function Rooms() {
   };
 
   const addRoom = () => {
+    setRooms([])
     const createRoom = async () => {
       if (user) {
         try {
@@ -124,6 +126,7 @@ export default function Rooms() {
   };
 
   const removeRoom = async (index, roomid) => {
+    setRooms([])
     if (user && roomid) {
       try {
         const updatedRooms = [...rooms];
@@ -140,6 +143,7 @@ export default function Rooms() {
         console.log("Error while deleting the room");
       }
     }
+    fetchRooms();
   };
 
   const playbuttonclicked = (roomid, userid) => {
