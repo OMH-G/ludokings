@@ -6,7 +6,6 @@ export async function GET() {
     // if(NextRequest.)
 
     const roomArray = await fetchRooms();
-
     //  res.setHeader("Cache-Control", "no-store, max-age=0");
     // console.log(roomArray);
     return NextResponse.json({ roomArray }, { status: 200 });

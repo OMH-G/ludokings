@@ -41,6 +41,7 @@ export default function Rooms() {
   }, [user]);
 
   useEffect(() => {
+    console.log(rooms);
     fetchRooms();
     const Room = supabase
       .channel("custom-all-channel")
@@ -68,10 +69,10 @@ export default function Rooms() {
             Expires: "0",
           },
         });
-        console.log("fetching rooms", response.data.roomArray);
+        console.log("fetching rooms", response.data.roomArray.data);
         // console.log("fetching rooms", response);
         // if (response.data.roomArray.length >= 1) {
-        setRooms(response.data.roomArray);
+        setRooms(response.data.roomArray.data);
         // }
       } catch (error) {
         console.log("Failed to retrieve rooms");

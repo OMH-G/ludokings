@@ -75,8 +75,8 @@ export async function checkUserInSupabase(userId) {
 
 export async function fetchRooms() {
   try {
-    let { data, error } = await supabase.from("Room").select("*");
-    console.log(data);
+    let data = await supabase.from("Room").select("*");
+    // console.log("Fetching room from supabase", data);
     return data;
   } catch (error) {
     console.error("Error while fetching room ");
