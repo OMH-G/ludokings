@@ -15,6 +15,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 export default function Rooms() {
+  
   const [rooms, setRooms] = useState([]);
 
   const { roomID, setRoomID } = useRoomID();
@@ -23,7 +24,9 @@ export default function Rooms() {
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
   const [chips, setChips] = useState("");
-
+  useEffect(()=>{
+    console.log(user);
+  })
   useEffect(() => {
     const getUserChips = async () => {
       if (user) {
@@ -56,7 +59,7 @@ export default function Rooms() {
       .subscribe();
 
     // console.log("Success!", response.data.code);
-  }, []);
+  }, [user]);
   const fetchRooms = async () => {
     if (user) {
       try {
