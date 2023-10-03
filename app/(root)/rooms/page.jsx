@@ -62,7 +62,11 @@ export default function Rooms() {
     if (user) {
       try {
         const response = await axios.get("/api/fetchRooms", {
-          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
         });
         console.log("fetching rooms", response.data.roomArray);
         // if (response.data.roomArray.length >= 1) {
