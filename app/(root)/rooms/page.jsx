@@ -41,17 +41,16 @@ export default function Rooms() {
   }, [user]);
 
   useEffect(() => {
-    console.log("database change occured", user);
     fetchRooms();
     const Room = supabase
-      .channel("custom-insert-channel")
+      .channel("custom-all-channel")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "Room" },
         (payload) => {
           console.log("Change received!", payload);
-          setRoomID(payload);
-          // fetchRooms();
+          // setRooms(payload.new);
+          fetchRooms();
         }
       )
       .subscribe();
