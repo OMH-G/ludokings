@@ -41,7 +41,7 @@ export default function Rooms() {
   }, [user]);
 
   useEffect(() => {
-    console.log("database change occured",user);
+    console.log("database change occured", user);
     fetchRooms();
     const Room = supabase
       .channel("custom-insert-channel")
@@ -71,8 +71,6 @@ export default function Rooms() {
     }
   };
 
-
-
   const addRoom = () => {
     const createRoom = async () => {
       if (user) {
@@ -87,13 +85,11 @@ export default function Rooms() {
           if (chips && newValue > chips) {
             alert("You do not have enough chips!");
           } else {
-            console.log('setting user',rooms)
+            console.log("setting user", rooms);
             let roomdata = await axios.post("/api/createRoom", data);
-            console.log(roomdata.length,rooms.length)
-            if(roomdata.length!==rooms.length){
-            setRooms(roomdata);
-            }
-            else{
+            if (roomdata.length !== rooms.length) {
+              setRooms(roomdata);
+            } else {
               fetchRooms();
             }
           }
@@ -145,9 +141,13 @@ export default function Rooms() {
 
   const playbuttonclicked = (roomid, userid) => {
     const assignuser = async (roomid, userid) => {
-      let supabaseData = await fetchRoomsById(roomid);
-      console.log(supabaseData);
-      if (supabaseData.length === 2) {
+      const roomId = {
+        id: roomid,
+      };
+      let supabaseData = await axios.post("/api/fetchRoomsById", roomId);
+      // let supabaseData = await fetchRoomsById(roomid);
+      console.log("supabase data", supabaseData.data);
+      if (supabaseData.data.length === 2) {
         setRoomID(null);
         alert("Already player exist");
         console.log("Not forward");
@@ -157,16 +157,20 @@ export default function Rooms() {
       }
       try {
         if (user) {
-          // Create the user in Supabase with their user ID
           console.log("User updated with room");
-          await assignroomid_user(roomid, userid);
+          let data = {
+            roomid,
+            userid,
+          };
+          let assignedUser = await axios.post("/api/assignedUser", data);
+          console.log("assigned user", assignedUser.data);
+          // await assignroomid_user(roomid, userid);
         }
       } catch (error) {
         console.error("Error creating Room in Supabase:", error);
       }
     };
 
-    // Call the createUser function when the user is authenticated
     if (user) {
       assignuser(roomid, userid);
     }
@@ -235,6 +239,7 @@ export default function Rooms() {
                 )}
 
                 <span>
+                  {/* <Link href={`#`}> */}
                   <Link href={`/room/${room.name}`}>
                     <button
                       className="bg-green-500 text-white px-2 md:px-4 py-1 md:py-2 mx-1 rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
