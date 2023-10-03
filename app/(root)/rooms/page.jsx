@@ -56,7 +56,7 @@ export default function Rooms() {
       .subscribe();
 
     // console.log("Success!", response.data.code);
-  }, [user]);
+  }, []);
   const fetchRooms = async () => {
     if (user) {
       try {
@@ -89,6 +89,7 @@ export default function Rooms() {
           } else {
             console.log('setting user',rooms)
             let roomdata = await axios.post("/api/createRoom", data);
+            console.log(roomdata.length,rooms.length)
             if(roomdata.length!==rooms.length){
             setRooms(roomdata);
             }

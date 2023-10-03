@@ -11,18 +11,19 @@ export async function POST(NextRequest) {
     if (!positiveIntegerPattern.test(newValue)) {
       return NextResponse.json("New value must be a positive integer.");
     }
-
     const userChips = await getChips(userId);
 
     // if (userChips < newValue) {
     //   return NextResponse.json("You don't have sufficient balance.");
     // }
+
     const response = await createRoomInSupabase(
       userId,
       newRoomName,
       newValue,
       userName
     );
+      console.log(response)
     return NextResponse.json("Room created");
   } catch (error) {
     return NextResponse.json(
