@@ -50,7 +50,8 @@ export default function Rooms() {
         { event: "*", schema: "public", table: "Room" },
         (payload) => {
           console.log("Change received!", payload);
-          fetchRooms();
+          setRoomID(payload);
+          // fetchRooms();
         }
       )
       .subscribe();
