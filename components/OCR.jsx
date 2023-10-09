@@ -15,7 +15,7 @@ export default function OCR(props) {
     const fetchCurrentRoomData = async () => {
       const data = { id: props.roomId };
       console.log('OCR room data',data)
-      const roomData = await axios.post("https://ludo-server-teal.vercel.app/fetchroombyid", data);
+      const roomData = await axios.post("http://localhost:3001/fetchroombyid", data);
     console.log(roomData)
       setRoomValue(roomData.data['message']);
     };

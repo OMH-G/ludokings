@@ -25,13 +25,13 @@ export default function Rooms() {
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
   const [chips, setChips] = useState("");
-
+  const [linkvalue, setlinkvalue] = useState('');
   useEffect(() => {
     const getUserChips = async () => {
       if (user) {
         try {
           const userId = user.id;
-          const response = await axios.post("https://ludo-server-teal.vercel.app/getChip", {'userid':userId});
+          const response = await axios.post("http://localhost:3001/getChip", {'userid':userId});
           console.log(response);
           setChips(response.message);
         } catch (error) {
@@ -63,7 +63,7 @@ export default function Rooms() {
   const fetchRooms = async () => {
     if (user) {
       try {
-        const response = await axios.get("https://ludo-server-teal.vercel.app/fetchroom", {
+        const response = await axios.get("http://localhost:3001/fetchroom", {
           headers: {
             "Cache-Control": "no-store, must-revalidate",
             Pragma: "no-cache",
@@ -93,11 +93,12 @@ export default function Rooms() {
             alert("You do not have enough chips!");
           } else {
             console.log("setting user", rooms);
-            let roomdata = await axios.post("https://ludo-server-teal.vercel.app/createRoom", data);
+            let roomdata = await axios.post("http://localhost:3001/createRoom", data);
             console.log('asdkllaskd',roomdata.data['message']);
-            // setRoomID(roomdata.data['message'])
             setRoomID(roomdata.data['message'])
             assignuser(roomdata.data['message'],user.id);
+            // setlinkvalue(newRoomName)
+
             
           }
 
@@ -156,7 +157,7 @@ export default function Rooms() {
       id: roomid,
     };
     
-    let d = await axios.post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId);
+    let d = await axios.post("http://localhost:3001/fetchusersbyid", roomId);
     // console.log('supabase data',d.data['message']);
     let supabaseData=d.data['message'];
     console.log(supabaseData)
@@ -216,7 +217,7 @@ export default function Rooms() {
           }}
           style={{ flex: "1", marginRight: "8px" }}
         />
-        <Link href={`/room/${newRoomName}`}>
+        <Link href={newRoomName!==''?`/room/${newRoomName}`:'/room'}>
 
         <Button
           variant="contained"
