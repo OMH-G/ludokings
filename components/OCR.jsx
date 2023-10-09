@@ -115,7 +115,9 @@ export default function OCR(props) {
         {extractedText && (
           <div>
             <h2>Result:</h2>
-            <p>{resultMessage}</p>
+            <p className="flex justify-center items-center m-4 bg-gray-100 p-2 rounded-md">
+              {resultMessage}
+            </p>
           </div>
         )}
       </div>
