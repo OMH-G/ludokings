@@ -25,7 +25,7 @@ export default function Rooms() {
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
   const [chips, setChips] = useState("");
-
+  const [linkvalue, setlinkvalue] = useState('');
   useEffect(() => {
     const getUserChips = async () => {
       if (user) {
@@ -95,8 +95,10 @@ export default function Rooms() {
             console.log("setting user", rooms);
             let roomdata = await axios.post("https://ludo-server-teal.vercel.app/createRoom", data);
             console.log('asdkllaskd',roomdata.data['message']);
-            // setRoomID(roomdata.data['message'])
+            setRoomID(roomdata.data['message'])
             assignuser(roomdata.data['message'],user.id);
+            // setlinkvalue(newRoomName)
+
             
           }
 
@@ -215,7 +217,7 @@ export default function Rooms() {
           }}
           style={{ flex: "1", marginRight: "8px" }}
         />
-        <Link href={`/room/${newRoomName}`}>
+        <Link href={newRoomName!==''?`/room/${newRoomName}`:'/room'}>
 
         <Button
           variant="contained"

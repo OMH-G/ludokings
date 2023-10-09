@@ -40,7 +40,7 @@ export default function Room({ params }) {
           let store_owner = await axios.post("https://ludo-server-teal.vercel.app/fetchownerbyid", roomId);
           let Ownerd=store_owner.data['message'];
           setDatabase(usersInRoom);
-          console.log('Owner in room',Ownerd,usersInRoom);
+          console.log('Owner in room',store_owner.data,usersInRoom.data);
           let db = usersInRoom;
           if (db.find((obj) => obj.name === Ownerd)) {
             getRoomCode();
@@ -57,7 +57,7 @@ export default function Room({ params }) {
   useEffect(() => {
     console.log(roomID)
     fetchroomdata();
-  }, []);
+  }, [roomID]);
 
   useEffect(() => {
     const User = supabase
@@ -70,7 +70,7 @@ export default function Room({ params }) {
         }
       )
       .subscribe();
-  }, []);
+  }, [roomID]);
 
   function goBack(userid) {
     router.back();
