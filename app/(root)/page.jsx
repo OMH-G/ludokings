@@ -42,7 +42,7 @@ export default function Home() {
           height={900}
           className=" h-full md:h-1/2 rounded-sm"
         />
-        <div className="flex flex-row justify-between items-center text-sm text-center">
+        <div className="flex flex-row justify-between items-center text-sm text-center md:my-4">
           <span className="bg-gray-100 rounded-md m-2 p-2">
             Instant Withdrawl
           </span>
@@ -51,7 +51,7 @@ export default function Home() {
         </div>
 
         <Link
-          className="w-full md:w-5/6 rounded-md bg-blue-400 text-white py-2 text-center"
+          className="w-full md:w-5/6 rounded-md bg-blue-400 text-white py-2 text-center md:mb-4"
           href="/rooms"
           alt="Play button."
         >
