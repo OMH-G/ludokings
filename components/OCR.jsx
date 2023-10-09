@@ -88,6 +88,8 @@ export default function OCR(props) {
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="text-center">
+        <p>Please upload the Screenshot </p>
+        <p>after the game. </p>
         <input
           className="my-4 w-11/12"
           type="file"
