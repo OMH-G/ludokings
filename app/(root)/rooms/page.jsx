@@ -31,7 +31,7 @@ export default function Rooms() {
       if (user) {
         try {
           const userId = user.id;
-          const response = await axios.post("https://ludo-server-teal.vercel.app/getChips", {'userid':userId});
+          const response = await axios.post("https://ludo-server-teal.vercel.app/getChip", {'userid':userId});
           console.log(response);
           setChips(response.message);
         } catch (error) {
