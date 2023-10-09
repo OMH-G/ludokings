@@ -153,14 +153,14 @@ export default function TopBar() {
                 ))}
               </div>
               <div className="py-6 items-center gap-4">
-                {userId && (
+{/*                 {userId && (
                   <Link
                     href="/wallet"
                     className="block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 border w-16"
                   >
                     0.00
                   </Link>
-                )}
+                )} */}
               </div>
             </div>
           </div>
