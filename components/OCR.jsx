@@ -64,11 +64,15 @@ export default function OCR(props) {
           roomValue: roomValue,
         };
         if (hasCongratulations) {
-          setResultMessage("Congratulations! You won the match.");
+          setResultMessage(
+            "Congratulations! You won the match.Chips will be added to your wallet."
+          );
           let isWinner = await axios.post("/api/gameResult", data);
           console.log("isWinner", isWinner.data);
         } else {
-          setResultMessage("You lost the match. ");
+          setResultMessage(
+            "You lost the match.Chips will be deduced from your wallet. "
+          );
           let isWinner = await axios.post("/api/gameResult", data);
           console.log("isLoser", isWinner.data);
         }
