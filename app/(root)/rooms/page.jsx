@@ -96,6 +96,7 @@ export default function Rooms() {
             let roomdata = await axios.post("https://ludo-server-teal.vercel.app/createRoom", data);
             console.log('asdkllaskd',roomdata.data['message']);
             // setRoomID(roomdata.data['message'])
+            setRoomID(roomdata.data['message'])
             assignuser(roomdata.data['message'],user.id);
             
           }
