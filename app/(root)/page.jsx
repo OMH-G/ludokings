@@ -2,6 +2,9 @@
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { useEffect } from "react";
+import Image from "next/image";
+import LudoHero from "@/assets/ludo.jpg";
+import Link from "next/link";
 
 export default function Home() {
   const { user } = useUser();
@@ -30,9 +33,31 @@ export default function Home() {
   }, [user]);
 
   return (
-    <div className="app">
-      Yet to update
-      <br />
+    <div className="flex justify-center items-center ">
+      <div className="flex flex-col justify-between items-center border-2 border-blue-800 w-11/12 md:w-1/2 p-2 rounded-sm">
+        <Image
+          src={LudoHero}
+          alt="LudoHero Image"
+          width={500}
+          height={900}
+          className=" h-full md:h-1/2 rounded-sm"
+        />
+        <div className="flex flex-row justify-between items-center text-sm text-center">
+          <span className="bg-gray-100 rounded-md m-2 p-2">
+            Instant Withdrawl
+          </span>
+          <span className="bg-gray-100 rounded-md m-2 p-2">5% Commission</span>
+          <span className="bg-gray-100 rounded-md m-2 p-2">24/7 Support</span>
+        </div>
+
+        <Link
+          className="w-full md:w-5/6 rounded-md bg-blue-400 text-white py-2 text-center"
+          href="/rooms"
+          alt="Play button."
+        >
+          Play Game
+        </Link>
+      </div>
     </div>
   );
 }
