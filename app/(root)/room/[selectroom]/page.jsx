@@ -35,9 +35,9 @@ export default function Room({ params }) {
           const roomId = {
             id: roomID,
           };
-          let store_user=await axios.post("http://localhost:3001/fetchusersbyid", roomId);
+          let store_user=await axios.post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId);
           let usersInRoom=store_user.data['message'];
-          let store_owner = await axios.post("http://localhost:3001/fetchownerbyid", roomId);
+          let store_owner = await axios.post("https://ludo-server-teal.vercel.app/fetchownerbyid", roomId);
           let Ownerd=store_owner.data['message'];
           setDatabase(usersInRoom);
           console.log('Owner in room',Ownerd,usersInRoom);
