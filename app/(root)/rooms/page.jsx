@@ -20,6 +20,7 @@ export default function Rooms() {
 
   const { roomID, setRoomID } = useRoomID();
 
+
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
@@ -30,16 +31,16 @@ export default function Rooms() {
       if (user) {
         try {
           const userId = user.id;
-          const response = await axios.post("/api/getChips", user);
+          const response = await axios.post("https://ludo-server-teal.vercel.app/getChips", {'userid':userId});
           console.log(response);
-          setChips(response.data);
+          setChips(response.message);
         } catch (error) {
           console.error("Error fetching user's chips: ", error);
         }
       }
     };
     getUserChips();
-  }, [user]);
+  }, [rooms.length]);
 
   useEffect(() => {
     console.log(rooms);
@@ -58,13 +59,11 @@ export default function Rooms() {
       .subscribe();
 
     // console.log("Success!", response.data.code);
-  }, [rooms.length]);
-
+  }, [user]);
   const fetchRooms = async () => {
     if (user) {
       try {
-        // let data = await supabase.from("Room").select("*");
-        const response = await axios.get("https://ludo-server-teal.vercel.app/", {
+        const response = await axios.get("https://ludo-server-teal.vercel.app/fetchroom", {
           headers: {
             "Cache-Control": "no-store, must-revalidate",
             Pragma: "no-cache",
@@ -72,7 +71,6 @@ export default function Rooms() {
           },
         });
         console.log("fetching rooms", response.data['message']);
-        // if (response.data.roomArray.length >= 1) {
         setRooms(response.data['message']);
       } catch (error) {
         console.log("Failed to retrieve rooms");
@@ -95,13 +93,11 @@ export default function Rooms() {
             alert("You do not have enough chips!");
           } else {
             console.log("setting user", rooms);
-            let roomdata = await axios.post("/api/createRoom", data);
-            if (roomdata.length !== rooms.length) {
-              setRooms(roomdata);
-            } else {
-              setRooms([]);
-              fetchRooms();
-            }
+            let roomdata = await axios.post("https://ludo-server-teal.vercel.app/createRoom", data);
+            console.log('asdkllaskd',roomdata.data['message']);
+            // setRoomID(roomdata.data['message'])
+            assignuser(roomdata.data['message'],user.id);
+            
           }
 
           // console.log(roomdata);
@@ -112,6 +108,7 @@ export default function Rooms() {
     };
     if (user) {
       createRoom();
+      // fetchRooms();
     }
     if (newRoomName !== "") {
       const newRoom = {
@@ -131,6 +128,7 @@ export default function Rooms() {
   };
 
   const removeRoom = async (index, roomid) => {
+    console.log(user,roomid)
     if (user && roomid) {
       try {
         // const updatedRooms = [...rooms];
@@ -142,7 +140,6 @@ export default function Rooms() {
         const response = await axios.post("/api/deleteRoom", data);
         if (response) {
           setRooms([]);
-          fetchRooms();
         }
         // console.log(response);
         // updatedRooms.splice(index, 1);
@@ -153,37 +150,39 @@ export default function Rooms() {
     }
   };
 
-  const playbuttonclicked = (roomid, userid) => {
-    const assignuser = async (roomid, userid) => {
-      const roomId = {
-        id: roomid,
-      };
-      let supabaseData = await axios.post("/api/fetchRoomsById", roomId);
-      // let supabaseData = await fetchRoomsById(roomid);
-      console.log("supabase data", supabaseData.data);
-      if (supabaseData.data.length === 2) {
-        setRoomID(null);
-        alert("Already player exist");
-        console.log("Not forward");
-        return;
-      } else {
-        setRoomID(roomid);
-      }
-      try {
-        if (user) {
-          console.log("User updated with room");
-          let data = {
-            roomid,
-            userid,
-          };
-          let assignedUser = await axios.post("/api/assignedUser", data);
-          console.log("assigned user", assignedUser.data);
-          // await assignroomid_user(roomid, userid);
-        }
-      } catch (error) {
-        console.error("Error creating Room in Supabase:", error);
-      }
+  const assignuser = async (roomid, userid) => {
+    const roomId = {
+      id: roomid,
     };
+    
+    let d = await axios.post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId);
+    // console.log('supabase data',d.data['message']);
+    let supabaseData=d.data['message'];
+    console.log(supabaseData)
+    if (supabaseData.length === 2) {
+      setRoomID(null);
+      alert("Already player exist");
+      console.log("Not forward");
+      return;
+    } else {
+      setRoomID(roomid);
+    }
+    try {
+      if (user) {
+        console.log("User updated with room");
+        let data = {
+          roomid,
+          userid,
+        };
+        let assignedUser = await axios.post("/api/assignedUser", data);
+        console.log("assigned user", assignedUser.data);
+        // await assignroomid_user(roomid, userid);
+      }
+    } catch (error) {
+      console.error("Error creating Room in Supabase:", error);
+    }
+  };
+  const playbuttonclicked = (roomid, userid) => {
 
     if (user) {
       assignuser(roomid, userid);
@@ -216,6 +215,8 @@ export default function Rooms() {
           }}
           style={{ flex: "1", marginRight: "8px" }}
         />
+        <Link href={`/room/${newRoomName}`}>
+
         <Button
           variant="contained"
           color="primary"
@@ -224,6 +225,7 @@ export default function Rooms() {
         >
           Set
         </Button>
+        </Link>
       </div>
       <ul className="w-11/12 md:w-1/2">
         <button onClick={fetchRooms}>test</button>
