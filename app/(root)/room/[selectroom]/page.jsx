@@ -24,7 +24,7 @@ export default function Room({ params }) {
 
   const [database, setDatabase] = useState([]);
 
-  const [roomCode, setRoomCode] = useState("Fetching Roomcode");
+  const [roomCode, setRoomCode] = useState(null);
 
   const [Owner, setOwner] = useState("");
 
@@ -35,14 +35,17 @@ export default function Room({ params }) {
           const roomId = {
             id: roomID,
           };
-          let usersInRoom = await axios.post("/api/fetchRoomById", roomId);
-          let Ownerd = await axios.post("/api/fetchRoomOwnerById", roomId);
-          setDatabase(usersInRoom.data);
-          let db = usersInRoom.data;
-          if (db.find((obj) => obj.name === Ownerd.data)) {
+          let store_user=await axios.post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId);
+          let usersInRoom=store_user.data['message'];
+          let store_owner = await axios.post("https://ludo-server-teal.vercel.app/fetchownerbyid", roomId);
+          let Ownerd=store_owner.data['message'];
+          setDatabase(usersInRoom);
+          console.log('Owner in room',Ownerd,usersInRoom);
+          let db = usersInRoom;
+          if (db.find((obj) => obj.name === Ownerd)) {
             getRoomCode();
           } else {
-            setRoomCode("Fetching Roomcode");
+            setRoomCode(null);
           }
         }
       } catch (error) {
@@ -52,6 +55,7 @@ export default function Room({ params }) {
   };
 
   useEffect(() => {
+    console.log(roomID)
     fetchroomdata();
   }, []);
 
@@ -152,8 +156,9 @@ export default function Room({ params }) {
           </button>
         </div>
       </div>
-      {roomCode !== undefined && user !== undefined && roomID !== null ? (
-        <OCR roomCode={roomCode} roomId={roomID} userId={user.id} />
+      {roomCode !== null && user !== undefined && roomID !== null ? (
+        
+        <OCR roomCode={roomCode} roomId={roomID} userId={user.id} >{console.log(roomCode,user,roomID)}</OCR>
       ) : (
         <div>Loading</div>
       )}

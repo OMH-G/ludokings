@@ -85,14 +85,13 @@ export async function fetchRooms() {
 }
 export async function fetchRoomsById(roomid) {
   try {
-    let { data, error } = await supabase
+    let data= await supabase
       .from("Room")
       .select("*")
       .eq("id", roomid);
     return data;
   } catch (error) {
     console.error("fetching room from Supabase:");
-    throw error;
   }
 }
 
