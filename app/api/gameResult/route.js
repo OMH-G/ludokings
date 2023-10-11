@@ -9,14 +9,14 @@ export async function POST(NextRequest) {
     let response;
     if (hasCongratulations == true) {
       const userChips = await getChips(userId);
-      let final = userChips + roomValue * 0.95;
+      let final = userChips + roomValue * 1.95;
       const res = await updateChips(userId, final);
       response = res;
     } else {
       const userChips = await getChips(userId);
-      let final = userChips - roomValue;
-      const res = await updateChips(userId, final);
-      response = res;
+      // let final = userChips - roomValue;
+      // const res = await updateChips(userId, final);
+      response = "You Lose";
     }
 
     return NextResponse.json(response);

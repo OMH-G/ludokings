@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Tesseract from "tesseract.js";
 import Image from "next/image";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function OCR(props) {
   const [image, setImage] = useState(null);
@@ -10,14 +11,18 @@ export default function OCR(props) {
   const [errorText, setErrorText] = useState(""); // State for error message
   const [roomValue, setRoomValue] = useState(0);
   // const { roomCode } = props; // Destructure the roomCode from props
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCurrentRoomData = async () => {
       const data = { id: props.roomId };
-      console.log('OCR room data',data)
-      const roomData = await axios.post("https://ludo-server-teal.vercel.app/fetchroombyid", data);
-    console.log(roomData)
-      setRoomValue(roomData.data['message']);
+      console.log("OCR room data", data);
+      const roomData = await axios.post(
+        "https://ludo-server-teal.vercel.app/fetchroombyid",
+        data
+      );
+      console.log(roomData);
+      setRoomValue(roomData.data["message"]);
     };
 
     fetchCurrentRoomData();
@@ -76,6 +81,9 @@ export default function OCR(props) {
           let isWinner = await axios.post("/api/gameResult", data);
           console.log("isLoser", isWinner.data);
         }
+        setTimeout(() => {
+          router.push("/rooms", { scroll: false });
+        }, 5000);
       }
     } catch (error) {
       console.error("Error while getting the game result:", error);

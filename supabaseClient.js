@@ -85,10 +85,7 @@ export async function fetchRooms() {
 }
 export async function fetchRoomsById(roomid) {
   try {
-    let data= await supabase
-      .from("Room")
-      .select("*")
-      .eq("id", roomid);
+    let data = await supabase.from("Room").select("*").eq("id", roomid);
     return data;
   } catch (error) {
     console.error("fetching room from Supabase:");
@@ -107,6 +104,22 @@ export async function getChips(userId) {
     return data[0].chips;
   } catch (error) {
     console.error("Error creating room in Supabase:");
+    throw error;
+  }
+}
+
+export async function getUserIdByName(name) {
+  try {
+    const { data, error } = await supabase
+      .from("User")
+      .select("user_id")
+      .eq("name", name)
+      .select();
+    // console.log(data);
+
+    return data[0];
+  } catch (error) {
+    console.error("Error getting user id by name in Supabase:");
     throw error;
   }
 }
