@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import TopBar from "@/components/TopBar";
-import { RoomIDProvider } from '../../RoomIDContext';
+import { RoomIDProvider } from "../../RoomIDContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,13 +20,13 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <RoomIDProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          {/* <Background /> */}
-          <TopBar />
-          <div className="mt-28">{children}</div>
-        </body>
-      </html>
+        <html lang="en">
+          <body className={inter.className}>
+            {/* <Background /> */}
+            <TopBar />
+            <div className="mt-28 mb-16">{children}</div>
+          </body>
+        </html>
       </RoomIDProvider>
     </ClerkProvider>
   );

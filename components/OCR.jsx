@@ -64,11 +64,15 @@ export default function OCR(props) {
           roomValue: roomValue,
         };
         if (hasCongratulations) {
-          setResultMessage("Congratulations! You won the match.");
+          setResultMessage(
+            "Congratulations! You won the match.Chips will be added to your wallet."
+          );
           let isWinner = await axios.post("/api/gameResult", data);
           console.log("isWinner", isWinner.data);
         } else {
-          setResultMessage("You lost the match. ");
+          setResultMessage(
+            "You lost the match.Chips will be deduced from your wallet. "
+          );
           let isWinner = await axios.post("/api/gameResult", data);
           console.log("isLoser", isWinner.data);
         }
@@ -84,6 +88,8 @@ export default function OCR(props) {
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="text-center">
+        <p>Please upload the Screenshot </p>
+        <p>after the game. </p>
         <input
           className="my-4 w-11/12"
           type="file"
@@ -115,7 +121,9 @@ export default function OCR(props) {
         {extractedText && (
           <div>
             <h2>Result:</h2>
-            <p>{resultMessage}</p>
+            <p className="flex justify-center items-center m-4 bg-gray-100 p-2 rounded-md">
+              {resultMessage}
+            </p>
           </div>
         )}
       </div>

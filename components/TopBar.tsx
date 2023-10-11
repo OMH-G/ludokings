@@ -17,29 +17,31 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname, useRouter } from "next/navigation";
 
 const navLinks = [
-  {
-    route: "/",
-    label: "Play",
-  },
-  {
-    route: "/wallet",
-    label: "wallet",
-  },
-  {
-    route: "/rooms",
-    label: "Rooms",
-  },
-  {
-    route: "/profile",
-    label: "Profile",
-  },
+  { route: "/", label: "Play" },
+  { route: "/wallet", label: "wallet" },
+  // { route: "/rooms", label: "Rooms" },
+  { route: "/terms", label: "Terms" },
+  { route: "/profile", label: "Profile" },
 ];
 
 export default function TopBar() {
+  // const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // const router = useRouter();
+  // const pathname = usePathname();
+  // const { userId } = useAuth();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const { userId } = useAuth();
+
+  // Check if the current path matches "room/*"
+  const isRoomPath = pathname.startsWith("/room/");
+
+  // If the path matches "room/*," return null to hide the top bar
+  if (isRoomPath) {
+    return null;
+  }
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
@@ -153,14 +155,14 @@ export default function TopBar() {
                 ))}
               </div>
               <div className="py-6 items-center gap-4">
-                {userId && (
+                {/*                 {userId && (
                   <Link
                     href="/wallet"
                     className="block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 border w-16"
                   >
                     0.00
                   </Link>
-                )}
+                )} */}
               </div>
             </div>
           </div>

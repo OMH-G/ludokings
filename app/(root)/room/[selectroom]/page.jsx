@@ -57,7 +57,7 @@ export default function Room({ params }) {
   useEffect(() => {
     console.log(roomID)
     fetchroomdata();
-  }, [roomID]);
+  }, [roomID,user,database.length]);
 
   useEffect(() => {
     const User = supabase
@@ -70,7 +70,7 @@ export default function Room({ params }) {
         }
       )
       .subscribe();
-  }, [roomID]);
+  }, [roomID,user,database.length]);
 
   function goBack(userid) {
     router.back();
