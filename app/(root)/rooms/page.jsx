@@ -244,11 +244,14 @@ export default function Rooms() {
           </Button>
         </Link>
       </div>
-      <ul className="w-11/12 md:w-1/2">
+      <ul className="w-11/12 md:w-1/2 ">
         {/*         <button onClick={fetchRooms}>test</button> */}
         {Array.isArray(rooms) &&
           rooms.map((room, index) => (
-            <li key={index} className="mb-4">
+            <li
+              key={index}
+              className="mb-2 md:mb-4 border border-gray-200 shadow p-2 md:p-4 rounded-md"
+            >
               <span className="flex justify-between items-center">
                 <p>
                   Room
@@ -282,12 +285,20 @@ export default function Rooms() {
                     </button>
                   </Link>
                   {/* {user?.id == room?.owned_by ? ( */}
+
                   <button
-                    className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
+                    className="bg-red-400 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
                     onClick={() => removeRoom(index, room.id)}
                   >
                     <DeleteIcon />
                   </button>
+
+                  {/* <button
+                    className="bg-red-500 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
+                    onClick={() => removeRoom(index, room.id)}
+                  >
+                    <DeleteIcon />
+                  </button> */}
                 </span>
               </span>
             </li>
