@@ -1,5 +1,5 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { useEffect } from "react";
 import Image from "next/image";
@@ -8,16 +8,21 @@ import Link from "next/link";
 
 export default function Home() {
   const { user } = useUser();
+  const { getToken } = useAuth();
 
   useEffect(() => {
     const checkUser = async () => {
       if (user) {
+        const token = JSON.stringify(await getToken({ template: "supabase" }));
         try {
           const userData = {
             userId: user.id,
             username: user.username,
           };
-          const response = await axios.post("/api/addUserToDB", userData);
+          console.log(token);
+          const response = await axios.post("/api/addUserToDB", token, {
+            withCredentials: true,
+          });
 
           // console.log(response);
         } catch (error) {

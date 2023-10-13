@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useContext } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
@@ -9,11 +9,14 @@ import { fetchUserbyRoomID } from "../../../../supabaseClient";
 import { getUserIdByName } from "../../../../supabaseClient";
 import OCR from "../../../../components/OCR";
 import { createClient } from "@supabase/supabase-js";
+import { supabaseAuth } from "@/supauth";
+
 // Initialize the Supabase client with your Supabase URL and API key
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
+
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
 
@@ -27,7 +30,7 @@ export default function Room({ params }) {
   const [roomCode, setRoomCode] = useState(null);
 
   const [Owner, setOwner] = useState("");
-
+  const { getToken } = useAuth();
   const fetchroomdata = async () => {
     if (user) {
       try {
@@ -64,7 +67,7 @@ export default function Room({ params }) {
     console.log(roomID);
     fetchroomdata();
   }, [roomID, user, database.length]);
-
+  let auth = getToken({ template: "supabase" });
   useEffect(() => {
     const User = supabase
       .channel("custom-update-channel")
@@ -72,6 +75,7 @@ export default function Room({ params }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "User" },
         (payload) => {
+          console.log("user changes");
           fetchroomdata();
         }
       )

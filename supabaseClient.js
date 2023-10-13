@@ -1,18 +1,20 @@
-import { createClient } from "@supabase/supabase-js";
+// import { createClient } from "@supabase/supabase-js";
+import { supabaseAuth } from "./supauth";
 // Initialize the Supabase client with your Supabase URL and API key
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// const supabase = createClient(
+//   process.env.NEXT_PUBLIC_SUPABASE_URL,
+//   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+//   {global:{headers}}
+// );
 
 // Function to create a user in Supabase
-export async function createUserInSupabase(userId, userName) {
+export async function createUserInSupabase(auth, userId, userName) {
   try {
     // Define the user data to be inserted or updated in the "User" table
 
     // Insert or update the user data in the "User" table using upsert
 
-    let check = await supabase
+    let check = await supabaseAuth(auth)
       .from("User")
       .select("user_id")
       .eq("user_id", userId);
@@ -21,7 +23,7 @@ export async function createUserInSupabase(userId, userName) {
       throw error;
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAuth(auth)
       .from("User")
       .insert([{ user_id: userId, chips: 100, name: userName }])
       .select();

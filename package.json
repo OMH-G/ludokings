@@ -29,6 +29,7 @@
     "encoding": "^0.1.13",
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
+    "jsonwebtoken": "^9.0.2",
     "next": "^13.4.19",
     "next-navigation": "^1.0.6",
     "nodemon": "^3.0.1",
