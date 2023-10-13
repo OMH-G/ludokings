@@ -141,23 +141,23 @@ export async function updateChips(auth, userId, amount) {
   }
 }
 
-export async function assignroomid_user(roomid, userid) {
+export async function assignroomid_user(auth, roomid, userid) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAuth(auth)
       .from("User")
       .update({ roomid: roomid })
       .eq("user_id", userid)
       .select();
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.error("Error creating room in Supabase:");
     throw error;
   }
 }
-export async function deassignroomid_user(userid) {
+export async function deassignroomid_user(auth, userid) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAuth(auth)
       .from("User")
       .update({ roomid: null })
       .eq("user_id", userid)
@@ -172,9 +172,9 @@ export async function deassignroomid_user(userid) {
     throw error;
   }
 }
-export async function deleteroom(userid, roomid) {
+export async function deleteroom(auth, userid, roomid) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAuth(auth)
       .from("Room")
       .delete()
       .eq("owned_by", userid)

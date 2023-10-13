@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import axios from "axios";
-import { useUser, clerkClient } from "@clerk/nextjs";
+import { useUser, clerkClient, useAuth } from "@clerk/nextjs";
 import { assignroomid_user, fetchRoomsById } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
 import { createClient } from "@supabase/supabase-js";
@@ -20,18 +20,22 @@ export default function Rooms() {
 
   const { roomID, setRoomID } = useRoomID();
 
-
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
   const [chips, setChips] = useState("");
-  const [linkvalue, setlinkvalue] = useState('');
+  const [linkvalue, setlinkvalue] = useState("");
+  const { getToken } = useAuth();
+
   useEffect(() => {
     const getUserChips = async () => {
       if (user) {
         try {
           const userId = user.id;
-          const response = await axios.post("https://ludo-server-teal.vercel.app/getChip", {'userid':userId});
+          const response = await axios.post(
+            "https://ludo-server-teal.vercel.app/getChip",
+            { userid: userId }
+          );
           console.log(response);
           setChips(response.message);
         } catch (error) {
@@ -63,15 +67,18 @@ export default function Rooms() {
   const fetchRooms = async () => {
     if (user) {
       try {
-        const response = await axios.get("https://ludo-server-teal.vercel.app/fetchroom", {
-          headers: {
-            "Cache-Control": "no-store, must-revalidate",
-            Pragma: "no-cache",
-            Expires: "0",
-          },
-        });
-        console.log("fetching rooms", response.data['message']);
-        setRooms(response.data['message']);
+        const response = await axios.get(
+          "https://ludo-server-teal.vercel.app/fetchroom",
+          {
+            headers: {
+              "Cache-Control": "no-store, must-revalidate",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
+          }
+        );
+        console.log("fetching rooms", response.data["message"]);
+        setRooms(response.data["message"]);
       } catch (error) {
         console.log("Failed to retrieve rooms");
       }
@@ -93,13 +100,14 @@ export default function Rooms() {
             alert("You do not have enough chips!");
           } else {
             console.log("setting user", rooms);
-            let roomdata = await axios.post("https://ludo-server-teal.vercel.app/createRoom", data);
-            console.log('asdkllaskd',roomdata.data['message']);
-            setRoomID(roomdata.data['message'])
-            assignuser(roomdata.data['message'],user.id);
+            let roomdata = await axios.post(
+              "https://ludo-server-teal.vercel.app/createRoom",
+              data
+            );
+            console.log("asdkllaskd", roomdata.data["message"]);
+            setRoomID(roomdata.data["message"]);
+            assignuser(roomdata.data["message"], user.id);
             // setlinkvalue(newRoomName)
-
-            
           }
 
           // console.log(roomdata);
@@ -130,16 +138,19 @@ export default function Rooms() {
   };
 
   const removeRoom = async (index, roomid) => {
-    console.log(user,roomid)
+    console.log(user, roomid);
     if (user && roomid) {
+      const token = await getToken({ template: "supabase" });
       try {
         // const updatedRooms = [...rooms];
         const data = {
-          userId: user.id,
+          token: token,
           roomId: roomid,
         };
 
-        const response = await axios.post("/api/deleteRoom", data);
+        const response = await axios.post("/api/deleteRoom", data, {
+          withCredentials: true,
+        });
         if (response) {
           setRooms([]);
         }
@@ -156,11 +167,14 @@ export default function Rooms() {
     const roomId = {
       id: roomid,
     };
-    
-    let d = await axios.post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId);
+
+    let d = await axios.post(
+      "https://ludo-server-teal.vercel.app/fetchusersbyid",
+      roomId
+    );
     // console.log('supabase data',d.data['message']);
-    let supabaseData=d.data['message'];
-    console.log(supabaseData)
+    let supabaseData = d.data["message"];
+    console.log(supabaseData);
     if (supabaseData.length === 2) {
       setRoomID(null);
       alert("Already player exist");
@@ -172,11 +186,14 @@ export default function Rooms() {
     try {
       if (user) {
         console.log("User updated with room");
+        const token = await getToken({ template: "supabase" });
         let data = {
           roomid,
-          userid,
+          token,
         };
-        let assignedUser = await axios.post("/api/assignedUser", data);
+        let assignedUser = await axios.post("/api/assignedUser", data, {
+          withCredentials: true,
+        });
         console.log("assigned user", assignedUser.data);
         // await assignroomid_user(roomid, userid);
       }
@@ -185,7 +202,6 @@ export default function Rooms() {
     }
   };
   const playbuttonclicked = (roomid, userid) => {
-
     if (user) {
       assignuser(roomid, userid);
     }
@@ -217,20 +233,19 @@ export default function Rooms() {
           }}
           style={{ flex: "1", marginRight: "8px" }}
         />
-        <Link href={newRoomName!==''?`/room/${newRoomName}`:'/room'}>
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={addRoom}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring focus:ring-blue-300"
-        >
-          Set
-        </Button>
+        <Link href={newRoomName !== "" ? `/room/${newRoomName}` : "/room"}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={addRoom}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring focus:ring-blue-300"
+          >
+            Set
+          </Button>
         </Link>
       </div>
       <ul className="w-11/12 md:w-1/2">
-{/*         <button onClick={fetchRooms}>test</button> */}
+        {/*         <button onClick={fetchRooms}>test</button> */}
         {Array.isArray(rooms) &&
           rooms.map((room, index) => (
             <li key={index} className="mb-4">

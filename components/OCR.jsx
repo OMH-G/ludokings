@@ -62,23 +62,29 @@ export default function OCR(props) {
         // } else {
         //   setResultMessage("You lost the match. ");
         // }
+
+        const token = await getToken({ template: "supabase" });
         let data = {
           hasCongratulations,
           roomId: props.roomId,
-          userId: props.userId,
+          token: token,
           roomValue: roomValue,
         };
         if (hasCongratulations) {
           setResultMessage(
             "Congratulations! You won the match.Chips will be added to your wallet."
           );
-          let isWinner = await axios.post("/api/gameResult", data);
+          let isWinner = await axios.post("/api/gameResult", data, {
+            withCredentials: true,
+          });
           console.log("isWinner", isWinner.data);
         } else {
           setResultMessage(
             "You lost the match.Chips will be deduced from your wallet. "
           );
-          let isWinner = await axios.post("/api/gameResult", data);
+          let isWinner = await axios.post("/api/gameResult", data, {
+            withCredentials: true,
+          });
           console.log("isLoser", isWinner.data);
         }
         setTimeout(() => {

@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { assignroomid_user } from "@/supabaseClient";
+const jwt = require("jsonwebtoken");
 
 export async function POST(NextRequest) {
   try {
     const reqBody = await NextRequest.json();
-    const { roomid, userid } = reqBody;
+    const { roomid, token } = reqBody;
 
-    const assignedUser = await assignroomid_user(roomid, userid);
+    let decode = jwt.verify(token, process.env.SUPABASE_SECRET_KEY, {
+      algorithms: ["HS256"],
+    });
+
+    let userId = decode["userid"];
+
+    const assignedUser = await assignroomid_user(token, roomid, userId);
 
     return NextResponse.json(assignedUser);
   } catch (error) {

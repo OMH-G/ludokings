@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { deleteroom } from "@/supabaseClient";
+const jwt = require("jsonwebtoken");
 
 export async function POST(NextRequest) {
   try {
     const reqBody = await NextRequest.json();
-    const { userId, roomId } = reqBody;
+    const { token, roomId } = reqBody;
 
-    const response = deleteroom(userId, roomId);
+    let decode = jwt.verify(token, process.env.SUPABASE_SECRET_KEY, {
+      algorithms: ["HS256"],
+    });
+
+    // console.log(decode);
+    let userId = decode["userid"];
+
+    const response = deleteroom(token, userId, roomId);
 
     return NextResponse.json("Room deleted", { status: 200 });
     // return NextResponse.json({ roomArray }, { status: 200 });

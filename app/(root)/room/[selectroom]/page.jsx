@@ -31,6 +31,7 @@ export default function Room({ params }) {
 
   const [Owner, setOwner] = useState("");
   const { getToken } = useAuth();
+
   const fetchroomdata = async () => {
     if (user) {
       try {
@@ -87,11 +88,14 @@ export default function Room({ params }) {
     const deassignuser = async (userid) => {
       try {
         if (user) {
+          const token = await getToken({ template: "supabase" });
           const userId = {
-            id: user.id,
+            token,
           };
           // await deassignroomid_user(userid);
-          const response = await axios.post("/api/goBack", userId);
+          const response = await axios.post("/api/goBack", userId, {
+            withCredentials: true,
+          });
           console.log("User updated with room", response);
         }
       } catch (error) {
