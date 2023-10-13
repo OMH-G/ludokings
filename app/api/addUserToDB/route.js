@@ -15,9 +15,9 @@ export async function POST(NextRequest) {
     // const isUserInSupabase = await checkUserInSupabase(userId);
     // console.log(isUserInSupabase);
 
-    // if (isUserInSupabase) {
-    //   return NextResponse.json("user already exists");
-    // }
+    if (isUserInSupabase) {
+      return NextResponse.json("user already exists");
+    }
     const adduser = await createUserInSupabase(
       body,
       decode["userid"],

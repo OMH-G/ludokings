@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import Image from "next/image";
 import LudoHero from "@/assets/ludo.jpg";
 import Link from "next/link";
-
 export default function Home() {
   const { user } = useUser();
   const { getToken } = useAuth();
@@ -19,7 +18,7 @@ export default function Home() {
             userId: user.id,
             username: user.username,
           };
-          console.log(token);
+          // console.log(token);
           const response = await axios.post("/api/addUserToDB", token, {
             withCredentials: true,
           });

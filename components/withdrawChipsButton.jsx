@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -9,13 +9,20 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Chip from "@mui/material/Chip";
 import { updateChips, getChips } from "@/supabaseClient";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
 import axios from "axios";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 export default function WithdrawChipsButton() {
   const [open, setOpen] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState(0);
   const { user } = useUser();
+  const { getToken } = useAuth();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -29,35 +36,31 @@ export default function WithdrawChipsButton() {
     setSelectedAmount(amount);
   };
 
-  // const withdrawChipsFromWallet = async () => {
-  //   try {
-  //     if (user) {
-  //       const chips = await getChips(user.id);
-
-  //       if (selectedAmount <= chips) {
-  //         let amount = chips - selectedAmount;
-  //         await updateChips(user.id, amount);
-  //         //   console.log("Withdrawal amount: ", selectedAmount);
-  //         alert(`Successfully withdrawn ₹${selectedAmount}.`);
-  //         setOpen(false);
-  //       } else {
-  //         alert("You don't have sufficient chips.");
+  // useEffect(() => {
+  //   supabase
+  //     .channel("custom-new-channel")
+  //     .on(
+  //       "postgres_changes",
+  //       { event: "*", schema: "public", table: "User" },
+  //       (payload) => {
+  //         console.log("user changes");
   //       }
-  //     }
-  //   } catch (error) {
-  //     console.log("Error while withdrawing the chips.");
-  //   }
-  // };
+  //     )
+  //     .subscribe();
+  // });
 
   const withdrawChipsFromWallet = async () => {
     try {
       if (user) {
         // const chips = await getChips(user.id);
+        const token = await getToken({ template: "supabase" });
         const userData = {
-          userId: user.id,
+          token: token,
           amount: selectedAmount,
         };
-        const response = await axios.post("/api/withdrawMoney", userData);
+        const response = await axios.post("/api/withdrawMoney", userData, {
+          withCredentials: true,
+        });
         if (response) {
           console.log(response.data);
         }

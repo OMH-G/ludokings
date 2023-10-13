@@ -1,21 +1,25 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
 import WithdrawChipsButton from "@/components/withdrawChipsButton";
 import DepositChipsButton from "@/components/depositChipsButton";
 import axios from "axios";
 
 export default function Wallet() {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const [chips, setChips] = useState(0);
 
   useEffect(() => {
     console.log(user);
     const getUserChips = async () => {
       if (user) {
+        const token = JSON.stringify(await getToken({ template: "supabase" }));
         try {
           const userId = user.id;
-          const response = await axios.post("/api/getChips", user);
+          const response = await axios.post("/api/getChips", token, {
+            withCredentials: true,
+          });
           console.log(response);
           setChips(response.data);
         } catch (error) {

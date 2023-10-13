@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getChips, updateChips } from "@/supabaseClient";
+const jwt = require("jsonwebtoken");
 
 export async function POST(NextRequest) {
   try {
     const reqBody = await NextRequest.json();
-    const { userId, amount } = reqBody;
+    const { token, amount } = reqBody;
+
+    let decode = jwt.verify(token, process.env.SUPABASE_SECRET_KEY, {
+      algorithms: ["HS256"],
+    });
+
+    let userId = decode["userid"];
 
     if (!userId || !amount) {
       return NextResponse.json(
@@ -13,9 +20,9 @@ export async function POST(NextRequest) {
       );
     }
 
-    const userChips = await getChips(userId);
+    const userChips = await getChips(token, decode["userid"]);
     let final = userChips + amount;
-    const response = await updateChips(userId, final);
+    const response = await updateChips(token, decode["userid"], final);
 
     return NextResponse.json(response);
   } catch (error) {

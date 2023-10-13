@@ -94,9 +94,9 @@ export async function fetchRoomsById(roomid) {
   }
 }
 
-export async function getChips(userId) {
+export async function getChips(auth, userId) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAuth(auth)
       .from("User")
       .select("chips")
       .eq("user_id", userId)
@@ -126,9 +126,9 @@ export async function getUserIdByName(name) {
   }
 }
 
-export async function updateChips(userId, amount) {
+export async function updateChips(auth, userId, amount) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAuth(auth)
       .from("User")
       .update({ chips: amount })
       .eq("user_id", userId)

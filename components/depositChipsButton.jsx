@@ -9,13 +9,14 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Chip from "@mui/material/Chip";
 import { updateChips, getChips } from "@/supabaseClient";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
 import axios from "axios";
 
 export default function DepositChipsButton() {
   const [open, setOpen] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState(0);
   const { user } = useUser();
+  const { getToken } = useAuth();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -33,11 +34,14 @@ export default function DepositChipsButton() {
     try {
       if (user) {
         // const chips = await getChips(user.id);
+        const token = await getToken({ template: "supabase" });
         const userData = {
-          userId: user.id,
+          token: token,
           amount: selectedAmount,
         };
-        const response = await axios.post("/api/addMoney", userData);
+        const response = await axios.post("/api/addMoney", userData, {
+          withCredentials: true,
+        });
         if (response) {
           console.log(response.data);
         }
