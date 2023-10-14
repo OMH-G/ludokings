@@ -19,7 +19,6 @@ export async function POST(NextRequest) {
     //   return NextResponse.json("user already exists");
     // }
     const adduser = await createUserInSupabase(
-      body,
       decode["userid"],
       decode["username"]
     );
