@@ -1,11 +1,10 @@
-// import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import { supabaseAuth } from "./supauth";
 // Initialize the Supabase client with your Supabase URL and API key
-// const supabase = createClient(
-//   process.env.NEXT_PUBLIC_SUPABASE_URL,
-//   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-//   {global:{headers}}
-// );
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+);
 
 // Function to create a user in Supabase
 export async function createUserInSupabase(auth, userId, userName) {
@@ -210,9 +209,6 @@ export async function fetchroomowner(roomid) {
       .from("Room")
       .select("owner_name")
       .eq("id", roomid);
-    if (error) {
-      throw error;
-    }
     // console.log(data[0].owner_name);
     return data[0].owner_name;
   } catch (error) {
@@ -220,19 +216,18 @@ export async function fetchroomowner(roomid) {
     throw error;
   }
 }
-export async function fetchUserbyRoomID(roomid) {
+export async function fetchUserbyRoomID(auth,roomid) {
   try {
-    const { data, error } = await supabase
+    console.log(roomid)
+    const { data, error } = await supabaseAuth(auth)
       .from("User")
       .select("name")
-      .eq("roomid", roomid);
-    if (error) {
-      throw error;
-    }
+      .eq('roomid',roomid)
+    console.log(data)
     return data;
   } catch (error) {
     console.error("Error fetching room in Supabase");
-    throw error;
+    // throw error;
   }
 }
 export async function fetchRoomIdbyUser(userid) {

@@ -164,17 +164,21 @@ export default function Rooms() {
   };
 
   const assignuser = async (roomid, userid) => {
+    const token = await getToken({ template: "supabase" });
     const roomId = {
       id: roomid,
+      token:token
     };
 
     let d = await axios.post(
-      "https://ludo-server-teal.vercel.app/fetchusersbyid",
-      roomId
+      "/api/fetchRoomById",
+      roomId,{withCredentials:true}
     );
+    console.log('Assigned user',d.data)
     // console.log('supabase data',d.data['message']);
-    let supabaseData = d.data["message"];
-    console.log(supabaseData);
+    let supabaseData = d.data;
+    // console.log(supabaseData);
+    console.log(supabaseData)
     if (supabaseData.length === 2) {
       setRoomID(null);
       alert("Already player exist");
@@ -185,7 +189,6 @@ export default function Rooms() {
     }
     try {
       if (user) {
-        console.log("User updated with room");
         const token = await getToken({ template: "supabase" });
         let data = {
           roomid,
