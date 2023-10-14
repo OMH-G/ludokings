@@ -31,9 +31,6 @@ export default function Room({ params }) {
 
   const [Owner, setOwner] = useState("");
   const { getToken } = useAuth();
-  let  token=  async()=>{
-      return 
-  }
   const fetchroomdata = async () => {
     if (user) {
       let token=await getToken({template:'supabase'})
