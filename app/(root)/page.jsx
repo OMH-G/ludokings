@@ -23,7 +23,7 @@ export default function Home() {
             withCredentials: true,
           });
 
-          // console.log(response);
+          console.log(response.data);
         } catch (error) {
           console.log("User does not found");
         }

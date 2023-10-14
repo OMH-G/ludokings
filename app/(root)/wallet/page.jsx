@@ -21,7 +21,11 @@ export default function Wallet() {
             withCredentials: true,
           });
           console.log(response);
-          setChips(response.data);
+          // setChips(0);
+          // if(chips!=response.data){
+          //   setChips(response.data);
+          // }
+          // setChips(response.data);
         } catch (error) {
           console.error("Error fetching user's chips: ", error);
         }

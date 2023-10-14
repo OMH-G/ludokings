@@ -20,7 +20,7 @@ export async function createUserInSupabase(auth, userId, userName) {
       .eq("user_id", userId);
 
     if (check.data.length !== 0) {
-      throw error;
+      return "user already exist"
     }
 
     const { data, error } = await supabaseAuth(auth)
