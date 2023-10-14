@@ -66,12 +66,13 @@ export default function Room({ params }) {
     }
   };
 
-  useEffect(() =>  {
-    console.log(roomID);
-    fetchroomdata();
-  }, [roomID, user, database.length]);
+  // useEffect(() =>  {
+  //   console.log(roomID);
+  //   fetchroomdata();
+  // }, [roomID, user, database.length]);
 
   useEffect(() => {
+    fetchroomdata();
     async function supToken(){
       let a=await getToken({template:'supabase'})
       supabase.realtime.setAuth(a)

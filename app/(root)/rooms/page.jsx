@@ -103,10 +103,11 @@ export default function Rooms() {
             let roomdata = await axios.post("/api/createRoom", data, {
               withCredentials: true,
             });
-            console.log("asdkllaskd", roomdata.data["message"]);
-            setRoomID(roomdata.data["message"]);
-            assignuser(roomdata.data["message"], user.id);
-            // setlinkvalue(newRoomName)
+            console.log("asksldfkl",roomdata)
+            if(roomdata.data.length!==0){
+              setRoomID(roomdata.data[0]['id']);
+              assignuser(roomdata.data[0]['id'], user.id);
+            }
           }
 
           // console.log(roomdata);
@@ -182,7 +183,7 @@ export default function Rooms() {
       alert("Already player exist");
       console.log("Not forward");
       return;
-    } else {
+    } else if(supabaseData!==null){
       setRoomID(roomid);
     }
     try {
