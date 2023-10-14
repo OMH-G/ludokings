@@ -51,7 +51,7 @@ export async function createRoomInSupabase(
       .select("owned_by")
       .eq("owned_by", userId);
     if (check.data.length !== 0) {
-      return "room created";
+      return [];
     }
     const data = await supabase
       .from("Room")
@@ -63,8 +63,8 @@ export async function createRoomInSupabase(
           owner_name: userName,
         },
       ])
-      .select();
-    return "Room created";
+      .select('id');
+    return data.data;
   } catch (error) {
     throw error;
   }
