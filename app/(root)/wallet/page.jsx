@@ -25,7 +25,7 @@ export default function Wallet() {
           // if(chips!=response.data){
           //   setChips(response.data);
           // }
-          // setChips(response.data);
+          setChips(response.data);
         } catch (error) {
           console.error("Error fetching user's chips: ", error);
         }

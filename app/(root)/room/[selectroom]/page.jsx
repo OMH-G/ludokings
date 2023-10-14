@@ -31,32 +31,37 @@ export default function Room({ params }) {
 
   const [Owner, setOwner] = useState("");
   const { getToken } = useAuth();
-
+  let  token=  async()=>{
+      return 
+  }
   const fetchroomdata = async () => {
     if (user) {
+      let token=await getToken({template:'supabase'})
       try {
         if (roomID) {
           const roomId = {
-            id: roomID,
+            'id': roomID,
+            'token':token
           };
           let store_user = await axios.post(
-            "https://ludo-server-teal.vercel.app/fetchusersbyid",
-            roomId
+            "/api/fetchRoomById",
+            roomId,
+            {withCredentials:true}
           );
-          let usersInRoom = store_user.data["message"];
+          let usersInRoom = store_user.data;
           let store_owner = await axios.post(
-            "https://ludo-server-teal.vercel.app/fetchownerbyid",
-            roomId
-          );
-          let Ownerd = store_owner.data["message"];
+            "/api/fetchRoomOwnerById",
+            roomId,{withCredentials:true}
+            );
+            let Ownerd = store_owner.data;
+            console.log('Store user',store_user.data,Ownerd)
           setDatabase(usersInRoom);
-          console.log("Owner in room", store_owner.data, usersInRoom.data);
-          let db = usersInRoom;
-          // if (db.find((obj) => obj.name === Ownerd)) {
-          //   getRoomCode();
-          // } else {
-          //   setRoomCode(null);
-          // }
+          // console.log("Owner in room", store_owner.data, usersInRoom.data);
+          if (usersInRoom.find((obj) => obj.name === Ownerd)) {
+            getRoomCode();
+          } else {
+            setRoomCode(null);
+          }
         }
       } catch (error) {
         console.log("fetchroom error");
@@ -64,24 +69,29 @@ export default function Room({ params }) {
     }
   };
 
-  useEffect(() => {
+  useEffect(() =>  {
     console.log(roomID);
     fetchroomdata();
   }, [roomID, user, database.length]);
-  let auth = getToken({ template: "supabase" });
+
   useEffect(() => {
-    const User = supabase
-      .channel("custom-update-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "User" },
-        (payload) => {
-          console.log("user changes");
-          fetchroomdata();
-        }
-      )
-      .subscribe();
-  }, [roomID, user, database.length]);
+    async function supToken(){
+      let a=await getToken({template:'supabase'})
+      supabase.realtime.setAuth(a)
+      const User = supabase
+        .channel("custom-update-channel")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "User" },
+          (payload) => {
+            console.log("user changes");
+            fetchroomdata();
+          }
+        )
+        .subscribe();
+    }
+    supToken();
+  }, [roomID]);
 
   function goBack(userid) {
     router.back();
