@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRoomInSupabase, getChips } from "@/supabaseClient";
+const jwt = require("jsonwebtoken");
 
 export async function POST(NextRequest) {
   try {
     const reqBody = await NextRequest.json();
-    const { userId, newRoomName, newValue, userName } = reqBody;
+    const { token, newRoomName, newValue } = reqBody;
+
+    let decode = jwt.verify(token, process.env.SUPABASE_SECRET_KEY, {
+      algorithms: ["HS256"],
+    });
+    let { userid, username } = decode;
+    // let userId = decode["userid"];
+    // let username = decode["username"];
 
     // Use a regex pattern to validate that newValue is a positive integer
     const positiveIntegerPattern = /^[1-9]\d*$/;
@@ -12,17 +20,22 @@ export async function POST(NextRequest) {
       return NextResponse.json("New value must be a positive integer.");
     }
 
-    const userChips = await getChips(userId);
+    const userChips = await getChips(token, userid);
 
     // if (userChips < newValue) {
     //   return NextResponse.json("You don't have sufficient balance.");
     // }
+    console.log("up", userid, username);
+
     const response = await createRoomInSupabase(
-      userId,
+      token,
+      userid,
       newRoomName,
       newValue,
-      userName
+      username
     );
+
+    console.log("down", userid, username);
     return NextResponse.json("Room created", { status: 200 });
   } catch (error) {
     return NextResponse.json(

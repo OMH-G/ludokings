@@ -30,12 +30,12 @@ export default function Rooms() {
   useEffect(() => {
     const getUserChips = async () => {
       if (user) {
+        const token = JSON.stringify(await getToken({ template: "supabase" }));
         try {
-          const userId = user.id;
-          const response = await axios.post(
-            "https://ludo-server-teal.vercel.app/getChip",
-            { userid: userId }
-          );
+          // const userId = user.id;
+          const response = await axios.post("/api/getChips", token, {
+            withCredentials: true,
+          });
           console.log(response);
           setChips(response.message);
         } catch (error) {
@@ -88,22 +88,21 @@ export default function Rooms() {
   const addRoom = () => {
     const createRoom = async () => {
       if (user) {
+        const token = await getToken({ template: "supabase" });
         try {
           const data = {
-            userId: user.id,
+            token,
             newRoomName,
             newValue,
-            userName: user.username,
           };
 
           if (chips && newValue > chips) {
             alert("You do not have enough chips!");
           } else {
             console.log("setting user", rooms);
-            let roomdata = await axios.post(
-              "https://ludo-server-teal.vercel.app/createRoom",
-              data
-            );
+            let roomdata = await axios.post("/api/createRoom", data, {
+              withCredentials: true,
+            });
             console.log("asdkllaskd", roomdata.data["message"]);
             setRoomID(roomdata.data["message"]);
             assignuser(roomdata.data["message"], user.id);
@@ -167,18 +166,17 @@ export default function Rooms() {
     const token = await getToken({ template: "supabase" });
     const roomId = {
       id: roomid,
-      token:token
+      token: token,
     };
 
-    let d = await axios.post(
-      "/api/fetchRoomById",
-      roomId,{withCredentials:true}
-    );
-    console.log('Assigned user',d.data)
+    let d = await axios.post("/api/fetchRoomById", roomId, {
+      withCredentials: true,
+    });
+    console.log("Assigned user", d.data);
     // console.log('supabase data',d.data['message']);
     let supabaseData = d.data;
     // console.log(supabaseData);
-    console.log(supabaseData)
+    console.log(supabaseData);
     if (supabaseData.length === 2) {
       setRoomID(null);
       alert("Already player exist");
