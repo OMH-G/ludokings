@@ -57,11 +57,11 @@ export default function Room({ params }) {
             console.log('Store user',store_user.data,Ownerd)
           setDatabase(usersInRoom);
           // console.log("Owner in room", store_owner.data, usersInRoom.data);
-          if (usersInRoom.find((obj) => obj.name === Ownerd)) {
-            getRoomCode();
-          } else {
-            setRoomCode(null);
-          }
+          // if (usersInRoom.find((obj) => obj.name === Ownerd)) {
+          //   getRoomCode();
+          // } else {
+          //   setRoomCode(null);
+          // }
         }
       } catch (error) {
         console.log("fetchroom error");
