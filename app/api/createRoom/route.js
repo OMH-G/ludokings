@@ -20,7 +20,7 @@ export async function POST(NextRequest) {
       return NextResponse.json("New value must be a positive integer.");
     }
 
-    const userChips = await getChips(token, userid);
+    const userChips = await getChips(userid);
 
     // if (userChips < newValue) {
     //   return NextResponse.json("You don't have sufficient balance.");
@@ -28,7 +28,6 @@ export async function POST(NextRequest) {
     console.log("up", userid, username);
 
     const response = await createRoomInSupabase(
-      token,
       userid,
       newRoomName,
       newValue,

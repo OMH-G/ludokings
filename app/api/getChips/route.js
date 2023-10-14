@@ -19,7 +19,7 @@ export async function POST(NextRequest) {
       return NextResponse.json({ error: "Missing userId" }, { status: 400 });
     }
 
-    const userChips = await getChips(body, decode["userid"]);
+    const userChips = await getChips(decode["userid"]);
     // const userChips = await getChips(id);
 
     return NextResponse.json(userChips);

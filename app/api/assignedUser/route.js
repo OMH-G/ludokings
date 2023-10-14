@@ -13,7 +13,7 @@ export async function POST(NextRequest) {
 
     let userId = decode["userid"];
 
-    const assignedUser = await assignroomid_user(token, roomid, userId);
+    const assignedUser = await assignroomid_user( roomid, userId);
 
     return NextResponse.json(assignedUser);
   } catch (error) {

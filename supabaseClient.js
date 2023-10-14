@@ -3,17 +3,24 @@ import { supabaseAuth } from "./supauth";
 // Initialize the Supabase client with your Supabase URL and API key
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,{
+    global:{
+      headers:{
+        Authorization:`Bearer ${process.env.SUP_SECRET_KEY}`
+      }
+    }
+  }
+  
 );
 
 // Function to create a user in Supabase
-export async function createUserInSupabase(auth, userId, userName) {
+export async function createUserInSupabase(userId, userName) {
   try {
     // Define the user data to be inserted or updated in the "User" table
 
     // Insert or update the user data in the "User" table using upsert
 
-    let check = await supabaseAuth(auth)
+    let check = await supabase
       .from("User")
       .select("user_id")
       .eq("user_id", userId);
@@ -22,7 +29,7 @@ export async function createUserInSupabase(auth, userId, userName) {
       return "user already exist";
     }
 
-    const { data, error } = await supabaseAuth(auth)
+    const { data, error } = await supabase
       .from("User")
       .insert([{ user_id: userId, chips: 100, name: userName }])
       .select();
@@ -33,14 +40,13 @@ export async function createUserInSupabase(auth, userId, userName) {
   }
 }
 export async function createRoomInSupabase(
-  auth,
   userId,
   roomname,
   value,
   userName
 ) {
   try {
-    let check = await supabaseAuth(auth)
+    let check = await supabase
       .from("Room")
       .select("owned_by")
       .eq("owned_by", userId);
@@ -99,9 +105,10 @@ export async function fetchRoomsById(roomid) {
   }
 }
 
-export async function getChips(auth, userId) {
+export async function getChips(userId) {
+  
   try {
-    const { data, error } = await supabaseAuth(auth)
+    const { data, error } = await supabase
       .from("User")
       .select("chips")
       .eq("user_id", userId)
@@ -131,9 +138,9 @@ export async function getUserIdByName(name) {
   }
 }
 
-export async function updateChips(auth, userId, amount) {
+export async function updateChips(userId, amount) {
   try {
-    const { data, error } = await supabaseAuth(auth)
+    const { data, error } = await supabase
       .from("User")
       .update({ chips: amount })
       .eq("user_id", userId)
@@ -146,9 +153,9 @@ export async function updateChips(auth, userId, amount) {
   }
 }
 
-export async function assignroomid_user(auth, roomid, userid) {
+export async function assignroomid_user(roomid, userid) {
   try {
-    const { data, error } = await supabaseAuth(auth)
+    const { data, error } = await supabase
       .from("User")
       .update({ roomid: roomid })
       .eq("user_id", userid)
@@ -160,9 +167,9 @@ export async function assignroomid_user(auth, roomid, userid) {
     throw error;
   }
 }
-export async function deassignroomid_user(auth, userid) {
+export async function deassignroomid_user(userid) {
   try {
-    const { data, error } = await supabaseAuth(auth)
+    const { data, error } = await supabase
       .from("User")
       .update({ roomid: null })
       .eq("user_id", userid)
@@ -177,9 +184,9 @@ export async function deassignroomid_user(auth, userid) {
     throw error;
   }
 }
-export async function deleteroom(auth, userid, roomid) {
+export async function deleteroom( userid, roomid) {
   try {
-    const { data, error } = await supabaseAuth(auth)
+    const { data, error } = await supabase
       .from("Room")
       .delete()
       .eq("owned_by", userid)
@@ -222,10 +229,10 @@ export async function fetchroomowner(roomid) {
     throw error;
   }
 }
-export async function fetchUserbyRoomID(auth, roomid) {
+export async function fetchUserbyRoomID(roomid) {
   try {
     console.log(roomid);
-    const { data, error } = await supabaseAuth(auth)
+    const { data, error } = await supabase
       .from("User")
       .select("name")
       .eq("roomid", roomid);

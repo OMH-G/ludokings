@@ -4,7 +4,7 @@ export function supabaseAuth(auth) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    { global: { headers: { Authorization: `Bearer ${auth}` } } }
+    // { global: { headers: { Authorization: `Bearer ${auth}` } } }
   );
   return supabase;
 }

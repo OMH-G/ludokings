@@ -14,7 +14,7 @@ export async function POST(NextRequest) {
     // console.log(decode);
     let userId = decode["userid"];
 
-    const response = deleteroom(token, userId, roomId);
+    const response = deleteroom( userId, roomId);
 
     return NextResponse.json("Room deleted", { status: 200 });
     // return NextResponse.json({ roomArray }, { status: 200 });

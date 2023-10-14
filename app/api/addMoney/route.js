@@ -20,9 +20,9 @@ export async function POST(NextRequest) {
       );
     }
 
-    const userChips = await getChips(token, decode["userid"]);
+    const userChips = await getChips(decode["userid"]);
     let final = userChips + amount;
-    const response = await updateChips(token, decode["userid"], final);
+    const response = await updateChips(decode["userid"], final);
 
     return NextResponse.json(response);
   } catch (error) {

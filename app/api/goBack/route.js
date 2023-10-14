@@ -13,7 +13,7 @@ export async function POST(NextRequest) {
 
     let userId = decode["userid"];
 
-    const goback = await deassignroomid_user(token, userId);
+    const goback = await deassignroomid_user( userId);
 
     return NextResponse.json(goback);
   } catch (error) {
