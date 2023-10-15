@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useContext } from "react";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { deassignroomid_user } from "../../../../supabaseClient";
@@ -26,32 +26,30 @@ export default function Room({ params }) {
   // Adding roomid to user in supabase
 
   const [database, setDatabase] = useState([]);
-
   const [roomCode, setRoomCode] = useState(null);
-
   const [Owner, setOwner] = useState("");
   const { getToken } = useAuth();
+
   const fetchroomdata = async () => {
     if (user) {
-      let token=await getToken({template:'supabase'})
+      let token = await getToken({ template: "supabase" });
       try {
         if (roomID) {
           const roomId = {
-            'id': roomID,
-            'token':token
+            id: roomID,
+            token: token,
           };
-          let store_user = await axios.post(
-            "/api/fetchRoomById",
-            roomId,
-            {withCredentials:true}
-          );
+          let store_user = await axios.post("/api/fetchRoomById", roomId, {
+            withCredentials: true,
+          });
           let usersInRoom = store_user.data;
           let store_owner = await axios.post(
             "/api/fetchRoomOwnerById",
-            roomId,{withCredentials:true}
-            );
-            let Ownerd = store_owner.data;
-            console.log('Store user',store_user.data,Ownerd)
+            roomId,
+            { withCredentials: true }
+          );
+          let Ownerd = store_owner.data;
+          console.log("Store user", store_user.data, Ownerd);
           setDatabase(usersInRoom);
           // console.log("Owner in room", store_owner.data, usersInRoom.data);
           // if (usersInRoom.find((obj) => obj.name === Ownerd)) {
@@ -73,9 +71,9 @@ export default function Room({ params }) {
 
   useEffect(() => {
     fetchroomdata();
-    async function supToken(){
-      let a=await getToken({template:'supabase'})
-      supabase.realtime.setAuth(a)
+    async function supToken() {
+      let a = await getToken({ template: "supabase" });
+      supabase.realtime.setAuth(a);
       const User = supabase
         .channel("custom-update-channel")
         .on(
@@ -124,13 +122,16 @@ export default function Room({ params }) {
       setRoomCode(response.data.code);
       console.log("Success!", response.data.code);
 
-      const data = { id: roomID };
-      const roomValue = await axios.post(
-        "https://ludo-server-teal.vercel.app/fetchroombyid",
-        data
-      );
-      console.log("roomValue:", roomValue);
-      const roomValueForStakes = roomValue.data["message"];
+      const token = await getToken({ template: "supabase" });
+      const data = { id: roomID, token: token };
+
+      const roomValue = await axios.post("/api/fetchRoomValueById", data, {
+        withCredentials: true,
+      });
+
+      // const roomValue = await axios.post("/api/fetchRoomValueById", data);
+      console.log("roomValue:", roomValue.data);
+      const roomValueForStakes = roomValue.data;
 
       if (database.length == 2) {
         const userData = {
