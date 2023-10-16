@@ -112,10 +112,34 @@ export async function getUserIdByName(name) {
       .from("User")
       .select("user_id")
       .eq("name", name)
-      .select();
     // console.log(data);
 
     return data[0];
+  } catch (error) {
+    console.error("Error getting user id by name in Supabase:");
+    throw error;
+  }
+}
+
+export async function RoomCode(id,RoomCode){
+  try {
+    console.log(id)
+    const check = await supabase
+      .from("Room")
+      .select("*")
+      .eq("id", id)
+    console.log(check)
+    if(check.data[0].roomcode!==null){
+      return null
+    }
+    const data = await supabase
+      .from("Room")
+      .update([{ roomcode:RoomCode }])
+      .eq("id", id)
+      .select('roomcode')
+    console.log('Room code is ',data);
+
+    return data.data[0].roomcode;
   } catch (error) {
     console.error("Error getting user id by name in Supabase:");
     throw error;

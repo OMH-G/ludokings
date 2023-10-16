@@ -53,6 +53,7 @@ export default function Room({ params }) {
             let Ownerd = store_owner.data;
             console.log('Store user',store_user.data,Ownerd)
           setDatabase(usersInRoom);
+          setOwner(Ownerd)
           // console.log("Owner in room", store_owner.data, usersInRoom.data);
           // if (usersInRoom.find((obj) => obj.name === Ownerd)) {
           //   getRoomCode();
@@ -118,9 +119,13 @@ export default function Room({ params }) {
   }
 
   const getRoomCode = async () => {
+    let token=JSON.stringify(await getToken({template:'supabase'}))
+
+    // if(Owner===user?.username){
+      if(Owner===user?.username){
     console.log("getting room code");
     try {
-      const response = await axios.get("/api/roomCode");
+      const response = await axios.post("/api/roomCode",token);
       setRoomCode(response.data.code);
       console.log("Success!", response.data.code);
 
@@ -142,10 +147,10 @@ export default function Room({ params }) {
         };
         const addStakes = await axios.post("/api/addStakes", userData);
         console.log("Stakes Added", addStakes);
-      } else {
+      }
+       else {
         alert("not enough players");
       }
-
       // if (database) {
       //   let name = database[0].name;
       //   const getUserId = await getUserIdByName(name);
@@ -154,6 +159,7 @@ export default function Room({ params }) {
     } catch (error) {
       console.log("failed!!!!", error.message);
     }
+  }
   };
 
   const handleCopy = (copyReferelId) => {
