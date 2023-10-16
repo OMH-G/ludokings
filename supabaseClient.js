@@ -13,13 +13,8 @@ const supabase = createClient(
   }
 );
 
-// Function to create a user in Supabase
 export async function createUserInSupabase(userId, userName) {
   try {
-    // Define the user data to be inserted or updated in the "User" table
-
-    // Insert or update the user data in the "User" table using upsert
-
     let check = await supabase
       .from("User")
       .select("user_id")
@@ -48,6 +43,19 @@ export async function createRoomInSupabase(userId, roomname, value, userName) {
     if (check.data.length !== 0) {
       return [];
     }
+
+    const roomHistory = await supabase
+      .from("RoomHistory")
+      .insert([
+        {
+          owned_by: userId,
+          name: roomname,
+          value: value,
+          owner_name: userName,
+        },
+      ])
+      .select();
+
     const data = await supabase
       .from("Room")
       .insert([
@@ -264,5 +272,46 @@ export async function fetchRoomIdbyUser(userid) {
   } catch (error) {
     console.error("Error fetching room in Supabase");
     throw error;
+  }
+}
+
+export async function gamesPlayed(auth, userid) {
+  try {
+    const { data, error } = await supabaseAuth(auth)
+      .from("RoomHistory")
+      .select()
+      .eq("owned_by", userid);
+    // .count();
+    // The count is returned as data[0].count
+    return data.length;
+  } catch (error) {
+    console.error("Error fetching games played in Supabase");
+    throw error;
+  }
+}
+
+export async function winChips(userid) {
+  try {
+    let data = await supabase
+      .from("User")
+      .select("win_amount")
+      .eq("user_id", userid);
+
+    return data.data[0];
+  } catch (error) {
+    console.error("Error fetching winChips in Supabase");
+  }
+}
+
+export async function loseChips(userid) {
+  try {
+    let data = await supabase
+      .from("User")
+      .select("lose_amount")
+      .eq("user_id", userid);
+
+    return data.data[0];
+  } catch (error) {
+    console.error("Error fetching loseChips in Supabase");
   }
 }

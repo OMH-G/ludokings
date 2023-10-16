@@ -1,9 +1,58 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
+import React, { useState, useEffect } from "react";
+import { useUser, useAuth } from "@clerk/nextjs";
 import Image from "next/image";
+import axios from "axios";
+import { gamesPlayed, winChips } from "@/supabaseClient";
 
 export default function UserProfile({ params }) {
   const { isLoaded, isSignedIn, user } = useUser();
+  const [gamesPlayedCount, setGamesPlayedCount] = useState("");
+  const [winAmount, setWinAmount] = useState("");
+  const [loseAmount, setLoseAmount] = useState("");
+  const { getToken } = useAuth();
+
+  const gamesPlayed = async () => {
+    if (user) {
+      let token = JSON.stringify(await getToken({ template: "supabase" }));
+      try {
+        const data = { token };
+        const gamesPlayedCount = await axios.post("/api/gamesPlayed", data, {
+          withCredentials: true,
+        });
+        console.log("gamesPlayedCount:", gamesPlayedCount.data);
+        setGamesPlayedCount(gamesPlayedCount.data);
+      } catch (error) {
+        console.log("Error fetching games played.");
+      }
+    }
+  };
+
+  const gameStats = async () => {
+    if (user) {
+      let token = await getToken({ template: "supabase" });
+      try {
+        const data = { token };
+        const gameStat = await axios.post("/api/gameStats", data, {
+          withCredentials: true,
+        });
+        // const gameStat = await winChips(user.id);
+
+        console.log("Chips Won:", gameStat.data.winAmount);
+        console.log("Penalty:", gameStat.data.loseAmount);
+
+        setWinAmount(gameStat.data.winAmount);
+        setLoseAmount(gameStat.data.loseAmount);
+      } catch (error) {
+        console.log("Error fetching gameStat played.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    gameStats();
+    gamesPlayed();
+  }, []);
 
   return (
     <div className="flex justify-center items-center flex-col">
@@ -40,6 +89,9 @@ export default function UserProfile({ params }) {
           ) : null}
         </div>
       </div>
+
+      {/* <button onClick={gamesPlayed}>gamesPlayed</button>
+      <button onClick={gameStats}>gameStats</button> */}
       <div className="border border-black w-11/12 md:w-1/2 rounded-lg bg-white mt-4">
         <h4 className="flex justify-center items-center py-4 text-lg bg-gray-100">
           Metrics
@@ -51,7 +103,7 @@ export default function UserProfile({ params }) {
               Games Played
             </h4>
             <p className="mx-2 my-1 font-bold md:text-lg md:my-4 flex justify-center items-center">
-              0.00
+              {gamesPlayedCount ? gamesPlayedCount : "0"}
             </p>
           </div>
 
@@ -60,7 +112,7 @@ export default function UserProfile({ params }) {
               Chips Won
             </h4>
             <p className="mx-2 my-1 font-bold md:text-lg md:my-4 flex justify-center items-center">
-              0.00
+              {winAmount ? winAmount : "0.00"}
             </p>
           </div>
 
@@ -78,7 +130,7 @@ export default function UserProfile({ params }) {
               Penalty
             </h4>
             <p className="mx-2 my-1 font-bold md:text-lg md:my-4 flex justify-center items-center">
-              0.00
+              {loseAmount ? loseAmount : "0.00"}
             </p>
           </div>
         </div>
