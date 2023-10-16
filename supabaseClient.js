@@ -3,23 +3,18 @@ import { supabaseAuth } from "./supauth";
 // Initialize the Supabase client with your Supabase URL and API key
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,{
-    global:{
-      headers:{
-        Authorization:`Bearer ${process.env.SUP_SECRET_KEY}`
-      }
-    }
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  {
+    global: {
+      headers: {
+        Authorization: `Bearer ${process.env.SUP_SECRET_KEY}`,
+      },
+    },
   }
-  
 );
 
-// Function to create a user in Supabase
 export async function createUserInSupabase(userId, userName) {
   try {
-    // Define the user data to be inserted or updated in the "User" table
-
-    // Insert or update the user data in the "User" table using upsert
-
     let check = await supabase
       .from("User")
       .select("user_id")
@@ -39,12 +34,7 @@ export async function createUserInSupabase(userId, userName) {
     throw error;
   }
 }
-export async function createRoomInSupabase(
-  userId,
-  roomname,
-  value,
-  userName
-) {
+export async function createRoomInSupabase(userId, roomname, value, userName) {
   try {
     let check = await supabase
       .from("Room")
@@ -53,6 +43,19 @@ export async function createRoomInSupabase(
     if (check.data.length !== 0) {
       return [];
     }
+
+    const roomHistory = await supabase
+      .from("RoomHistory")
+      .insert([
+        {
+          owned_by: userId,
+          name: roomname,
+          value: value,
+          owner_name: userName,
+        },
+      ])
+      .select();
+
     const data = await supabase
       .from("Room")
       .insert([
@@ -63,7 +66,7 @@ export async function createRoomInSupabase(
           owner_name: userName,
         },
       ])
-      .select('id');
+      .select("id");
     return data.data;
   } catch (error) {
     throw error;
@@ -89,8 +92,19 @@ export async function fetchRoomsById(roomid) {
   }
 }
 
+export async function fetchRoomValueById(auth, roomid) {
+  try {
+    let data = await supabaseAuth(auth)
+      .from("Room")
+      .select("*")
+      .eq("id", roomid);
+    return data;
+  } catch (error) {
+    console.error("fetching room from Supabase:");
+  }
+}
+
 export async function getChips(userId) {
-  
   try {
     const { data, error } = await supabase
       .from("User")
@@ -192,7 +206,7 @@ export async function deassignroomid_user(userid) {
     throw error;
   }
 }
-export async function deleteroom( userid, roomid) {
+export async function deleteroom(userid, roomid) {
   try {
     const { data, error } = await supabase
       .from("Room")
@@ -219,6 +233,23 @@ export async function fetchroomidbyuserid(userid) {
       throw error;
     }
     return data[0].roomid;
+  } catch (error) {
+    console.error("Error fetching room in Supabase");
+    throw error;
+  }
+}
+
+export async function fetchroomvaluebyuserid(userid) {
+  try {
+    const { data, error } = await supabase
+      .from("Room")
+      .select("value")
+      .eq("owned_by", userid);
+
+    if (error) {
+      throw error;
+    }
+    return data[0];
   } catch (error) {
     console.error("Error fetching room in Supabase");
     throw error;
@@ -265,5 +296,46 @@ export async function fetchRoomIdbyUser(userid) {
   } catch (error) {
     console.error("Error fetching room in Supabase");
     throw error;
+  }
+}
+
+export async function gamesPlayed(auth, userid) {
+  try {
+    const { data, error } = await supabaseAuth(auth)
+      .from("RoomHistory")
+      .select()
+      .eq("owned_by", userid);
+    // .count();
+    // The count is returned as data[0].count
+    return data.length;
+  } catch (error) {
+    console.error("Error fetching games played in Supabase");
+    throw error;
+  }
+}
+
+export async function winChips(userid) {
+  try {
+    let data = await supabase
+      .from("User")
+      .select("win_amount")
+      .eq("user_id", userid);
+
+    return data.data[0];
+  } catch (error) {
+    console.error("Error fetching winChips in Supabase");
+  }
+}
+
+export async function loseChips(userid) {
+  try {
+    let data = await supabase
+      .from("User")
+      .select("lose_amount")
+      .eq("user_id", userid);
+
+    return data.data[0];
+  } catch (error) {
+    console.error("Error fetching loseChips in Supabase");
   }
 }

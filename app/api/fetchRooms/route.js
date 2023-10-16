@@ -7,8 +7,8 @@ export async function GET() {
 
     const roomArray = await fetchRooms();
     //  res.setHeader("Cache-Control", "no-store, max-age=0");
-    // console.log(roomArray);
-    return NextResponse.json({ roomArray }, { status: 200 });
+    // console.log(roomArray.data);
+    return NextResponse.json({ roomArray: roomArray.data }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "An error occurred at fetchRooms server: " + error.message },

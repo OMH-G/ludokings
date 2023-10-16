@@ -4,13 +4,13 @@ import { fetchUserbyRoomID } from "@/supabaseClient";
 export async function POST(NextRequest) {
   try {
     const reqBody = await NextRequest.json();
-    const { id ,token} = reqBody;
+    const { id } = reqBody;
 
     // let users;
     // if (id) {
-      let users = await fetchUserbyRoomID(id);
-      console.log("players in room", users);
-      return NextResponse.json(users);
+    let users = await fetchUserbyRoomID(id);
+    console.log("players in room", users);
+    return NextResponse.json(users);
     // }
   } catch (error) {
     return NextResponse.json(

@@ -3,6 +3,7 @@ import Tesseract from "tesseract.js";
 import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useUser, useAuth } from "@clerk/nextjs";
 
 export default function OCR(props) {
   const [image, setImage] = useState(null);
@@ -12,17 +13,22 @@ export default function OCR(props) {
   const [roomValue, setRoomValue] = useState(0);
   // const { roomCode } = props; // Destructure the roomCode from props
   const router = useRouter();
+  const { getToken } = useAuth();
 
   useEffect(() => {
     const fetchCurrentRoomData = async () => {
-      const data = { id: props.roomId };
+      const token = await getToken({ template: "supabase" });
+      const data = { id: props.roomId, token: token };
       console.log("OCR room data", data);
-      const roomData = await axios.post(
-        "https://ludo-server-teal.vercel.app/fetchroombyid",
-        data
-      );
-      console.log(roomData);
-      setRoomValue(roomData.data["message"]);
+      // const roomData = await axios.post(
+      //   "https://ludo-server-teal.vercel.app/fetchroombyid",
+      //   data
+      // );
+      const roomData = await axios.post("/api/fetchRoomValueById", data, {
+        withCredentials: true,
+      });
+      console.log("setRoomValue", roomData.data);
+      setRoomValue(roomData.data);
     };
 
     fetchCurrentRoomData();
