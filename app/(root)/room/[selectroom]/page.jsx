@@ -117,27 +117,28 @@ export default function Room({ params }) {
   }
 
   const getRoomCode = async () => {
-    let token=JSON.stringify(await getToken({template:'supabase'}))
-
+    
     // if(Owner===user?.username){
       if(Owner===user?.username){
-    console.log("getting room code");
-    try {
-      const response = await axios.post("/api/roomCode",token);
-      setRoomCode(response.data.code);
-      console.log("Success!", response.data.code);
-
-      const token = await getToken({ template: "supabase" });
-      const data = { id: roomID, token: token };
-
-      const roomValue = await axios.post("/api/fetchRoomValueById", data, {
-        withCredentials: true,
-      });
+        let token=JSON.stringify(await getToken({template:'supabase'}))
+        // const token = await getToken({ template: "supabase" });
+        console.log("getting room code");
+        try {
+          const response = await axios.post("/api/roomCode",token);
+          setRoomCode(response.data.code);
+          console.log("Success!", response.data.code);
+          
+          const data = { id: roomID, token: JSON.parse(token) };
+          
+          const roomValue = await axios.post("/api/fetchRoomValueById", data, {
+            withCredentials: true,
+          });
+          console.log('Response',roomValue)
 
       // const roomValue = await axios.post("/api/fetchRoomValueById", data);
       console.log("roomValue:", roomValue.data);
       const roomValueForStakes = roomValue.data;
-
+      
       if (database.length == 2) {
         const userData = {
           // userId: user.id,
@@ -146,6 +147,7 @@ export default function Room({ params }) {
           name1: database[0]?.name,
           name2: database[1]?.name,
         };
+        console.log(userData)
         const addStakes = await axios.post("/api/addStakes", userData);
         console.log("Stakes Added", addStakes);
       }

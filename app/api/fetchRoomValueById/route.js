@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 export async function POST(NextRequest) {
   try {
     const reqBody = await NextRequest.json();
-    const { id, token } = reqBody;
-
+    const { token } = reqBody;
+    // const new_token=token;
     let decode = jwt.verify(token, process.env.SUPABASE_SECRET_KEY, {
       algorithms: ["HS256"],
     });
@@ -14,11 +14,13 @@ export async function POST(NextRequest) {
     let userId = decode["userid"];
 
     const roomId = await fetchroomidbyuserid(userId);
-    const roomValue = await fetchRoomValueById(token, roomId);
-
+    // console.log(roomId)
+    console.log(decode)
+    const roomValue= await fetchRoomValueById(roomId);
+    
     // console.log(
     //   "room............................................",
-    //   roomValue.data[0].value
+      // roomValue.data[0].value
     // );
 
     return NextResponse.json(roomValue.data[0].value);

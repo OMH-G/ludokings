@@ -20,11 +20,11 @@ export async function POST(NextRequest) {
     });
     const data=await fetchroomidbyuserid(decode['userid']);
      const roomdata=await RoomCode(data,formattedNumber)
-     console.log(roomdata);
+     console.log('sdfklsdkfsldk',roomdata);
     // Delay for 5 seconds
     // await new Promise((resolve) => setTimeout(resolve, 5000));
     return NextResponse.json({
-      code: roomdata,
+      code: roomdata.roomcode,
     });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
