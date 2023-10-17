@@ -20,7 +20,7 @@ export async function POST(NextRequest) {
 
     let userId = decode["userid"];
 
-    const gamesPlayedCount = await gamesPlayed(token, userId);
+    const gamesPlayedCount = await gamesPlayed( userId);
 
     console.log("gamesPlayed", gamesPlayedCount);
 

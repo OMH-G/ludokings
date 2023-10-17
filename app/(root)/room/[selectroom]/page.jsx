@@ -51,6 +51,7 @@ export default function Room({ params }) {
           let Ownerd = store_owner.data;
           console.log("Store user", store_user.data, Ownerd);
           setDatabase(usersInRoom);
+          setOwner(Ownerd)
           // console.log("Owner in room", store_owner.data, usersInRoom.data);
           // if (usersInRoom.find((obj) => obj.name === Ownerd)) {
           //   getRoomCode();
@@ -64,13 +65,11 @@ export default function Room({ params }) {
     }
   };
 
-  // useEffect(() =>  {
-  //   console.log(roomID);
-  //   fetchroomdata();
-  // }, [roomID, user, database.length]);
+ 
 
   useEffect(() => {
     fetchroomdata();
+    console.log('Room code is ',roomCode)
     async function supToken() {
       let a = await getToken({ template: "supabase" });
       supabase.realtime.setAuth(a);
@@ -82,6 +81,7 @@ export default function Room({ params }) {
           (payload) => {
             console.log("user changes");
             fetchroomdata();
+        
           }
         )
         .subscribe();
@@ -116,37 +116,56 @@ export default function Room({ params }) {
   }
 
   const getRoomCode = async () => {
-    console.log("getting room code");
-    try {
-      const response = await axios.get("/api/roomCode");
-      setRoomCode(response.data.code);
-      console.log("Success!", response.data.code);
-
+    
+    // if(Owner===user?.username){
+      if(roomID){
+      
       const token = await getToken({ template: "supabase" });
-      const data = { id: roomID, token: token };
-
-      const roomValue = await axios.post("/api/fetchRoomValueById", data, {
+      console.log(Owner,database,roomCode)
+      const roomId = {
+        id: roomID,
+        token: token,
+      };
+      let store_user = await axios.post("/api/fetchRoomById", roomId, {
         withCredentials: true,
       });
+      if(store_user.data.length===2 ){
+        let token=JSON.stringify(await getToken({template:'supabase'}))
+        // const token = await getToken({ template: "supabase" });
+        console.log("getting room code");
+        try {
+          let response;
+          response = await axios.post("/api/roomCode",token);
+          
+          setRoomCode(response.data.code);
+          console.log("Success!", response.data.code);
+          
+          const data = { id: roomID, token: JSON.parse(token) };
+          
+          const roomValue = await axios.post("/api/fetchRoomValueById", data, {
+            withCredentials: true,
+          });
+          console.log('Response',roomValue)
 
       // const roomValue = await axios.post("/api/fetchRoomValueById", data);
       console.log("roomValue:", roomValue.data);
       const roomValueForStakes = roomValue.data;
-
-      if (database.length == 2) {
-        const userData = {
-          // userId: user.id,
-          amount: roomValueForStakes,
-          // database: database,
-          name1: database[0]?.name,
-          name2: database[1]?.name,
-        };
-        const addStakes = await axios.post("/api/addStakes", userData);
-        console.log("Stakes Added", addStakes);
-      } else {
-        alert("not enough players");
-      }
-
+      
+      // if (database.length == 2) {
+      //   const userData = {
+      //     // userId: user.id,
+      //     amount: roomValueForStakes,
+      //     // database: database,
+      //     name1: database[0]?.name,
+      //     name2: database[1]?.name,
+      //   };
+      //   console.log(userData)
+      //   const addStakes = await axios.post("/api/addStakes", userData);
+      //   console.log("Stakes Added", addStakes);
+      // }
+      //  else {
+        // alert("not enough players");
+      // }
       // if (database) {
       //   let name = database[0].name;
       //   const getUserId = await getUserIdByName(name);
@@ -155,6 +174,11 @@ export default function Room({ params }) {
     } catch (error) {
       console.log("failed!!!!", error.message);
     }
+  }
+  }
+  else{
+    alert('Not enough player')
+  }
   };
 
   const handleCopy = (copyReferelId) => {

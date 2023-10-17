@@ -67,20 +67,18 @@ export default function Rooms() {
   const fetchRooms = async () => {
     if (user) {
       try {
-        // const response = await axios.get(
-        //   "https://ludo-server-teal.vercel.app/fetchroom",
-        //   {
-        //     headers: {
-        //       "Cache-Control": "no-store, must-revalidate",
-        //       Pragma: "no-cache",
-        //       Expires: "0",
-        //     },
-        //   }
-        // );
-
-        const response = await axios.get("/api/fetchRooms");
-        console.log("fetching rooms...............", response.data.roomArray);
-        setRooms(response.data.roomArray);
+        const response = await axios.get(
+          "https://ludo-server-teal.vercel.app/fetchroom",
+          {
+            headers: {
+              "Cache-Control": "no-store, must-revalidate",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
+          }
+        );
+        console.log("fetching rooms", response.data["message"]);
+        setRooms(response.data["message"]);
       } catch (error) {
         console.log("Failed to retrieve rooms");
       }
@@ -105,10 +103,10 @@ export default function Rooms() {
             let roomdata = await axios.post("/api/createRoom", data, {
               withCredentials: true,
             });
-            console.log("asksldfkl", roomdata);
-            if (roomdata.data.length !== 0) {
-              setRoomID(roomdata.data[0]["id"]);
-              assignuser(roomdata.data[0]["id"], user.id);
+            console.log("asksldfkl",roomdata)
+            if(roomdata.data.length!==0){
+              setRoomID(roomdata.data[0]['id']);
+              assignuser(roomdata.data[0]['id'], user.id);
             }
           }
 
@@ -185,7 +183,7 @@ export default function Rooms() {
       alert("Already player exist");
       console.log("Not forward");
       return;
-    } else if (supabaseData !== null) {
+    } else if(supabaseData!==null){
       setRoomID(roomid);
     }
     try {

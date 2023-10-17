@@ -92,12 +92,14 @@ export async function fetchRoomsById(roomid) {
   }
 }
 
-export async function fetchRoomValueById(auth, roomid) {
+export async function fetchRoomValueById( roomid) {
+  console.log('FetchRoomValue',roomid)
   try {
-    let data = await supabaseAuth(auth)
+    let data = await supabase
       .from("Room")
-      .select("*")
+      .select("value")
       .eq("id", roomid);
+    console.log(data);
     return data;
   } catch (error) {
     console.error("fetching room from Supabase:");
@@ -126,10 +128,35 @@ export async function getUserIdByName(name) {
       .from("User")
       .select("user_id")
       .eq("name", name)
-      .select();
     // console.log(data);
 
     return data[0];
+  } catch (error) {
+    console.error("Error getting user id by name in Supabase:");
+    throw error;
+  }
+}
+
+export async function RoomCode(id,RoomCode,owner,user){
+  console.log(owner,user)
+  try {
+    console.log(id)
+    const check = await supabase
+      .from("Room")
+      .select("*")
+      .eq("id", id)
+    console.log(check)
+    if(check.data[0].roomcode!==null || owner!==user){
+      return check.data[0]
+    }
+    const data = await supabase
+      .from("Room")
+      .update([{ roomcode:RoomCode }])
+      .eq("id", id)
+      .select('*')
+    console.log('Room code is ',data);
+
+    return data.data[0];
   } catch (error) {
     console.error("Error getting user id by name in Supabase:");
     throw error;
@@ -275,9 +302,9 @@ export async function fetchRoomIdbyUser(userid) {
   }
 }
 
-export async function gamesPlayed(auth, userid) {
+export async function gamesPlayed(userid) {
   try {
-    const { data, error } = await supabaseAuth(auth)
+    const { data, error } = await supabase
       .from("RoomHistory")
       .select()
       .eq("owned_by", userid);
