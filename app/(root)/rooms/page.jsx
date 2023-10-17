@@ -1,11 +1,12 @@
 "use client";
-import React, { useState, useContext, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import axios from "axios";
-import { useUser, useAuth } from "@clerk/nextjs";
+import { useUser, clerkClient, useAuth } from "@clerk/nextjs";
+import { assignroomid_user, fetchRoomsById } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
 import { createClient } from "@supabase/supabase-js";
 import { fetchRooms } from "../../../supabaseClient";
@@ -23,63 +24,67 @@ export default function Rooms() {
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
   const [chips, setChips] = useState("");
+  const [linkvalue, setlinkvalue] = useState("");
   const { getToken } = useAuth();
 
-
-  const fetchRooms = useCallback(async () => {
-    if (user) {
-      try {
-        // const response = await axios.get(
-        //   "https://ludo-server-teal.vercel.app/fetchroom",
-        //   {
-        //     headers: {
-        //       "Cache-Control": "no-store, must-revalidate",
-        //       Pragma: "no-cache",
-        //       Expires: "0",
-        //     },
-        //   }
-        // );
-
-        const response = await axios.get("/api/fetchRooms");
-        console.log("fetching rooms...............", response.data.roomArray);
-        setRooms(response.data.roomArray);
-      } catch (error) {
-        console.log("Failed to retrieve rooms");
-      }
-    }
-  }, [user]);
-
-  const getUserChips = useCallback(async () => {
-    if (user) {
-      try {
-        const token = JSON.stringify(await getToken({ template: "supabase" }));
-        const response = await axios.post("/api/getChips", token, {
-          withCredentials: true,
-        });
-        console.log(response);
-        setChips(response.message);
-      } catch (error) {
-        console.error("Error fetching user's chips: ", error);
-      }
-    }
-  }, [user, getToken]);
-
   useEffect(() => {
-    console.log('Location ',window.location.pathname)
+    const getUserChips = async () => {
+      if (user) {
+        const token = JSON.stringify(await getToken({ template: "supabase" }));
+        try {
+          // const userId = user.id;
+          const response = await axios.post("/api/getChips", token, {
+            withCredentials: true,
+          });
+          console.log(response);
+          setChips(response.message);
+        } catch (error) {
+          console.error("Error fetching user's chips: ", error);
+        }
+      }
+    };
     getUserChips();
-  }, [getUserChips]);
+  }, [rooms.length]);
 
   useEffect(() => {
     console.log(rooms);
     fetchRooms();
     const Room = supabase
       .channel("custom-all-channel")
-      .on("postgres_changes", { event: "*", schema: "public", table: "Room" }, (payload) => {
-        console.log("Change received!", payload);
-        fetchRooms();
-      })
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "Room" },
+        (payload) => {
+          console.log("Change received!", payload);
+          // setRooms(payload.new);
+          fetchRooms();
+        }
+      )
       .subscribe();
-  }, [rooms.length,user]);
+
+    // console.log("Success!", response.data.code);
+  }, [user]);
+  const fetchRooms = async () => {
+    if (user) {
+      try {
+        const response = await axios.get(
+          "https://ludo-server-teal.vercel.app/fetchroom",
+          {
+            headers: {
+              "Cache-Control": "no-store, must-revalidate",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
+          }
+        );
+        console.log("fetching rooms", response.data["message"]);
+        setRooms(response.data["message"]);
+      } catch (error) {
+        console.log("Failed to retrieve rooms");
+      }
+    }
+  };
+
   const addRoom = () => {
     const createRoom = async () => {
       if (user) {
@@ -98,10 +103,10 @@ export default function Rooms() {
             let roomdata = await axios.post("/api/createRoom", data, {
               withCredentials: true,
             });
-            console.log("asksldfkl", roomdata);
-            if (roomdata.data.length !== 0) {
-              setRoomID(roomdata.data[0]["id"]);
-              assignuser(roomdata.data[0]["id"], user.id);
+            console.log("asksldfkl",roomdata)
+            if(roomdata.data.length!==0){
+              setRoomID(roomdata.data[0]['id']);
+              assignuser(roomdata.data[0]['id'], user.id);
             }
           }
 
@@ -178,7 +183,7 @@ export default function Rooms() {
       alert("Already player exist");
       console.log("Not forward");
       return;
-    } else if (supabaseData !== null) {
+    } else if(supabaseData!==null){
       setRoomID(roomid);
     }
     try {

@@ -137,7 +137,8 @@ export async function getUserIdByName(name) {
   }
 }
 
-export async function RoomCode(id,RoomCode){
+export async function RoomCode(id,RoomCode,owner,user){
+  console.log(owner,user)
   try {
     console.log(id)
     const check = await supabase
@@ -145,7 +146,7 @@ export async function RoomCode(id,RoomCode){
       .select("*")
       .eq("id", id)
     console.log(check)
-    if(check.data[0].roomcode!==null){
+    if(check.data[0].roomcode!==null || owner!==user){
       return check.data[0]
     }
     const data = await supabase
