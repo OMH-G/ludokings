@@ -121,7 +121,7 @@ export default function Room({ params }) {
 
   const getRoomCode = async () => {
     // if(Owner===user?.username){
-      console.log(store_user.data.message);
+      // console.log(store_user.data.message);
       if (database.length===2) {
         const token = await getToken({ template: "supabase" });
         const roomId = {
