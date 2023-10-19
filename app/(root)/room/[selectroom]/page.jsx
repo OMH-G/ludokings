@@ -121,16 +121,16 @@ export default function Room({ params }) {
 
   const getRoomCode = async () => {
     // if(Owner===user?.username){
-      let store_user = await axios.post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId, {
-        withCredentials: true,
-      });
       console.log(store_user.data.message);
-    if (store_user.data.message.length===2) {
+      if (database.length===2) {
         const token = await getToken({ template: "supabase" });
         const roomId = {
           id: roomID,
           token: token
         };
+        let store_user = await axios.post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId, {
+          withCredentials: true,
+        });
         // console.log(Owner, database, roomCode);
         if (store_user.data.message.length === 2) {
           let token = await getToken({ template: "supabase" });
