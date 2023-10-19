@@ -69,7 +69,7 @@ export default function Rooms() {
     let token=await getToken({template:'supabase'});
     if (user) {
       try {
-        const response = await axios.get(
+        const response = await axios.post(
           "https://ludo-server-teal.vercel.app/fetchroom",{token:token},
           {
             withCredentials:true
