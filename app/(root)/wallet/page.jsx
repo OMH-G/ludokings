@@ -14,18 +14,14 @@ export default function Wallet() {
     console.log(user);
     const getUserChips = async () => {
       if (user) {
-        const token = JSON.stringify(await getToken({ template: "supabase" }));
+        const token = await getToken({ template: "supabase" });
         try {
           const userId = user.id;
-          const response = await axios.post("/api/getChips", token, {
+          const response = await axios.post("https://ludo-server-teal.vercel.app/getChip", {token:token}, {
             withCredentials: true,
           });
           console.log(response);
-          // setChips(0);
-          // if(chips!=response.data){
-          //   setChips(response.data);
-          // }
-          setChips(response.data);
+          setChips(response.data.message);
         } catch (error) {
           console.error("Error fetching user's chips: ", error);
         }

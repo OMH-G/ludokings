@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import LudoHero from "@/assets/ludo.jpg";
 import Link from "next/link";
+
 export default function Home() {
   const { user } = useUser();
   const { getToken } = useAuth();
@@ -12,18 +13,19 @@ export default function Home() {
   useEffect(() => {
     const checkUser = async () => {
       if (user) {
-        const token = JSON.stringify(await getToken({ template: "supabase" }));
+        
+        const a = await getToken({ template: "supabase" });
         try {
           const userData = {
             userId: user.id,
             username: user.username,
           };
           // console.log(token);
-          const response = await axios.post("/api/addUserToDB", token, {
+          const response = await axios.post("https://ludo-server-teal.vercel.app/addUserToDB",{"token":a}, {
             withCredentials: true,
           });
 
-          console.log(response.data);
+          console.log(response.data.message);
         } catch (error) {
           console.log("User does not found");
         }

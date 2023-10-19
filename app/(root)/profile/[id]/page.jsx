@@ -17,11 +17,11 @@ export default function UserProfile({ params }) {
       let token = JSON.stringify(await getToken({ template: "supabase" }));
       try {
         const data = { token };
-        const gamesPlayedCount = await axios.post("/api/gamesPlayed", data, {
+        const gamesPlayedCount = await axios.post("https://ludo-server-teal.vercel.app/gamesPlayed", data, {
           withCredentials: true,
         });
         console.log("gamesPlayedCount:", gamesPlayedCount.data);
-        setGamesPlayedCount(gamesPlayedCount.data);
+        setGamesPlayedCount(gamesPlayedCount.data.message);
       } catch (error) {
         console.log("Error fetching games played.");
       }
@@ -33,16 +33,16 @@ export default function UserProfile({ params }) {
       let token = await getToken({ template: "supabase" });
       try {
         const data = { token };
-        const gameStat = await axios.post("/api/gameStats", data, {
+        const gameStat = await axios.post("https://ludo-server-teal.vercel.app/gameStats", data, {
           withCredentials: true,
         });
         // const gameStat = await winChips(user.id);
 
-        console.log("Chips Won:", gameStat.data.winAmount);
-        console.log("Penalty:", gameStat.data.loseAmount);
+        console.log("Chips Won:", gameStat.data.message.winAmount);
+        console.log("Penalty:", gameStat.data.message.loseAmount);
 
-        setWinAmount(gameStat.data.winAmount);
-        setLoseAmount(gameStat.data.loseAmount);
+        setWinAmount(gameStat.data.message.winAmount);
+        setLoseAmount(gameStat.data.message.loseAmount);
       } catch (error) {
         console.log("Error fetching gameStat played.");
       }
