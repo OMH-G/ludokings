@@ -217,9 +217,7 @@ export async function deleteroom(userid, roomid) {
       .eq("owned_by", userid)
       .eq("id", roomid);
 
-    if (error) {
-      throw error;
-    }
+    console.log("Delete the room ",data)
     return data;
   } catch (error) {
     console.error("Error Deleting room in Supabase");

@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import TopBar from "@/components/TopBar";
 import { RoomIDProvider } from "../../RoomIDContext";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

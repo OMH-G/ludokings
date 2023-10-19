@@ -6,15 +6,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "next/link";
 import axios from "axios";
 import { useUser, clerkClient, useAuth } from "@clerk/nextjs";
-import { assignroomid_user, fetchRoomsById } from "../../../supabaseClient";
 import { useRoomID } from "../../../RoomIDContext";
-import { createClient } from "@supabase/supabase-js";
-import { fetchRooms } from "../../../supabaseClient";
+// import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/supauth";
 // Initialize the Supabase client with your Supabase URL and API key
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+// const supabase = createClient(
+//   process.env.NEXT_PUBLIC_SUPABASE_URL,
+//   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+// );
+
 export default function Rooms() {
   const [rooms, setRooms] = useState([]);
 
@@ -24,16 +24,17 @@ export default function Rooms() {
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
   const [chips, setChips] = useState("");
-  const [linkvalue, setlinkvalue] = useState("");
-  const { getToken } = useAuth();
+  // const [linkvalue, setlinkvalue] = useState("");
+  const { getToken } = useAuth();         
 
   useEffect(() => {
     const getUserChips = async () => {
       if (user) {
-        const token = JSON.stringify(await getToken({ template: "supabase" }));
+        const token = await getToken({ template: "supabase" });
         try {
           // const userId = user.id;
-          const response = await axios.post("/api/getChips", token, {
+
+          const response = await axios.post("https://ludo-server-teal.vercel.app/getChip", {token:token}, {
             withCredentials: true,
           });
           console.log(response);
@@ -65,16 +66,13 @@ export default function Rooms() {
     // console.log("Success!", response.data.code);
   }, [user]);
   const fetchRooms = async () => {
+    let token=await getToken({template:'supabase'});
     if (user) {
       try {
-        const response = await axios.get(
-          "https://ludo-server-teal.vercel.app/fetchroom",
+        const response = await axios.post(
+          "https://ludo-server-teal.vercel.app/fetchroom",{token:token},
           {
-            headers: {
-              "Cache-Control": "no-store, must-revalidate",
-              Pragma: "no-cache",
-              Expires: "0",
-            },
+            withCredentials:true
           }
         );
         console.log("fetching rooms", response.data["message"]);
