@@ -66,12 +66,12 @@ export default function Room({ params }) {
       table: "Room",
       columns: ["roomcode"] // Specify the columns you want to listen for changes
     },
-    async (payload) =>  {
+    (payload) =>  {
       setRoomCode(null)
       // let token= await getToken({template:'supabase'})
       // let response = await axios.post("https://ludo-server-teal.vercel.app/roomCode", {token:token},{withCredentials:true});
       // setRoomCode(response.data.code)
-      // getRoomCode();
+      getRoomCode();
       // console.log("Change received! roomcode");
       // Handle the change as needed (e.g., update the UI)
     }
@@ -98,7 +98,7 @@ export default function Room({ params }) {
             console.log("user changes");
             fetchroomdata();
             // if(roomCode===null){
-            //   let d=await getRoomCode();
+              // getRoomCode();
             //   setRoomCode(d);
             // }
           }
