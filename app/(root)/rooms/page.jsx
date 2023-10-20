@@ -46,22 +46,30 @@ export default function Rooms() {
     };
     getUserChips();
   }, [rooms.length]);
-
+useEffect(()=>{
+  fetchRooms();
+},[user])
   useEffect(() => {
     console.log(rooms);
-    fetchRooms();
-    const Room = supabase
-      .channel("custom-all-channel")
+     supabase
+    .channel("custom-insert-channel")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "Room" },
+        { event: "*", schema: "public", table: "Room" ,columns:["id"]},
         (payload) => {
-          console.log("Change received!", payload);
-          // setRooms(payload.new);
           fetchRooms();
         }
-      )
-      .subscribe();
+      ).subscribe();
+      // supabase
+      // .channel("custom-delete-channel")
+      // .on(
+      //   "postgres_changes",
+      //   { event: "DELETE", schema: "public", table: "Room" ,columns:["id"]},
+      //   (payload) => {
+      //     fetchRooms();
+      //   }
+      // )
+      // .subscribe();
 
     // console.log("Success!", response.data.code);
   }, [user]);

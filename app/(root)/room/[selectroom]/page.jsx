@@ -48,24 +48,42 @@ export default function Room({ params }) {
           console.log("Store user", store_user.data.message, Ownerd);
           setDatabase(usersInRoom);
           setOwner(Ownerd);
-          // console.log("Owner in room", store_owner.data, usersInRoom.data);
-          // if (usersInRoom.find((obj) => obj.name === Ownerd)) {
-          //   getRoomCode();
-          // } else {
-          //   setRoomCode(null);
-          // }
+          
         }
       } catch (error) {
         console.log("fetchroom error");
       }
     }
   };
-  useEffect(() => {
-    fetchroomdata();
-    getRoomCode();
-  },[roomID,database.length]);
+  useEffect(()=>{
+    supabase
+  .channel("custom-roomer-channel")
+  .on(
+    "postgres_changes",
+    {
+      event: "*",
+      schema: "public",
+      table: "Room",
+      columns: ["roomcode"] // Specify the columns you want to listen for changes
+    },
+    (payload) =>  {
+      setRoomCode(null)
+      // let token= await getToken({template:'supabase'})
+      // let response = await axios.post("https://ludo-server-teal.vercel.app/roomCode", {token:token},{withCredentials:true});
+      // setRoomCode(response.data.code)
+      getRoomCode();
+      // console.log("Change received! roomcode");
+      // Handle the change as needed (e.g., update the UI)
+    }
+  )
+  .subscribe();
+  })
+  // useEffect(() => {
+  //   getRoomCode();
+  // });
   const [check, setcheck] = useState(1)
   useEffect(() => {
+    // fetchroomdata();
     console.log("Room code is ", roomCode);
     async function supToken() {
       let a = await getToken({ template: "supabase" });
@@ -75,12 +93,12 @@ export default function Room({ params }) {
         .channel("custom-update-channel")
         .on(
           "postgres_changes",
-          { event: "*", schema: "public", table: "User" },
+          { event: "*", schema: "public", table: "User" ,columns:["roomid"]},
           (payload) => {
             console.log("user changes");
             fetchroomdata();
             // if(roomCode===null){
-            //   let d=await getRoomCode();
+              // getRoomCode();
             //   setRoomCode(d);
             // }
           }
@@ -91,7 +109,7 @@ export default function Room({ params }) {
     // if(database.length===2){
     // getRoomCode();
     // }
-  }, [roomID]);
+  });
 
   function goBack(userid) {
     router.back();
@@ -122,7 +140,7 @@ export default function Room({ params }) {
   const getRoomCode = async () => {
     // if(Owner===user?.username){
       // console.log(store_user.data.message);
-      if (database.length===2) {
+      if (database.length===2 && roomCode===null) {
         const token = await getToken({ template: "supabase" });
         const roomId = {
           id: roomID,
@@ -142,44 +160,9 @@ export default function Room({ params }) {
             console.log("The diskau code is ", response.data.code);
             setRoomCode( response.data.code)
             
-            // setRoomCode(response.data.code);
             console.log("Success!", response.data.code);
-
-            // const data = { id: roomID, token: JSON.parse(token) };
-
-            // const roomValue = await axiosS.post(
-            //   "/api/fetchRoomValueById",
-            //   data,
-            //   {
-            //     withCredentials: true,
-            //   }
-            // );
             console.log("Response", roomValue);
 
-            // const roomValue = await axios.post("/api/fetchRoomValueById", data);
-            // console.log("roomValue:", roomValue.data);
-            // const roomValueForStakes = roomValue.data;
-
-            // if (database.length == 2) {
-            //   const userData = {
-            //     // userId: user.id,
-            //     amount: roomValueForStakes,
-            //     // database: database,
-            //     name1: database[0]?.name,
-            //     name2: database[1]?.name,
-            //   };
-            //   console.log(userData)
-            //   const addStakes = await axios.post("/api/addStakes", userData);
-            //   console.log("Stakes Added", addStakes);
-            // }
-            //  else {
-            // alert("not enough players");
-            // }
-            // if (database) {
-            //   let name = database[0].name;
-            //   const getUserId = await getUserIdByName(name);
-            //   console.log("getUserId", getUserId.user_id);
-            // }
           } catch (error) {
             console.log("failed!!!!", error.message);
           }
