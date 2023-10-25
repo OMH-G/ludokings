@@ -8,16 +8,27 @@ import OCR from "../../../../components/OCR";
 // import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/supauth";
 import { RoomCode } from "@/supabaseClient";
+import { RealtimeClient } from "@supabase/realtime-js";
 // import { useAuther } from '../../../../AuthContext';
+import { useToken } from "@/TokenContext";
 
 // Initialize the Supabase client with your Supabase URL and API key
 
+const client = new RealtimeClient(process.env.NEXT_PUBLIC_SUPREALTIME, {
+  params: {
+    apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  },
+});
+client.connect();
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
   const room = params.selectroom;
+  // const [Token, setToken] = useState("");
+
   // Adding roomid to user in supabase
+  // const { token, updateToken } = useToken();
 
   const [database, setDatabase] = useState([]);
   const [roomCode, setRoomCode] = useState(null);
@@ -25,91 +36,104 @@ export default function Room({ params }) {
   const { getToken } = useAuth();
 
   const fetchroomdata = async () => {
+    // if(database.length!==2){
     if (user) {
       let token = await getToken({ template: "supabase" });
+      // updateToken(token);
       try {
         if (roomID) {
           const roomId = {
             id: roomID,
             token: token,
           };
-          let store_user = await axios.post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId, {
-            withCredentials: true,
-          });
+          let store_user = await axios.post(
+            "https://ludo-server-teal.vercel.app/fetchusersbyid",
+            roomId,
+            {
+              withCredentials: true,
+            }
+          );
           let usersInRoom = store_user.data.message;
-          console.log(store_user.data.message)
+          console.log(store_user.data.message);
           let store_owner = await axios.post(
             "https://ludo-server-teal.vercel.app/fetchownerbyid",
             roomId,
             { withCredentials: true }
           );
-          console.log(store_owner.data)
+          console.log(store_owner.data);
           let Ownerd = store_owner.data.message;
           console.log("Store user", store_user.data.message, Ownerd);
           setDatabase(usersInRoom);
           setOwner(Ownerd);
-          
         }
       } catch (error) {
         console.log("fetchroom error");
       }
     }
-  };
-  useEffect(()=>{
-    supabase
-  .channel("custom-roomer-channel")
-  .on(
-    "postgres_changes",
-    {
-      event: "*",
-      schema: "public",
-      table: "Room",
-      columns: ["roomcode"] // Specify the columns you want to listen for changes
-    },
-    (payload) =>  {
-      setRoomCode(null)
-      // let token= await getToken({template:'supabase'})
-      // let response = await axios.post("https://ludo-server-teal.vercel.app/roomCode", {token:token},{withCredentials:true});
-      // setRoomCode(response.data.code)
-      getRoomCode();
-      // console.log("Change received! roomcode");
-      // Handle the change as needed (e.g., update the UI)
-    }
-  )
-  .subscribe();
-  })
-  // useEffect(() => {
-  //   getRoomCode();
-  // });
-  const [check, setcheck] = useState(1)
-  useEffect(() => {
-    // fetchroomdata();
-    console.log("Room code is ", roomCode);
-    async function supToken() {
-      let a = await getToken({ template: "supabase" });
-      
-      supabase.realtime.setAuth(a);
-      const User = supabase
-        .channel("custom-update-channel")
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "User" ,columns:["roomid"]},
-          (payload) => {
-            console.log("user changes");
-            fetchroomdata();
-            // if(roomCode===null){
-              // getRoomCode();
-            //   setRoomCode(d);
-            // }
-          }
-        )
-        .subscribe();
-    }
-    supToken();
-    // if(database.length===2){
-    // getRoomCode();
     // }
-  });
+  };
+  useEffect(() => {
+    const channel = client.channel("db-roomcode-user-changes");
+
+    channel.on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "Room",
+        columns: ["roomcode"],
+      },
+       (payload) => {
+        console.log('roomcode is activated')
+        getRoomCode();
+        // console.log("All inserts in messages table: ", payload);
+        // let token=localStorage.getItem('token')
+        // const roomId = {
+        //   id: roomID,
+        //   token: token,
+        // };
+        // let store_user = await axios.post(
+        //   "https://ludo-server-teal.vercel.app/fetchusersbyid",
+        //   roomId,
+        //   {
+        //     withCredentials: true,
+        //   }
+        //   );
+        //   console.log('roomcdoesdfoasodkfasldfsk',store_user.data.message)
+        // let usersInRoom = store_user.data.message;
+        // if(usersInRoom && usersInRoom.length===2){
+        //   getRoomCode();
+        // }
+      }
+    );
+
+    channel.subscribe(async (status) => {
+      if (status === "SUBSCRIBED") {
+        console.log("Ready to receive database changes!");
+      }
+    });
+  }, [roomCode]);
+  useEffect(() => {
+    console.log("Room code is ", roomCode);
+    fetchroomdata();
+    client.accessToken = localStorage.getItem("token");
+    const channel = client.channel("db-user-changes");
+
+    channel.on(
+      "postgres_changes",
+      { event: "UPDATE", schema: "public", table: "User", columns: ["roomid"] },
+      (payload) => {
+        console.log("All inserts in messages table: ", payload);
+        fetchroomdata();
+      }
+    );
+
+    channel.subscribe(async (status) => {
+      if (status === "SUBSCRIBED") {
+        console.log("Ready to receive database changes!");
+      }
+    });
+  }, [roomID]);
 
   function goBack(userid) {
     router.back();
@@ -138,38 +162,35 @@ export default function Room({ params }) {
   }
 
   const getRoomCode = async () => {
-    // if(Owner===user?.username){
-      // console.log(store_user.data.message);
-      if (database.length===2 && roomCode===null) {
-        const token = await getToken({ template: "supabase" });
-        const roomId = {
-          id: roomID,
-          token: token
-        };
-        let store_user = await axios.post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId, {
+    let token=localStorage.getItem('token')
+    const roomId = {
+      id: roomID,
+      token: token,
+    };
+    let store_user = await axios.post(
+      "https://ludo-server-teal.vercel.app/fetchusersbyid",
+      roomId
+    );
+    // console.log("room code logic", database.length);
+    if (store_user.data.message!==null && store_user.data.message.length === 2) {
+      const token = localStorage.getItem("token");
+
+      console.log("getting room code");
+      try {
+        let response;
+        response = await axios.post("/api/roomCode", JSON.stringify(token), {
           withCredentials: true,
         });
-        // console.log(Owner, database, roomCode);
-        if (store_user.data.message.length === 2) {
-          let token = await getToken({ template: "supabase" });
-          // const token = await getToken({ template: "supabase" });
-          console.log("getting room code");
-          try {
-            let response;
-            response = await axios.post("https://ludo-server-teal.vercel.app/roomCode", {token:token},{withCredentials:true});
-            console.log("The diskau code is ", response.data.code);
-            setRoomCode( response.data.code)
-            
-            console.log("Success!", response.data.code);
-            console.log("Response", roomValue);
+        console.log("The diskau code is ", response.data.code);
+        setRoomCode(response.data.code);
 
-          } catch (error) {
-            console.log("failed!!!!", error.message);
-          }
-        }
-    } else {
-      console.log("Not enough player");
+        console.log("Success!", response.data.code);
+        // console.log("Response", roomValue);
+      } catch (error) {
+        console.log("failed!!!!", error.message);
+      }
     }
+    // }
   };
 
   const handleCopy = (copyReferelId) => {
@@ -181,7 +202,6 @@ export default function Room({ params }) {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      {/* {console.log(database)} */}
       <div className="flex justify-start items-center w-11/12 md:w-1/2">
         <button
           onClick={() => goBack(user?.id)}
@@ -193,11 +213,9 @@ export default function Room({ params }) {
 
       <div className="flex flex-col justify-center items-center w-11/12 md:w-1/2 my-4">
         <h3 className="text-2xl font-semibold mb-2">Players in the room:</h3>
-        {/* {console.log("database", database)} */}
         {database &&
           database.map((item, index) => (
             <div key={index} className="mb-1">
-              {/* {checkUserInSupabase(item["user_id"]).name} */}
               {item["name"]}
             </div>
           ))}

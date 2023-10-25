@@ -14,8 +14,16 @@ import { supabase } from "@/supauth";
 //   process.env.NEXT_PUBLIC_SUPABASE_URL,
 //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 // );
-
+import { RealtimeClient } from '@supabase/realtime-js'
+const client = new RealtimeClient(process.env.NEXT_PUBLIC_SUPREALTIME, {
+  params: {
+    apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  },
+  
+})
+client.connect()
 export default function Rooms() {
+  
   const [rooms, setRooms] = useState([]);
 
   const { roomID, setRoomID } = useRoomID();
@@ -25,7 +33,7 @@ export default function Rooms() {
   const [newValue, setNewValue] = useState(0);
   const [chips, setChips] = useState("");
   // const [linkvalue, setlinkvalue] = useState("");
-  const { getToken } = useAuth();         
+  const { getToken } = useAuth();
 
   useEffect(() => {
     const getUserChips = async () => {
@@ -34,9 +42,13 @@ export default function Rooms() {
         try {
           // const userId = user.id;
 
-          const response = await axios.post("https://ludo-server-teal.vercel.app/getChip", {token:token}, {
-            withCredentials: true,
-          });
+          const response = await axios.post(
+            "https://ludo-server-teal.vercel.app/getChip",
+            { token: token },
+            {
+              withCredentials: true,
+            }
+          );
           console.log(response);
           setChips(response.message);
         } catch (error) {
@@ -46,41 +58,47 @@ export default function Rooms() {
     };
     getUserChips();
   }, [rooms.length]);
-useEffect(()=>{
-  fetchRooms();
-},[user])
   useEffect(() => {
-    console.log(rooms);
-     supabase
-    .channel("custom-insert-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "Room" ,columns:["id"]},
-        (payload) => {
-          fetchRooms();
-        }
-      ).subscribe();
-      // supabase
-      // .channel("custom-delete-channel")
-      // .on(
-      //   "postgres_changes",
-      //   { event: "DELETE", schema: "public", table: "Room" ,columns:["id"]},
-      //   (payload) => {
-      //     fetchRooms();
-      //   }
-      // )
-      // .subscribe();
+    fetchRooms();
+  }, [user]);
+  useEffect(() => {
+    const channel = client.channel("db-changes");
+    
 
-    // console.log("Success!", response.data.code);
+    channel.on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "Room",columns:['id'] },
+      (payload) => {
+        console.log("All inserts in messages table: ", payload);
+        fetchRooms();
+      }
+    ).on(
+      "postgres_changes",
+      { event: "DELETE", schema: "public", table: "Room",columns:['id'] },
+      (payload) => {
+        console.log("All inserts in messages table: ", payload);
+        fetchRooms();
+      }
+    )
+
+    
+
+    channel.subscribe(async (status) => {
+      if (status === "SUBSCRIBED") {
+        console.log("Ready to receive database changes!");
+      }
+    });
+    
   }, [user]);
   const fetchRooms = async () => {
-    let token=await getToken({template:'supabase'});
+    let token = await getToken({ template: "supabase" });
     if (user) {
       try {
         const response = await axios.post(
-          "https://ludo-server-teal.vercel.app/fetchroom",{token:token},
+          "https://ludo-server-teal.vercel.app/fetchroom",
+          { token: token },
           {
-            withCredentials:true
+            withCredentials: true,
           }
         );
         console.log("fetching rooms", response.data["message"]);
@@ -109,10 +127,10 @@ useEffect(()=>{
             let roomdata = await axios.post("/api/createRoom", data, {
               withCredentials: true,
             });
-            console.log("asksldfkl",roomdata)
-            if(roomdata.data.length!==0){
-              setRoomID(roomdata.data[0]['id']);
-              assignuser(roomdata.data[0]['id'], user.id);
+            console.log("asksldfkl", roomdata);
+            if (roomdata.data.length !== 0) {
+              setRoomID(roomdata.data[0]["id"]);
+              assignuser(roomdata.data[0]["id"], user.id);
             }
           }
 
@@ -189,7 +207,7 @@ useEffect(()=>{
       alert("Already player exist");
       console.log("Not forward");
       return;
-    } else if(supabaseData!==null){
+    } else if (supabaseData !== null) {
       setRoomID(roomid);
     }
     try {

@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
   export const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    // {realtime:{heartbeatIntervalMs:1000}}
     // { global: { headers: { Authorization: `Bearer ${auth}` } } }
   );
 //   return supabase;
