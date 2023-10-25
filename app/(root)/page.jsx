@@ -5,16 +5,20 @@ import { useEffect } from "react";
 import Image from "next/image";
 import LudoHero from "@/assets/ludo.jpg";
 import Link from "next/link";
+import { useToken } from "@/TokenContext";
 
 export default function Home() {
   const { user } = useUser();
   const { getToken } = useAuth();
+  const { token, updateToken } = useToken();
 
   useEffect(() => {
     const checkUser = async () => {
       if (user) {
         
         const a = await getToken({ template: "supabase" });
+        // updateToken(a);
+        localStorage.setItem('token',a)
         try {
           const userData = {
             userId: user.id,
