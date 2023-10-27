@@ -87,7 +87,10 @@ export default function Room({ params }) {
       },
        (payload) => {
         console.log('roomcode is activated')
+        console.log(database.length)
         getRoomCode();
+
+        // setRoomCode(getRoomCode());
        
       }
     );
@@ -146,37 +149,42 @@ export default function Room({ params }) {
     }
   }
 
-  const getRoomCode = async () => {
-    let token=localStorage.getItem('token')
+  const getRoomCode = () => {
+    let token = localStorage.getItem('token');
     const roomId = {
       id: roomID,
       token: token,
     };
-    let store_user = await axios.post(
-      "https://ludo-server-teal.vercel.app/fetchusersbyid",
-      roomId
-    );
-    // console.log("room code logic", database.length);
-    if (store_user.data.message!==null && store_user.data.message.length === 2) {
-      const token = localStorage.getItem("token");
-
-      console.log("getting room code");
-      try {
-        let response;
-        response = await axios.post("/api/roomCode", JSON.stringify(token), {
-          withCredentials: true,
-        });
-        console.log("The diskau code is ", response.data.code);
-        setRoomCode(response.data.code);
-
-        console.log("Success!", response.data.code);
-        // console.log("Response", roomValue);
-      } catch (error) {
-        console.log("failed!!!!", error.message);
-      }
-    }
-    // }
+    let store_user;
+  
+    axios
+      .post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId)
+      .then((response) => {
+        store_user = response;
+  
+        if (store_user.data.message !== null && store_user.data.message.length === 2) {
+          const token = localStorage.getItem("token");
+          console.log("getting room code");
+  
+          axios
+            .post("/api/roomCode", JSON.stringify(token), {
+              withCredentials: true,
+            })
+            .then((response) => {
+              // console.log("The diskau code is ", response.data.code);
+              setRoomCode(response.data.code)
+              // console.log("Success!", response.data.code);
+            })
+            .catch((error) => {
+              console.log("failed!!!!", error.message);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error("Error in fetching users by id:", error);
+      });
   };
+  
 
   const handleCopy = (copyReferelId) => {
     setCopied(copyReferelId);
