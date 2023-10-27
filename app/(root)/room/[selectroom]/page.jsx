@@ -110,7 +110,7 @@ export default function Room({ params }) {
       { event: "UPDATE", schema: "public", table: "User", columns: ["roomid"] },
       (payload) => {
         console.log("All inserts in messages table: ", payload);
-        fetchroomdata();
+        // fetchroomdata();
       }
     );
 
