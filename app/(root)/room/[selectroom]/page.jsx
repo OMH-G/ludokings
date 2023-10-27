@@ -83,29 +83,12 @@ export default function Room({ params }) {
         event: "UPDATE",
         schema: "public",
         table: "Room",
-        columns: ["roomcode"],
+        // columns: ["roomcode"],
       },
        (payload) => {
         console.log('roomcode is activated')
         getRoomCode();
-        // console.log("All inserts in messages table: ", payload);
-        // let token=localStorage.getItem('token')
-        // const roomId = {
-        //   id: roomID,
-        //   token: token,
-        // };
-        // let store_user = await axios.post(
-        //   "https://ludo-server-teal.vercel.app/fetchusersbyid",
-        //   roomId,
-        //   {
-        //     withCredentials: true,
-        //   }
-        //   );
-        //   console.log('roomcdoesdfoasodkfasldfsk',store_user.data.message)
-        // let usersInRoom = store_user.data.message;
-        // if(usersInRoom && usersInRoom.length===2){
-        //   getRoomCode();
-        // }
+       
       }
     );
 
