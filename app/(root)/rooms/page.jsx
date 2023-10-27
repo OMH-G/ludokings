@@ -7,27 +7,16 @@ import Link from "next/link";
 import axios from "axios";
 import { useUser, clerkClient, useAuth } from "@clerk/nextjs";
 import { useRoomID } from "../../../RoomIDContext";
-// import { createClient } from "@supabase/supabase-js";
+import { useSupabase } from '../../../RealtimeContext';
+
 import { supabase } from "@/supauth";
-// Initialize the Supabase client with your Supabase URL and API key
-// const supabase = createClient(
-//   process.env.NEXT_PUBLIC_SUPABASE_URL,
-//   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-// );
-import { RealtimeClient } from '@supabase/realtime-js'
-const client = new RealtimeClient(process.env.NEXT_PUBLIC_SUPREALTIME, {
-  params: {
-    apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  },
-  
-})
-client.connect()
+
 export default function Rooms() {
   
   const [rooms, setRooms] = useState([]);
 
   const { roomID, setRoomID } = useRoomID();
-
+  const client=useSupabase();
   const { isLoaded, isSignedIn, user } = useUser();
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);

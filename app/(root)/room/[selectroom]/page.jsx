@@ -9,22 +9,24 @@ import OCR from "../../../../components/OCR";
 import { supabase } from "@/supauth";
 import { RoomCode } from "@/supabaseClient";
 import { RealtimeClient } from "@supabase/realtime-js";
+import { useSupabase } from "@/RealtimeContext";
 // import { useAuther } from '../../../../AuthContext';
-import { useToken } from "@/TokenContext";
+// import { useToken } from "@/TokenContext";
 
 // Initialize the Supabase client with your Supabase URL and API key
 
-const client = new RealtimeClient(process.env.NEXT_PUBLIC_SUPREALTIME, {
-  params: {
-    apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  },
-});
-client.connect();
+// const client = new RealtimeClient(process.env.NEXT_PUBLIC_SUPREALTIME, {
+//   params: {
+//     apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+//   },
+// });
+// client.connect();
 export default function Room({ params }) {
   const { roomID, setRoomID } = useRoomID();
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
   const room = params.selectroom;
+  const client=useSupabase();
   // const [Token, setToken] = useState("");
 
   // Adding roomid to user in supabase
