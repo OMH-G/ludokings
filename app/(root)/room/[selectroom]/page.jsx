@@ -101,7 +101,9 @@ export default function Room({ params }) {
   }, [roomCode]);
   useEffect(() => {
     console.log("Room code is ", roomCode);
+    // if(database.lengtSh!==2){
     fetchroomdata();
+    // }
     client.accessToken = localStorage.getItem("token");
     const channel = client.channel("db-user-changes");
 
