@@ -5,12 +5,12 @@ import { useEffect } from "react";
 import Image from "next/image";
 import LudoHero from "@/assets/ludo.jpg";
 import Link from "next/link";
-import { useToken } from "@/TokenContext";
+// import { useToken } from "@/TokenContext";
 
 export default function Home() {
   const { user } = useUser();
   const { getToken } = useAuth();
-  const { token, updateToken } = useToken();
+  // const { token, updateToken } = useToken();
 
   useEffect(() => {
     const checkUser = async () => {

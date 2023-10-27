@@ -5,6 +5,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import TopBar from "@/components/TopBar";
 import { RoomIDProvider } from "../../RoomIDContext";
 import {TokenProvider} from '../../TokenContext'
+import { SupabaseProvider } from '../../RealtimeContext';
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <TokenProvider>
+      <SupabaseProvider>
       <RoomIDProvider>
         <html lang="en">
           <body className={inter.className}>
@@ -29,7 +31,7 @@ export default function RootLayout({
           </body>
         </html>
       </RoomIDProvider>
-      </TokenProvider>
+      </SupabaseProvider>
     </ClerkProvider>
   );
 }
