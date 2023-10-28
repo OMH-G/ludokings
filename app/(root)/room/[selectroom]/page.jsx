@@ -87,7 +87,19 @@ export default function Room({ params }) {
       },
       (payload) => {
         console.log("roomcode is activated");
-        console.log(database.length);
+        let token = localStorage.getItem("token");
+        const roomId = {
+          id: roomID,
+          token: token,
+        };
+        let store_user;
+
+        axios
+          .post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId)
+          .then((response) => {
+            store_user = response;
+          });
+          setDatabase(store_user.data.message)
         getRoomCode();
 
         // setRoomCode(getRoomCode());
@@ -103,7 +115,7 @@ export default function Room({ params }) {
   useEffect(() => {
     console.log("Room code is ", roomCode);
     // if(database.lengtSh!==2){
-      console.log(database.length)
+    console.log(database.length);
     if (database.length !== 2) {
       fetchroomdata();
       // }
