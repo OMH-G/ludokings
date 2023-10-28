@@ -164,7 +164,7 @@ export default function Rooms() {
   const removeRoom = async (index, roomid) => {
     console.log(user, roomid);
     if (user && roomid) {
-      const token = await getToken({ template: "supabase" });
+      const token = localStorage.getItem('token');
       try {
         // const updatedRooms = [...rooms];
         const data = {
@@ -175,9 +175,9 @@ export default function Rooms() {
         const response = await axios.post("/api/deleteRoom", data, {
           withCredentials: true,
         });
-        if (response) {
-          setRooms([]);
-        }
+        // if (response) {
+        //   setRooms([]);
+        // }
         // console.log(response);
         // updatedRooms.splice(index, 1);
         // setRooms(updatedRooms);
