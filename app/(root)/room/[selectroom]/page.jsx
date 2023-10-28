@@ -83,13 +83,12 @@ export default function Room({ params }) {
         table: "Room",
         // columns: ["roomcode"],
       },
-       (payload) => {
-        console.log('roomcode is activated')
-        console.log(database.length)
+      (payload) => {
+        console.log("roomcode is activated");
+        console.log(database.length);
         getRoomCode();
 
         // setRoomCode(getRoomCode());
-       
       }
     );
 
@@ -102,25 +101,33 @@ export default function Room({ params }) {
   useEffect(() => {
     console.log("Room code is ", roomCode);
     // if(database.lengtSh!==2){
-    fetchroomdata();
-    // }
-    client.accessToken = localStorage.getItem("token");
-    const channel = client.channel("db-user-changes");
+      console.log(database.length)
+    if (database.length !== 2) {
+      fetchroomdata();
+      // }
+      client.accessToken = localStorage.getItem("token");
+      const channel = client.channel("db-user-changes");
 
-    channel.on(
-      "postgres_changes",
-      { event: "UPDATE", schema: "public", table: "User", columns: ["roomid"] },
-      (payload) => {
-        console.log("All inserts in messages table: ", payload);
-        // fetchroomdata();
-      }
-    );
+      channel.on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "User",
+          columns: ["roomid"],
+        },
+        (payload) => {
+          console.log("All inserts in messages table: ", payload);
+          fetchroomdata();
+        }
+      );
 
-    channel.subscribe(async (status) => {
-      if (status === "SUBSCRIBED") {
-        console.log("Ready to receive database changes!");
-      }
-    });
+      channel.subscribe(async (status) => {
+        if (status === "SUBSCRIBED") {
+          console.log("Ready to receive database changes!");
+        }
+      });
+    }
   }, [roomID]);
 
   function goBack(userid) {
@@ -150,29 +157,32 @@ export default function Room({ params }) {
   }
 
   const getRoomCode = () => {
-    let token = localStorage.getItem('token');
+    let token = localStorage.getItem("token");
     const roomId = {
       id: roomID,
       token: token,
     };
     let store_user;
-  
+
     axios
       .post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId)
       .then((response) => {
         store_user = response;
-  
-        if (store_user.data.message !== null && store_user.data.message.length === 2) {
+
+        if (
+          store_user.data.message !== null &&
+          store_user.data.message.length === 2
+        ) {
           const token = localStorage.getItem("token");
           console.log("getting room code");
-  
+
           axios
             .post("/api/roomCode", JSON.stringify(token), {
               withCredentials: true,
             })
             .then((response) => {
               // console.log("The diskau code is ", response.data.code);
-              setRoomCode(response.data.code)
+              setRoomCode(response.data.code);
               // console.log("Success!", response.data.code);
             })
             .catch((error) => {
@@ -184,7 +194,6 @@ export default function Room({ params }) {
         console.error("Error in fetching users by id:", error);
       });
   };
-  
 
   const handleCopy = (copyReferelId) => {
     setCopied(copyReferelId);
