@@ -86,7 +86,7 @@ export default function Room({ params }) {
         // columns: ["roomcode"],
       },
       (payload) => {
-        getRoomCode();
+        alert('Room code is activated');
 
         // setRoomCode(getRoomCode());
       }
@@ -98,11 +98,13 @@ export default function Room({ params }) {
       }
     });
   }, [roomCode]);
+
+
   useEffect(() => {
     console.log("Room code is ", roomCode);
-    // if(database.lengtSh!==2){
-      fetchroomdata();
-      // }
+    if(database.length<2){
+    fetchroomdata();
+    }
       client.accessToken = localStorage.getItem("token");
       const channel = client.channel("db-user-changes");
 
@@ -125,7 +127,7 @@ export default function Room({ params }) {
           console.log("Ready to receive database changes!");
         }
       });
-  }, [roomID]);
+  }, [roomID,Owner]);
 
   function goBack(userid) {
     router.back();
@@ -154,6 +156,7 @@ export default function Room({ params }) {
   }
 
   const getRoomCode = () => {
+    if(roomCode===null){
     let token = localStorage.getItem("token");
     const roomId = {
       id: roomID,
@@ -190,6 +193,7 @@ export default function Room({ params }) {
       .catch((error) => {
         console.error("Error in fetching users by id:", error);
       });
+    }
   };
 
   const handleCopy = (copyReferelId) => {

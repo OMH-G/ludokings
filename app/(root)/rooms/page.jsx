@@ -8,7 +8,7 @@ import axios from "axios";
 import { useUser, clerkClient, useAuth } from "@clerk/nextjs";
 import { useRoomID } from "../../../RoomIDContext";
 import { useSupabase } from '../../../RealtimeContext';
-
+import { useRouter } from "next/navigation";
 import { supabase } from "@/supauth";
 
 export default function Rooms() {
@@ -21,9 +21,10 @@ export default function Rooms() {
   const [newRoomName, setNewRoomName] = useState("");
   const [newValue, setNewValue] = useState(0);
   const [chips, setChips] = useState("");
+  const [Store, setStore] = useState('')
   // const [linkvalue, setlinkvalue] = useState("");
   const { getToken } = useAuth();
-
+  const router = useRouter();
   useEffect(() => {
     const getUserChips = async () => {
       if (user) {
@@ -38,15 +39,15 @@ export default function Rooms() {
               withCredentials: true,
             }
           );
-          console.log(response);
-          setChips(response.message);
+          console.log(response.data.message);
+          setChips(response.data.message);
         } catch (error) {
           console.error("Error fetching user's chips: ", error);
         }
       }
     };
     getUserChips();
-  }, [rooms.length]);
+  }, [rooms]);
   useEffect(() => {
     fetchRooms();
   }, [user]);
@@ -108,9 +109,11 @@ export default function Rooms() {
             newRoomName,
             newValue,
           };
-
+          console.log('Chips and newvalue',chips,newValue)
+          setNewRoomName('')
           if (chips && newValue > chips) {
             alert("You do not have enough chips!");
+            return;
           } else {
             console.log("setting user", rooms);
             let roomdata = await axios.post("/api/createRoom", data, {
@@ -120,6 +123,9 @@ export default function Rooms() {
             if (roomdata.data.length !== 0) {
               setRoomID(roomdata.data[0]["id"]);
               assignuser(roomdata.data[0]["id"], user.id);
+              console.log(newRoomName);
+
+              // router.push(`/${newRoomName}`);
             }
           }
 
@@ -142,13 +148,10 @@ export default function Rooms() {
       setNewRoomName("");
       setNewValue("");
     }
+    
   };
 
-  const join = (roomname) => {
-    console.log("Join clicked");
-    setJoin(1);
-    setChoosenRoom(roomname);
-  };
+
 
   const removeRoom = async (index, roomid) => {
     console.log(user, roomid);
@@ -216,9 +219,15 @@ export default function Rooms() {
       console.error("Error creating Room in Supabase:", error);
     }
   };
-  const playbuttonclicked = (roomid, userid) => {
-    if (user) {
+  const playbuttonclicked = (roomid, userid,value) => {
+     if (user && chips>=value) {
+      console.log('alsdfk')
+      setStore(newRoomName)
       assignuser(roomid, userid);
+    }
+    else{
+      // setNewRoomName('')
+      alert('Not enough chips to enter room')
     }
   };
 
@@ -248,7 +257,7 @@ export default function Rooms() {
           }}
           style={{ flex: "1", marginRight: "8px" }}
         />
-        <Link href={newRoomName !== "" ? `/room/${newRoomName}` : "/room"}>
+       <Link href={newRoomName ? `/room/${newRoomName}` : "#"}>
           <Button
             variant="contained"
             color="primary"
@@ -290,16 +299,16 @@ export default function Rooms() {
                 )}
 
                 <span>
-                  {/* <Link href={`#`}> */}
+                  
                   <Link href={`/room/${room.name}`}>
                     <button
                       className="bg-green-500 text-white px-2 md:px-4 py-1 md:py-2 mx-1 rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
-                      onClick={() => playbuttonclicked(room.id, user?.id)}
+                      onClick={() => playbuttonclicked(room.id, user?.id,room.value)}
                     >
                       Play
                     </button>
                   </Link>
-                  {/* {user?.id == room?.owned_by ? ( */}
+                  
 
                   <button
                     className="bg-red-400 text-white px-2 md:px-4 py-1 md:py-2 rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
