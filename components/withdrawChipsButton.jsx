@@ -21,6 +21,7 @@ const supabase = createClient(
 export default function WithdrawChipsButton() {
   const [open, setOpen] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState(0);
+  const [inputValue, setInputValue] = useState('');
   const { user } = useUser();
   const { getToken } = useAuth();
 
@@ -35,7 +36,7 @@ export default function WithdrawChipsButton() {
   const handleChipClick = (amount) => {
     setSelectedAmount(amount);
   };
-
+  
   // useEffect(() => {
   //   supabase
   //     .channel("custom-new-channel")
@@ -56,11 +57,10 @@ export default function WithdrawChipsButton() {
         const token = await getToken({ template: "supabase" });
         const userData = {
           token: token,
-          amount: selectedAmount,
+          subject:"Withdraw",
+          amount: inputValue
         };
-        const response = await axios.post("/api/withdrawMoney", userData, {
-          withCredentials: true,
-        });
+        const response = await axios.post("/api/sendMail", userData);
         if (response) {
           console.log(response.data);
         }
@@ -73,8 +73,13 @@ export default function WithdrawChipsButton() {
     }
   };
 
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+  
   return (
     <div>
+    
       <Button
         variant="outlined"
         onClick={handleClickOpen}
@@ -110,9 +115,17 @@ export default function WithdrawChipsButton() {
               color={selectedAmount === 2000 ? "primary" : "default"}
             />
           </div>
+          <input
+            type="number"
+            placeholder="Custom Amount"
+            value={inputValue}
+            onChange={handleInputChange}
+            className="border border-gray-300 rounded-md p-2 mb-2"
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
+
           <Button onClick={withdrawChipsFromWallet}>Withdraw</Button>
         </DialogActions>
       </Dialog>

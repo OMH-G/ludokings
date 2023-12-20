@@ -10,11 +10,14 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Chip from "@mui/material/Chip";
 import { updateChips, getChips } from "@/supabaseClient";
 import { useUser, useAuth } from "@clerk/nextjs";
+import { createClient } from "@supabase/supabase-js";
 import axios from "axios";
 
 export default function DepositChipsButton() {
   const [open, setOpen] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null); // New state to hold selected file
+
   const { user } = useUser();
   const { getToken } = useAuth();
 
@@ -32,30 +35,49 @@ export default function DepositChipsButton() {
 
   const depositChipsToWallet = async () => {
     try {
-      if (user) {
-        // const chips = await getChips(user.id);
-        const token = await getToken({ template: "supabase" });
-        const userData = {
-          token: token,
-          amount: selectedAmount,
-        };
-        const response = await axios.post("/api/addMoney", userData, {
-          withCredentials: true,
-        });
-        if (response) {
-          console.log(response.data);
-        }
+      if (selectedFile) {
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+          {
+            global: {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            },
+          }
+        );
+        const { data, error } = await supabase.storage
+          .from("Images")
+          .upload(`payment/file_${Date.now()}`, selectedFile, {
+            contentType: selectedFile.type,
+          });
 
-        alert(`Successfully added ₹${selectedAmount}.`);
-        setOpen(false);
+        if (error) {
+          console.error("Error uploading file:", error);
+          // return 0
+        } else {
+          console.log("File uploaded successfully:", data);
+          let message = {
+            token: localStorage.getItem("token"),
+            email: "omkarhalgi50@gmail.com",
+            subject:"Deposit Money",
+          };
+          const response = await axios.post("/api/sendMail",message);
+          // return 1;
+        }
       }
     } catch (error) {
-      console.log("Error while adding the chips.");
+      console.error("Error uploading file:", error.message);
     }
   };
-
+  
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]); // Update state with selected file
+  };
   return (
     <div>
+      
       <Button
         variant="outlined"
         onClick={handleClickOpen}
@@ -69,7 +91,7 @@ export default function DepositChipsButton() {
           <DialogContentText>
             To Add the chips, please choose the amount you want.
           </DialogContentText>
-          <div className="flex flex-row justify-center gap-2 items-center my-4">
+          {/* <div className="flex flex-row justify-center gap-2 items-center my-4">
             <Chip
               label="500"
               onClick={() => handleChipClick(500)}
@@ -90,7 +112,8 @@ export default function DepositChipsButton() {
               onClick={() => handleChipClick(2000)}
               color={selectedAmount === 2000 ? "primary" : "default"}
             />
-          </div>
+          </div> */}
+          <input type="file" onChange={handleFileChange} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

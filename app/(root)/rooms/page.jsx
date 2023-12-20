@@ -156,7 +156,7 @@ export default function Rooms() {
   const removeRoom = async (index, roomid) => {
     console.log(user, roomid);
     if (user && roomid) {
-      const token = localStorage.getItem('token');
+      const token = await getToken({ template: "supabase" });
       try {
         // const updatedRooms = [...rooms];
         const data = {

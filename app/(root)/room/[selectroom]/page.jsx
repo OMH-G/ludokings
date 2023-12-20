@@ -249,13 +249,15 @@ export default function Room({ params }) {
           </button>
         </div>
       </div>
-      {roomCode !== null && user !== undefined && roomID !== null ? (
-        <OCR roomCode={roomCode} roomId={roomID} userId={user.id}>
+      {
+      roomCode !== null && user !== undefined && roomID !== null ? (
+        <OCR roomCode={roomCode} roomId={roomID} userId={user.id} username={user.username}>
           {console.log("console in ocr component:", roomCode, user, roomID)}
         </OCR>
       ) : (
         <div>Loading</div>
-      )}
+      )
+      }
     </div>
   );
 }

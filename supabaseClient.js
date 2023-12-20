@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import { supabaseAuth } from "./supauth";
 // Initialize the Supabase client with your Supabase URL and API key
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -28,7 +27,7 @@ export async function createUserInSupabase(userId, userName) {
       .from("User")
       .insert([{ user_id: userId, chips: 100, name: userName }])
       .select();
-    console.log(data);
+    // console.log(data);
     return "User created";
   } catch (error) {
     throw error;
@@ -92,14 +91,14 @@ export async function fetchRoomsById(roomid) {
   }
 }
 
-export async function fetchRoomValueById( roomid) {
-  console.log('FetchRoomValue',roomid)
+export async function fetchRoomValueById(roomid) {
+  // console.log('FetchRoomValue', roomid)
   try {
     let data = await supabase
       .from("Room")
       .select("value")
       .eq("id", roomid);
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.error("fetching room from Supabase:");
@@ -137,24 +136,24 @@ export async function getUserIdByName(name) {
   }
 }
 
-export async function RoomCode(id,RoomCode,owner,user){
-  console.log(owner,user)
+export async function RoomCode(id, RoomCode, owner, user) {
+  // console.log(owner, user)
   try {
-    console.log(id)
+    // console.log(id)
     const check = await supabase
       .from("Room")
       .select("*")
       .eq("id", id)
-    console.log(check)
-    if(check.data[0].roomcode!==null || owner!==user){
+    // console.log(check)
+    if (check.data[0].roomcode !== null || owner !== user) {
       return check.data[0]
     }
     const data = await supabase
       .from("Room")
-      .update([{ roomcode:RoomCode }])
+      .update([{ roomcode: RoomCode }])
       .eq("id", id)
       .select('*')
-    console.log('Room code is ',data);
+    // console.log('Room code is ', data);
 
     return data.data[0];
   } catch (error) {
@@ -217,7 +216,7 @@ export async function deleteroom(userid, roomid) {
       .eq("owned_by", userid)
       .eq("id", roomid);
 
-    console.log("Delete the room ",data)
+    // console.log("Delete the room ", data)
     return data;
   } catch (error) {
     console.error("Error Deleting room in Supabase");
@@ -271,12 +270,12 @@ export async function fetchroomowner(roomid) {
 }
 export async function fetchUserbyRoomID(roomid) {
   try {
-    console.log(roomid);
+    // console.log(roomid);
     const { data, error } = await supabase
       .from("User")
       .select("name")
       .eq("roomid", roomid);
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.error("Error fetching room in Supabase");
@@ -292,7 +291,7 @@ export async function fetchRoomIdbyUser(userid) {
     if (error) {
       throw error;
     }
-    console.log(data);
+    // console.log(data);
     return data[0].roomid;
   } catch (error) {
     console.error("Error fetching room in Supabase");
@@ -339,4 +338,63 @@ export async function loseChips(userid) {
   } catch (error) {
     console.error("Error fetching loseChips in Supabase");
   }
+}
+export async function fetchFile(userid,folder) {
+  // console.log('alsdkf',process.env.SUP_SECRET_KEY)
+  // console.log(userid)
+  // let {data,error} = await supabase
+  // .from("Transaction")
+  // .insert([{ user_id: userid, folder:'result',roomcode:roomcode}])
+  console.log(userid,folder)
+  const { data, error } = await supabase
+    .storage
+    .from('Images')
+    .list(folder,{
+      limit: 1,
+      offset: 0,
+      sortBy: { column: 'name', order: 'asc' },
+      eq: 'owner_id',
+      filterValue: userid
+    })
+  // .order('created_at',{ascending:true})
+  // .eq("owner_id",userid);
+  // console.log(data)
+  if (error) {
+    return []
+    // return 0
+  } else {
+    return data
+    // return 1;
+  }
+}
+export async function uploadFile(userid,roomcode) {
+  // console.log('alsdkf',process.env.SUP_SECRET_KEY)
+  // console.log(userid)
+
+  let data2 = await checkFile(userid,roomcode)
+  if(data2===0){
+  let {data,error} = await supabase
+  .from("Transaction")
+  .insert([{ userid: userid, folder:'result',roomcode:roomcode}])
+  if(error){
+    return error.message;
+  }
+  return 0;
+}
+return 1
+}
+export async function checkFile(userid,roomcode) {
+  // console.log('alsdkf',process.env.SUP_SECRET_KEY)
+  // console.log(userid)
+
+  let data2 = await supabase
+  .from("Transaction")
+  .select()
+  .eq('userid',userid)
+  .eq('roomcode',roomcode)
+  console.log(data2)
+  if(data2.data.length!==0){
+    return 1
+  }
+  return 0;
 }
