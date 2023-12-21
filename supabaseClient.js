@@ -339,17 +339,17 @@ export async function loseChips(userid) {
     console.error("Error fetching loseChips in Supabase");
   }
 }
-export async function fetchFile(userid,folder) {
+export async function fetchFile(userid, folder) {
   // console.log('alsdkf',process.env.SUP_SECRET_KEY)
   // console.log(userid)
   // let {data,error} = await supabase
   // .from("Transaction")
   // .insert([{ user_id: userid, folder:'result',roomcode:roomcode}])
-  console.log(userid,folder)
+  console.log(userid, folder)
   const { data, error } = await supabase
     .storage
     .from('Images')
-    .list(folder,{
+    .list(folder, {
       limit: 1,
       offset: 0,
       sortBy: { column: 'name', order: 'asc' },
@@ -367,33 +367,75 @@ export async function fetchFile(userid,folder) {
     // return 1;
   }
 }
-export async function uploadFile(userid,roomcode) {
+export async function uploadFile(userid, roomcode, amount, folder) {
   // console.log('alsdkf',process.env.SUP_SECRET_KEY)
   // console.log(userid)
-
-  let data2 = await checkFile(userid,roomcode)
-  if(data2===0){
-  let {data,error} = await supabase
-  .from("Transaction")
-  .insert([{ userid: userid, folder:'result',roomcode:roomcode}])
-  if(error){
-    return error.message;
+  console.log('uploading file', roomcode, amount, folder)
+  let data2 = null;
+  if (folder === "payment") {
+    data2 = await checkFile(userid, '', folder)
   }
-  return 0;
+  else {
+    data2 = await checkFile(userid, roomcode, '')
+  }
+  if (data2 === 0) {
+    let { data, error } = await supabase
+      .from("Transaction")
+      .insert([{ userid: userid, folder: folder, roomcode: roomcode, amount: amount }])
+    if (error) {
+      return error.message;
+    }
+    return 0;
+  }
+  return 1
 }
-return 1
-}
-export async function checkFile(userid,roomcode) {
+export async function checkFile(userid, roomcode, folder) {
   // console.log('alsdkf',process.env.SUP_SECRET_KEY)
   // console.log(userid)
 
-  let data2 = await supabase
-  .from("Transaction")
-  .select()
-  .eq('userid',userid)
-  .eq('roomcode',roomcode)
+  let data2 = null;
+  if (folder === "result") {
+    data2 = await supabase
+      .from("Transaction")
+      .select()
+      .eq('userid', userid)
+      .eq('roomcode', roomcode)
+  }
+  else if (folder === "payment") {
+
+    data2 = await supabase
+      .from("Transaction")
+      .select()
+      .eq('userid', userid)
+      .eq('folder', folder)
+      .order('created_at', { ascending: false })
+      .limit(1)
+
+
+
+  }
   console.log(data2)
-  if(data2.data.length!==0){
+  if (data2.data.length !== 0) {
+    if (folder === "payment") {
+      const givenUtcTimestamp = new Date(data2.data[0]['created_at']);
+
+      // Get the current system time in UTC
+      const currentUtcTime = new Date();
+
+      // Calculate the difference in milliseconds between the given timestamp and the current time
+      const timeDifference = currentUtcTime - givenUtcTimestamp;
+
+      // Check if the time difference is greater than 1 hour (in milliseconds)
+      const oneHourInMillis = 5 * 60 * 1000; // 1 hour in milliseconds
+
+      if (timeDifference > oneHourInMillis) {
+        console.log("greater than 2")
+        return 0
+      } else {
+        console.log('less than 2 ')
+        return 1
+      }
+    }
     return 1
   }
   return 0;

@@ -34,6 +34,10 @@ export default function DepositChipsButton() {
   };
 
   const depositChipsToWallet = async () => {
+    const token = await getToken({ template: "supabase" });
+    if (localStorage.getItem("token") !== token) {
+      localStorage.setItem("token", token);
+    }
     try {
       if (selectedFile) {
         const supabase = createClient(
@@ -47,37 +51,46 @@ export default function DepositChipsButton() {
             },
           }
         );
-        const { data, error } = await supabase.storage
-          .from("Images")
-          .upload(`payment/file_${Date.now()}`, selectedFile, {
-            contentType: selectedFile.type,
-          });
+        const response = await axios.post("/api/checkResultFile", {
+          token: localStorage.getItem("token"),
+          roomcode: '',
+          subject: "payment",
+        });
+        if (response.data === 0) {
+          const { data, error } = await supabase.storage
+            .from("Images")
+            .upload(`payment/file_${Date.now()}`, selectedFile, {
+              contentType: selectedFile.type,
+            });
 
-        if (error) {
-          console.error("Error uploading file:", error);
-          // return 0
-        } else {
-          console.log("File uploaded successfully:", data);
-          let message = {
-            token: localStorage.getItem("token"),
-            email: "omkarhalgi50@gmail.com",
-            subject:"Deposit Money",
-          };
-          const response = await axios.post("/api/sendMail",message);
-          // return 1;
+          if (error) {
+            console.error("Error uploading file:", error);
+            // return 0
+          } else {
+            console.log("File uploaded successfully:", data);
+            let message = {
+              token: localStorage.getItem("token"),
+              email: "omkarhalgi50@gmail.com",
+              subject: "Deposit",
+            };
+            const response = await axios.post("/api/sendMail", message);
+            // return 1;
+          }
+        }
+        else{
+          console.log('Already file is uploaded');
         }
       }
     } catch (error) {
       console.error("Error uploading file:", error.message);
     }
   };
-  
+
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]); // Update state with selected file
   };
   return (
     <div>
-      
       <Button
         variant="outlined"
         onClick={handleClickOpen}

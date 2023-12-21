@@ -4,13 +4,13 @@ const jwt = require("jsonwebtoken");
 export async function POST(NextRequest) {
   try {
     const reqBody = await NextRequest.json();
-    const {token,roomcode}=reqBody;
+    const {token,roomcode,subject}=reqBody;
     
 
     let decode = jwt.verify(token, process.env.SUPABASE_SECRET_KEY, {
       algorithms: ["HS256"],
     });
-    let data=await checkFile(decode['username'],roomcode);
+    let data=await checkFile(decode['username'],roomcode,subject);
     console.log(data);
     // let temp=0;
     // if(data!==0){

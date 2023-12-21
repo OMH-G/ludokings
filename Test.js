@@ -1,26 +1,17 @@
-const nodemailer = require('nodemailer');
-// const { text } = require('stream/consumers');
+// Given timestamp in UTC
+const givenUtcTimestamp = new Date('2023-12-21T04:30:27.211458+00:00');
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'omkarhalgi90@gmail.com',
-    pass: 'gelc gydb eizp hhha'
-  }
-});
+// Get the current system time in UTC
+const currentUtcTime = new Date();
 
-// const sendEmail = (to, subject, text) => {
-  const mailOptions = {
-    from: 'omkarhalgi50@gmail.com',
-    to:'omkarhalgi8@gmail.com',
-    subject:'Hello',
-    text:'What have you done'
-  };
+// Calculate the difference in milliseconds between the given timestamp and the current time
+const timeDifference = currentUtcTime - givenUtcTimestamp;
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error(error);
-    } else {
-      console.log('Email sent: ' + info.response);
-    }
-  });
+// Check if the time difference is greater than 1 hour (in milliseconds)
+const oneHourInMillis = 2 * 60 * 1000; // 1 hour in milliseconds
+
+if (timeDifference > oneHourInMillis) {
+  console.log('The difference is greater than 1 hour.');
+} else {
+  console.log('The difference is not greater than 1 hour.');
+}

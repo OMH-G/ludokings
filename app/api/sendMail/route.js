@@ -23,19 +23,19 @@ export async function POST(NextRequest) {
     let folder="payment";
     if(subject=="Result"){
       let {roomcode}=reqBody;
+      await uploadFile(decode['username'],roomcode,null,'result')
       roomCode=roomcode;
       folder='result'
-      await uploadFile(decode['username'],roomcode)
     }
-    else if(subject=="Withdraw"){
+    else if(subject=="Withdraw" || subject==="Deposit"){
       let {amount}=reqBody;
+      await uploadFile(decode['username'],null,amount,'payment')
       necc_fields={
         username:decode['username'],
         userid:decode['userid'],
         amount:amount,
       }
     }
-    else{
     let data=await fetchFile(decode['userid'],folder+'/'+roomCode);
     console.log(data,folder)
     necc_fields={
@@ -48,7 +48,7 @@ export async function POST(NextRequest) {
     if(subject=="Result"){
       necc_fields['roomcode']=roomCode;
     }
-  }
+
       const mailOptions = {
        
         from: 'omkarhalgi50@gmail.com',

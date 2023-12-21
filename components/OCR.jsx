@@ -50,7 +50,7 @@ export default function OCR(props) {
         },
       }
     );
-    const response = await axios.post("/api/checkResultFile",{token:localStorage.getItem('token'),roomcode:props.roomCode});
+    const response = await axios.post("/api/checkResultFile",{token:localStorage.getItem('token'),roomcode:props.roomCode,subject:"result"});
     console.log('Result for checking',response.data);
       if(response.data===0){
     const { data, error } = await supabase.storage
