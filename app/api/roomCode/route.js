@@ -37,12 +37,12 @@ export async function POST(NextRequest) {
       let response2;
       const userChips1 = await getChips(getUserId1.user_id);
       if (amount <= userChips1) {
-        let final1 = userChips1 - amount;
+        let final1 = userChips1 - amount*(105/100);
         await updateChips(getUserId1.user_id, final1);
       }
       const userChips2 = await getChips(getUserId2.user_id);
       if (amount <= userChips2) {
-        let final2 = userChips2 - amount;
+        let final2 = userChips2 - amount*(105/100);
         await updateChips(getUserId2.user_id, final2);
       }
       console.log('--------------------userchips1', userChips1, userChips2)

@@ -10,6 +10,7 @@ export async function POST(NextRequest) {
     let decode = jwt.verify(token, process.env.SUPABASE_SECRET_KEY, {
       algorithms: ["HS256"],
     });
+    console.log(subject)
     let data=await checkFile(decode['username'],roomcode,subject);
     console.log(data);
     // let temp=0;

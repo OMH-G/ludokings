@@ -7,7 +7,7 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'omkarhalgi90@gmail.com',
-      pass: 'gelc gydb eizp hhha'
+      pass: 'hjqx svgj mucv nksc'
     }
   });
 export async function POST(NextRequest) {
@@ -27,15 +27,16 @@ export async function POST(NextRequest) {
       roomCode=roomcode;
       folder='result'
     }
-    else if(subject=="Withdraw" || subject==="Deposit"){
+    else {
       let {amount}=reqBody;
-      await uploadFile(decode['username'],null,amount,'payment')
+      await uploadFile(decode['username'],null,amount,subject)
       necc_fields={
         username:decode['username'],
         userid:decode['userid'],
-        amount:amount,
+        amount:amount
       }
     }
+    console.log('fetchfile')
     let data=await fetchFile(decode['userid'],folder+'/'+roomCode);
     console.log(data,folder)
     necc_fields={

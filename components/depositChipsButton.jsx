@@ -54,7 +54,7 @@ export default function DepositChipsButton() {
         const response = await axios.post("/api/checkResultFile", {
           token: localStorage.getItem("token"),
           roomcode: '',
-          subject: "payment",
+          subject: "Deposit",
         });
         if (response.data === 0) {
           const { data, error } = await supabase.storage
@@ -62,7 +62,6 @@ export default function DepositChipsButton() {
             .upload(`payment/file_${Date.now()}`, selectedFile, {
               contentType: selectedFile.type,
             });
-
           if (error) {
             console.error("Error uploading file:", error);
             // return 0

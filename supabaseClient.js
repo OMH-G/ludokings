@@ -372,11 +372,11 @@ export async function uploadFile(userid, roomcode, amount, folder) {
   // console.log(userid)
   console.log('uploading file', roomcode, amount, folder)
   let data2 = null;
-  if (folder === "payment") {
+  if (folder === "Withdraw" || folder==="Deposit") {
     data2 = await checkFile(userid, '', folder)
   }
   else {
-    data2 = await checkFile(userid, roomcode, '')
+    data2 = await checkFile(userid, roomcode, folder)
   }
   if (data2 === 0) {
     let { data, error } = await supabase
@@ -392,16 +392,23 @@ export async function uploadFile(userid, roomcode, amount, folder) {
 export async function checkFile(userid, roomcode, folder) {
   // console.log('alsdkf',process.env.SUP_SECRET_KEY)
   // console.log(userid)
-
+  console.log('checking file',userid,roomcode,folder)
   let data2 = null;
   if (folder === "result") {
+    let data = await supabase
+      .from("Room")
+      .select()
+      .eq('roomcode', roomcode)
+    if(data.data.length===0){
+      return 1
+    }
     data2 = await supabase
       .from("Transaction")
       .select()
       .eq('userid', userid)
       .eq('roomcode', roomcode)
   }
-  else if (folder === "payment") {
+  else if (folder === "Withdraw" || folder==="Deposit") {
 
     data2 = await supabase
       .from("Transaction")
@@ -414,9 +421,8 @@ export async function checkFile(userid, roomcode, folder) {
 
 
   }
-  console.log(data2)
   if (data2.data.length !== 0) {
-    if (folder === "payment") {
+    if (folder === "Withdraw" || folder==="Deposit") {
       const givenUtcTimestamp = new Date(data2.data[0]['created_at']);
 
       // Get the current system time in UTC

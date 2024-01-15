@@ -54,6 +54,12 @@ export default function WithdrawChipsButton() {
     try {
       if (user) {
         // const chips = await getChips(user.id);
+        const response = await axios.post("/api/checkResultFile", {
+          token: localStorage.getItem("token"),
+          roomcode: '',
+          subject: 'Withdraw'
+        });
+        if (response.data === 0) {
         const token = await getToken({ template: "supabase" });
         const userData = {
           token: token,
@@ -68,6 +74,7 @@ export default function WithdrawChipsButton() {
         alert(`Successfully withdrawed ₹${selectedAmount}.`);
         setOpen(false);
       }
+    }
     } catch (error) {
       console.log("Error while withdrawing the chips.");
     }
