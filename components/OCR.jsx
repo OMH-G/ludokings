@@ -9,10 +9,11 @@ import Button from "@mui/material/Button";
 export default function OCR(props) {
   console.log(props.roomname)
   const [image, setImage] = useState(null);
-  const [extractedText, setExtractedText] = useState("");
-  const [resultMessage, setResultMessage] = useState("");
-  const [errorText, setErrorText] = useState(""); // State for error message
-  const [roomValue, setRoomValue] = useState(0);
+  const [submit,setSubmit]=useState(true);
+  // const [extractedText, setExtractedText] = useState("");
+  // const [resultMessage, setResultMessage] = useState("");
+  // const [errorText, setErrorText] = useState(""); // State for error message
+  // const [roomValue, setRoomValue] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   // const { roomCode } = props; // Destructure the roomCode from props
   const router = useRouter();
@@ -23,15 +24,10 @@ export default function OCR(props) {
       const token = await getToken({ template: "supabase" });
       const data = { id: props.roomId, token: token };
       console.log("OCR room data", data);
-      // const roomData = await axios.post(
-      //   "https://ludo-server-teal.vercel.app/fetchroombyid",
-      //   data
-      // );
+      
       const roomData = await axios.post("/api/fetchRoomValueById", data, {
         withCredentials: true,
       });
-      console.log("setRoomValue", roomData.data);
-      setRoomValue(roomData.data);
     };
 
     fetchCurrentRoomData();
@@ -73,6 +69,7 @@ export default function OCR(props) {
 
       };
       const response = await axios.post("/api/sendMail",message);
+      setSubmit(false)
     // }
     }
   }
@@ -81,69 +78,12 @@ export default function OCR(props) {
   }
   };
 
-  // const performOCR = async () => {
-  //   try {
-  //     if (image) {
-  //       const {
-  //         data: { text },
-  //       } = await Tesseract.recognize(
-  //         image,
-  //         "eng" // Language code for English
-  //       );
-  //       setExtractedText(text);
-  //       // console.log(text);
-
-  //       const hasCongratulations = text.includes("Congratulations");
-  //       // const hasMatchingRoomCode = roomCode && text.includes(roomCode);
-
-  //       // if (hasCongratulations && hasMatchingRoomCode) {
-  //       //   setResultMessage("Congratulations! You won the match.");
-  //       // } else if (hasCongratulations && !hasMatchingRoomCode) {
-  //       //   setResultMessage("Room code does not match.");
-  //       // } else {
-  //       //   setResultMessage("You lost the match. ");
-  //       // }
-
-  //       const token = await getToken({ template: "supabase" });
-  //       let data = {
-  //         hasCongratulations,
-  //         roomId: props.roomId,
-  //         token: token,
-  //         roomValue: roomValue,
-  //       };
-  //       if (hasCongratulations) {
-  //         setResultMessage(
-  //           "Congratulations! You won the match.Chips will be added to your wallet."
-  //         );
-  //         let isWinner = await axios.post("/api/gameResult", data, {
-  //           withCredentials: true,
-  //         });
-  //         console.log("isWinner", isWinner.data);
-  //       } else {
-  //         setResultMessage(
-  //           "You lost the match.Chips will be deduced from your wallet. "
-  //         );
-  //         let isWinner = await axios.post("/api/gameResult", data, {
-  //           withCredentials: true,
-  //         });
-  //         console.log("isLoser", isWinner.data);
-  //       }
-  //       setTimeout(() => {
-  //         router.push("/rooms", { scroll: false });
-  //       }, 5000);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error while getting the game result:", error);
-  //   }
-  // };
-
-  // Check if an image is selected to enable the "Submit" button
-  const isSubmitDisabled = !image;
   
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]); // Update state with selected file
   };
-  return (
+  return (<>
+    {submit?
     <div className="flex flex-col justify-center items-center">
       <div className="text-center">
         <p>Please upload the Screenshot </p>
@@ -154,7 +94,7 @@ export default function OCR(props) {
           accept="image/*" // Allow only image files
           onChange={handleFileChange}
         />
-        {errorText && <p className="text-red-500">{errorText}</p>}
+        {/* {errorText && <p className="text-red-500">{errorText}</p>} */}
         <div className="">
           {image && (
             <Image
@@ -171,6 +111,7 @@ export default function OCR(props) {
           
        
       </div>
-    </div>
+    </div>:<></>}
+    </>
   );
 }

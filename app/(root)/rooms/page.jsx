@@ -167,12 +167,6 @@ export default function Rooms() {
         const response = await axios.post("/api/deleteRoom", data, {
           withCredentials: true,
         });
-        // if (response) {
-        //   setRooms([]);
-        // }
-        // console.log(response);
-        // updatedRooms.splice(index, 1);
-        // setRooms(updatedRooms);
       } catch (error) {
         console.log("Error while deleting the room");
       }

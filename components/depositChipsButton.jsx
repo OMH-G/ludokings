@@ -73,11 +73,10 @@ export default function DepositChipsButton() {
               subject: "Deposit",
             };
             const response = await axios.post("/api/sendMail", message);
-            // return 1;
           }
         }
         else{
-          console.log('Already file is uploaded');
+          setOpen(false)
         }
       }
     } catch (error) {

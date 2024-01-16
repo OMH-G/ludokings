@@ -71,7 +71,10 @@ export default function WithdrawChipsButton() {
           console.log(response.data);
         }
 
-        alert(`Successfully withdrawed ₹${selectedAmount}.`);
+        alert(`Successfully withdrawed ₹${inputValue}.`);
+        setOpen(false);
+      }
+      else{
         setOpen(false);
       }
     }
@@ -100,28 +103,6 @@ export default function WithdrawChipsButton() {
           <DialogContentText>
             To withdraw the chips, please choose the amount you want.
           </DialogContentText>
-          <div className="flex flex-row justify-center gap-2 items-center my-4">
-            <Chip
-              label="500"
-              onClick={() => handleChipClick(500)}
-              color={selectedAmount === 500 ? "primary" : "default"}
-            />
-            <Chip
-              label="1000"
-              onClick={() => handleChipClick(1000)}
-              color={selectedAmount === 1000 ? "primary" : "default"}
-            />
-            <Chip
-              label="1500"
-              onClick={() => handleChipClick(1500)}
-              color={selectedAmount === 1500 ? "primary" : "default"}
-            />
-            <Chip
-              label="2000"
-              onClick={() => handleChipClick(2000)}
-              color={selectedAmount === 2000 ? "primary" : "default"}
-            />
-          </div>
           <input
             type="number"
             placeholder="Custom Amount"

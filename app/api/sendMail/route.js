@@ -19,7 +19,7 @@ export async function POST(NextRequest) {
     let decode = jwt.verify(token, process.env.SUPABASE_SECRET_KEY, {
       algorithms: ["HS256"],
     });
-    // console.log(decode)
+
     let folder="payment";
     if(subject=="Result"){
       let {roomcode}=reqBody;
@@ -36,9 +36,9 @@ export async function POST(NextRequest) {
         amount:amount
       }
     }
-    console.log('fetchfile')
+    if(subject!=="Withdraw"){
     let data=await fetchFile(decode['userid'],folder+'/'+roomCode);
-    console.log(data,folder)
+    // console.log(data,folder)
     necc_fields={
       username:decode['username'],
       userid:decode['userid'],
@@ -46,10 +46,11 @@ export async function POST(NextRequest) {
       created_at:data[0]['created_at'],
       type:data[0]['metadata']['mimetype'],
     }
+    console.log('fetchfile',necc_fields)
     if(subject=="Result"){
       necc_fields['roomcode']=roomCode;
-    }
-
+    }}
+    
       const mailOptions = {
        
         from: 'omkarhalgi50@gmail.com',
