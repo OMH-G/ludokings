@@ -77,7 +77,7 @@ export default function Room({ params }) {
     // }
   };
   useEffect(() => {
-    const channel = client.channel("db-roomcode-user-changes");
+    const channel = client.channel(roomID);
 
     channel.on(
       "postgres_changes",
@@ -85,9 +85,10 @@ export default function Room({ params }) {
         event: "UPDATE",
         schema: "public",
         table: "Room",
-        // columns: ["roomcode"],
+        columns: ["roomcode"],
       },
       (payload) => {
+        // console.log('Room name is ',roomID)
         alert('Room code is Visible');
 
         // setRoomCode(getRoomCode());
