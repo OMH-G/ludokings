@@ -59,7 +59,7 @@ export default function DepositChipsButton() {
         if (response.data === 0) {
           const { data, error } = await supabase.storage
             .from("Images")
-            .upload(`payment/file_${Date.now()}`, selectedFile, {
+            .upload(`payment/${user.primaryPhoneNumber}/${Date.now()}`, selectedFile, {
               contentType: selectedFile.type,
             });
           console.log(data)

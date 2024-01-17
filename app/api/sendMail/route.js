@@ -20,7 +20,7 @@ export async function POST(NextRequest) {
       algorithms: ["HS256"],
     });
 
-    let folder="payment";
+    let folder=`payment/${decode['username']}`;
     if(subject=="Result"){
       let {roomcode}=reqBody;
       await uploadFile(decode['username'],roomcode,null,'result')
