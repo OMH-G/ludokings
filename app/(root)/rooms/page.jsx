@@ -29,6 +29,9 @@ export default function Rooms() {
     const getUserChips = async () => {
       if (user) {
         const token = await getToken({ template: "supabase" });
+        if(localStorage.getItem('token')!==token){
+          localStorage.setItem('token',token)
+        }
         try {
           // const userId = user.id;
 
@@ -82,6 +85,9 @@ export default function Rooms() {
   }, [user]);
   const fetchRooms = async () => {
     let token = await getToken({ template: "supabase" });
+    if(localStorage.getItem('token')!==token){
+      localStorage.setItem('token',token)
+    }
     if (user) {
       try {
         const response = await axios.post(
@@ -103,6 +109,9 @@ export default function Rooms() {
     const createRoom = async () => {
       if (user) {
         const token = await getToken({ template: "supabase" });
+        if(localStorage.getItem('token')!==token){
+          localStorage.setItem('token',token)
+        }
         try {
           const data = {
             token,
@@ -157,6 +166,9 @@ export default function Rooms() {
     console.log(user, roomid);
     if (user && roomid) {
       const token = await getToken({ template: "supabase" });
+      if(localStorage.getItem('token')!==token){
+        localStorage.setItem('token',token)
+      }
       try {
         // const updatedRooms = [...rooms];
         const data = {
@@ -175,6 +187,9 @@ export default function Rooms() {
 
   const assignuser = async (roomid, userid) => {
     const token = await getToken({ template: "supabase" });
+    if(localStorage.getItem('token')!==token){
+      localStorage.setItem('token',token)
+    }
     const roomId = {
       id: roomid,
       token: token,

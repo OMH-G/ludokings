@@ -18,7 +18,9 @@ export default function Home() {
         
         const a = await getToken({ template: "supabase" });
         // updateToken(a);
-        localStorage.setItem('token',a)
+        if(localStorage.getItem('token')!==a){
+          localStorage.setItem('token',a)
+        }
         try {
           const userData = {
             userId: user.id,

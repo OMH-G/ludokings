@@ -52,7 +52,7 @@ export async function POST(NextRequest) {
     }}
     
       const mailOptions = {
-       
+        
         from: 'omkarhalgi50@gmail.com',
         to: 'omkarhalgi90@gmail.com',
         subject:subject,

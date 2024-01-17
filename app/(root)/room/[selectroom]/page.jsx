@@ -41,7 +41,9 @@ export default function Room({ params }) {
     // if(database.length!==2){
     if (user) {
       let token = await getToken({ template: "supabase" });
-      // updateToken(token);
+      if(localStorage.getItem('token')!==token){
+        localStorage.setItem('token',token)
+      }
       try {
         if (roomID) {
           const roomId = {
@@ -135,6 +137,9 @@ export default function Room({ params }) {
       try {
         if (user) {
           const token = await getToken({ template: "supabase" });
+          if(localStorage.getItem('token')!==token){
+            localStorage.setItem('token',token)
+          }
           const userId = {
             token,
           };

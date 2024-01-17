@@ -15,6 +15,9 @@ export default function Wallet() {
     const getUserChips = async () => {
       if (user) {
         const token = await getToken({ template: "supabase" });
+        if(localStorage.getItem('token')!==token){
+          localStorage.setItem('token',token)
+        }
         try {
           const userId = user.id;
           const response = await axios.post("https://ludo-server-teal.vercel.app/getChip", {token:token}, {

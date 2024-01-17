@@ -62,6 +62,7 @@ export default function DepositChipsButton() {
             .upload(`payment/file_${Date.now()}`, selectedFile, {
               contentType: selectedFile.type,
             });
+          console.log(data)
           if (error) {
             console.error("Error uploading file:", error);
             // return 0
@@ -73,6 +74,7 @@ export default function DepositChipsButton() {
               subject: "Deposit",
             };
             const response = await axios.post("/api/sendMail", message);
+            setOpen(false)
           }
         }
         else{

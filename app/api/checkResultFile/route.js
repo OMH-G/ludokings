@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { checkFile, fetchFile, uploadFile } from "@/supabaseClient";
+import { checkFile } from "@/supabaseClient";
 const jwt = require("jsonwebtoken");
 export async function POST(NextRequest) {
   try {
