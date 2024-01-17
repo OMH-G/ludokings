@@ -153,12 +153,18 @@ export async function RoomCode(id, RoomCode, owner, user) {
       .update([{ roomcode: RoomCode }])
       .eq("id", id)
       .select('*')
+    console.log(id,user,owner)
+    const history = await supabase
+      .from("RoomHistory")
+      .update([{ roomcode: RoomCode }])
+      .eq("owner_name", user)
+      .select('*')
+    console.log('History is history',history)
     // console.log('Room code is ', data);
 
     return data.data[0];
   } catch (error) {
     console.error("Error getting user id by name in Supabase:");
-    throw error;
   }
 }
 
@@ -432,7 +438,7 @@ export async function checkFile(userid, roomcode, folder) {
       const timeDifference = currentUtcTime - givenUtcTimestamp;
 
       // Check if the time difference is greater than 1 hour (in milliseconds)
-      const oneHourInMillis = 5 * 60 * 1000; // 1 hour in milliseconds
+      const oneHourInMillis = 1000; // 1 hour in milliseconds
 
       if (timeDifference > oneHourInMillis) {
         console.log("greater than 2")

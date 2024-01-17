@@ -88,7 +88,7 @@ export default function Room({ params }) {
         // columns: ["roomcode"],
       },
       (payload) => {
-        alert('Room code is activated');
+        alert('Room code is Visible');
 
         // setRoomCode(getRoomCode());
       }
