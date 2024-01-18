@@ -66,6 +66,7 @@ export async function createRoomInSupabase(userId, roomname, value, userName) {
         },
       ])
       .select("id");
+    console.log(data);
     return data.data;
   } catch (error) {
     throw error;

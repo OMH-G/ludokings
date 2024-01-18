@@ -88,9 +88,11 @@ export default function Room({ params }) {
         columns: ["roomcode"],
       },
       (payload) => {
-        // console.log('Room name is ',roomID)
+        console.log('Room name is ',roomID,payload.new.id)
+        if(payload.new.id===roomID){
         alert('Room code is Visible');
-
+        }
+        // getRoomCode();
         // setRoomCode(getRoomCode());
       }
     );
