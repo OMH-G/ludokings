@@ -49,7 +49,12 @@ export async function POST(NextRequest) {
     console.log('fetchfile',necc_fields)
     if(subject=="Result"){
       necc_fields['roomcode']=roomCode;
-    }}
+    }
+    else if(subject=="Deposit"){
+      let {amount}=reqBody;
+      necc_fields['amount']=amount;
+    }
+  }
     
       const mailOptions = {
         

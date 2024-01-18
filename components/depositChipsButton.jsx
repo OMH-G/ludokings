@@ -17,6 +17,7 @@ export default function DepositChipsButton() {
   const [open, setOpen] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null); // New state to hold selected file
+  const [inputValue, setInputValue] = useState('');
 
   const { user } = useUser();
   const { getToken } = useAuth();
@@ -72,6 +73,7 @@ export default function DepositChipsButton() {
               token: localStorage.getItem("token"),
               email: "omkarhalgi50@gmail.com",
               subject: "Deposit",
+              amount:inputValue
             };
             const response = await axios.post("/api/sendMail", message);
             setOpen(false)
@@ -88,6 +90,9 @@ export default function DepositChipsButton() {
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]); // Update state with selected file
+  };
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
   };
   return (
     <div>
@@ -126,6 +131,13 @@ export default function DepositChipsButton() {
               color={selectedAmount === 2000 ? "primary" : "default"}
             />
           </div> */}
+          <input
+            type="number"
+            placeholder="Custom Amount"
+            value={inputValue}
+            onChange={handleInputChange}
+            className="border border-gray-300 rounded-md p-2 mb-2"
+          />
           <input type="file" onChange={handleFileChange} />
         </DialogContent>
         <DialogActions>
