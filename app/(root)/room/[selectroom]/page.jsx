@@ -10,6 +10,7 @@ import { supabase } from "@/supauth";
 import { RoomCode } from "@/supabaseClient";
 import { RealtimeClient } from "@supabase/realtime-js";
 import { useSupabase } from "@/RealtimeContext";
+import { fetchroomidbyuserid } from "../../../../supabaseClient";
 // import { useAuther } from '../../../../AuthContext';
 // import { useToken } from "@/TokenContext";
 
@@ -92,12 +93,19 @@ export default function Room({ params }) {
         table: "Room",
         columns: ["roomcode"],
       },
-      (payload) => {
+      async (payload) => {
         // alert('Room code is Visible');
-        getRoomCode();
-        console.log('Room name is ',roomID,payload.new.id,room)
-        // if(payload.new.id===roomID){
-        // }
+        // getRoomCode();
+        let token=localStorage.getItem('token')
+        console.log(token)
+        let roomId = await axios.post(
+          "/api/fetchRoomIDbyuserid",{token},{withCredentials:true}
+        );
+
+        console.log('Room name is ',roomId.data,payload.new.id,room)
+        if(payload.new.id===roomId.data){
+          alert('Roomcode is visible')
+        }
         // getRoomCode();
         // setRoomCode(getRoomCode());
       }
