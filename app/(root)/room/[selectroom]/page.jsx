@@ -35,6 +35,7 @@ export default function Room({ params }) {
   const [database, setDatabase] = useState([]);
   const [roomCode, setRoomCode] = useState(null);
   const [Owner, setOwner] = useState("");
+  const [gRoom, setgRoom] = useState(1);
   const { getToken } = useAuth();
 
   const fetchroomdata = async () => {
@@ -66,6 +67,10 @@ export default function Room({ params }) {
           );
           console.log(store_owner.data);
           let Ownerd = store_owner.data.message;
+          // if(store_user.data.message.length===2 && user.username===Ownerd && gRoom===1){
+          //   getRoomCode();
+          //   setgRoom(0);
+          // }
           console.log("Store user", store_user.data.message, Ownerd);
           setDatabase(usersInRoom);
           setOwner(Ownerd);
@@ -88,11 +93,11 @@ export default function Room({ params }) {
         columns: ["roomcode"],
       },
       (payload) => {
+        alert('Room code is Visible');
         // console.log('Room name is ',roomID,payload.new.id,room)
         // if(payload.new.id===roomID){
-        // alert('Room code is Visible');
         // }
-        getRoomCode();
+        // getRoomCode();
         // setRoomCode(getRoomCode());
       }
     );
@@ -133,6 +138,44 @@ export default function Room({ params }) {
         }
       });
   }, [roomID,Owner]);
+// useEffect(() => {
+//   let token = localStorage.getItem("token");
+//   const roomId = {
+//     id: roomID,
+//     token: token,
+//   };
+//   let store_user;
+
+//   axios
+//     .post("https://ludo-server-teal.vercel.app/fetchusersbyid", roomId)
+//     .then((response) => {
+//       store_user = response;
+
+//       if (
+//         store_user.data.message !== null &&
+//         store_user.data.message.length === 2
+//       ) {
+//         const token = localStorage.getItem("token");
+//         console.log("getting room code");
+
+//         axios
+//           .post("/api/roomCode", JSON.stringify(token), {
+//             withCredentials: true,
+//           })
+//           .then((response) => {
+//             // console.log("The diskau code is ", response.data.code);
+//             setRoomCode(response.data.code);
+//             // console.log("Success!", response.data.code);
+//           })
+//           .catch((error) => {
+//             console.log("failed!!!!", error.message);
+//           });
+//       }
+//     })
+//     .catch((error) => {
+//       console.error("Error in fetching users by id:", error);
+//     });
+// }, [])
 
   function goBack(userid) {
     router.back();
@@ -164,6 +207,7 @@ export default function Room({ params }) {
   }
 
   const getRoomCode = () => {
+    // setRoomCode('2334')
     if(roomCode===null){
     let token = localStorage.getItem("token");
     const roomId = {
@@ -191,6 +235,18 @@ export default function Room({ params }) {
             .then((response) => {
               // console.log("The diskau code is ", response.data.code);
               setRoomCode(response.data.code);
+              // console.log("Success!", response.data.code);
+            })
+            .catch((error) => {
+              console.log("failed!!!!", error.message);
+            });
+          axios
+            .post("/api/deleteMoney", JSON.stringify(token), {
+              withCredentials: true,
+            })
+            .then((response) => {
+              // console.log("The diskau code is ", response.data.code);
+              console.log('Moneeey is deducted')
               // console.log("Success!", response.data.code);
             })
             .catch((error) => {
