@@ -94,7 +94,7 @@ export default function Room({ params }) {
       },
       (payload) => {
         alert('Room code is Visible');
-        // console.log('Room name is ',roomID,payload.new.id,room)
+        console.log('Room name is ',roomID,payload.new.id,room)
         // if(payload.new.id===roomID){
         // }
         // getRoomCode();
