@@ -1,10 +1,12 @@
 "use client";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext,useRef } from "react";
 import { useUser, useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useRoomID } from "../../../../RoomIDContext";
 import OCR from "../../../../components/OCR";
+import { ToastContainer,toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/supauth";
 import { RoomCode } from "@/supabaseClient";
@@ -82,48 +84,77 @@ export default function Room({ params }) {
     }
     // }
   };
+  const channelRef = useRef(null);
+
   useEffect(() => {
-    const channel = client.channel(roomID);
+    // Check if the channel has not been created
+    if (!channelRef.current) {
+      const channel = client.channel(roomID);
 
-    channel.on(
-      "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "Room",
-        columns: ["roomcode"],
-      },
-      async (payload) => {
-        // alert('Room code is Visible');
-        // getRoomCode();
-        let token=localStorage.getItem('token')
-        console.log(token)
-        let roomId = await axios.post(
-          "/api/fetchRoomIDbyuserid",{token},{withCredentials:true}
-        );
+      channel.on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "Room",
+          columns: ["roomcode"],
+        },
+        async (payload) => {
+          try {
+            let token = localStorage.getItem('token');
+            console.log(token);
 
-        console.log('Room name is ',roomId.data,payload.new.id,room)
-        if(payload.new.id===roomId.data){
-          alert('Roomcode is visible')
+            let response = await axios.post(
+              "/api/fetchRoomIDbyuserid",
+              { token: token },
+              { withCredentials: true }
+            );
+
+            let roomId = response.data;
+
+            console.log('Room name is', roomId, payload.new.id, room);
+
+            if (payload.new.id === Number(roomId)) {
+              // alert('Roomcode is visible');
+              toast.success("Room code is visible");
+            }
+          } catch (error) {
+            console.error("Error in Axios request or PostgreSQL changes callback:", error);
+          }
         }
-        // getRoomCode();
-        // setRoomCode(getRoomCode());
-      }
-    );
+      );
 
-    channel.subscribe(async (status) => {
-      if (status === "SUBSCRIBED") {
-        console.log("Ready to receive database changes!");
-      }
-    });
-  }, [roomCode]);
+      channel.subscribe(async (status) => {
+        if (status === "SUBSCRIBED") {
+          console.log("Ready to receive database changes!");
+        }
+      });
 
+      // Store the channel in the ref
+      channelRef.current = channel;
+    }
+
+    // Clean up channel when component is unmounted
+    return () => {
+      // Check if channel exists before unsubscribing
+      if (channelRef.current) {
+        channelRef.current.unsubscribe();
+        channelRef.current = null;
+      }
+    };
+  }, [roomID]); // Add roomID to dependency array if it can change during component's lifecycle
+
+
+
+  const channelRef2 = useRef(null);
 
   useEffect(() => {
-    console.log("Room code is ", roomCode);
-    if(database.length<2){
-    fetchroomdata();
-    }
+    if (!channelRef2.current) {
+      console.log("Room code is ", roomCode);
+      if (database.length < 2) {
+        fetchroomdata();
+      }
+
       client.accessToken = localStorage.getItem("token");
       const channel = client.channel("db-user-changes");
 
@@ -146,7 +177,18 @@ export default function Room({ params }) {
           console.log("Ready to receive database changes!");
         }
       });
-  }, [roomID,Owner]);
+
+      // Store the channel in the ref
+      channelRef2.current = channel;
+    }
+
+    return () => {
+      if (channelRef2.current) {
+        channelRef2.current.unsubscribe();
+        channelRef2.current = null;
+      }
+    };
+  }, [roomID, Owner]);
 // useEffect(() => {
 //   let token = localStorage.getItem("token");
 //   const roomId = {
@@ -217,7 +259,7 @@ export default function Room({ params }) {
 
   const getRoomCode = () => {
     // setRoomCode('2334')
-    if(roomCode===null){
+    if(roomCode===null ){
     let token = localStorage.getItem("token");
     const roomId = {
       id: roomID,
@@ -249,6 +291,7 @@ export default function Room({ params }) {
             .catch((error) => {
               console.log("failed!!!!", error.message);
             });
+            if(Owner===user.username){
           axios
             .post("/api/deleteMoney", JSON.stringify(token), {
               withCredentials: true,
@@ -261,6 +304,7 @@ export default function Room({ params }) {
             .catch((error) => {
               console.log("failed!!!!", error.message);
             });
+          }
         }
       })
       .catch((error) => {
@@ -278,6 +322,7 @@ export default function Room({ params }) {
 
   return (
     <div className="flex flex-col justify-center items-center">
+      <ToastContainer/>
       <div className="flex justify-start items-center w-11/12 md:w-1/2">
         <button
           onClick={() => goBack(user?.id)}
